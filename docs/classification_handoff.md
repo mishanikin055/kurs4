@@ -1,6 +1,6 @@
 # Состояние работы для продолжения
 
-Обновлено 08.10.2026. Репозиторий `/home/mikhail/kurs4` в WSL2,
+Обновлено 09.10.2026. Репозиторий `/home/mikhail/kurs4` в WSL2,
 ветка `codex/classification-comparison`, origin `mishanikin055/kurs4`.
 Прочитать AGENTS.md, PROJECT_PLAN.md и classification/README.md.
 
@@ -40,18 +40,23 @@
   модели. Качество smoke отсутствует; полный сравнительный анализ не выполнен.
 - Верификация: reports/verification/classification_runs.json и classification.md.
 
-## Активный запуск
+## Полный ResNet-50 завершён
 
-Full ResNet-50 запущен командой из classification/README.md.
-Docker container: kurs4-benchmark-run-0c68c4ce1cd4; shell session текущего чата: 37549.
-Первый повтор: running, более 3600 / 50 000 обработано на момент записи.
-Все три повтора выполняются одним родительским расписанием; следующие модели
-пропускаются фильтром --model resnet50. Source commit запуска — 30e705a.
-Смотреть reports/classification/validation50000-v1/resnet50_repeat*/run.json
-и process.log. **Не запускать второй GPU-процесс и не менять исходники из
-source fingerprint, конфиг/manifest/контейнер до окончания.** Родитель после
-трёх повторов сам генерирует comparison без доверительных интервалов.
-Фактические результаты full брать только после status=complete во всех трёх.
+Проверено 09.10.2026: все три resnet50_repeat1/2/3 имеют status=complete,
+по 50 000 изображений, по одной попытке, errors.jsonl пусты. Контейнер и
+модельные процессы завершились. Predicted top5/softmax совпадают между повторами.
+Top1 0.80854 (40 427 / 50 000), Top5 0.95438 (47 719 / 50 000),
+Macro-F1 0.8063235756082204. Проверены sample SHA-256, dataset/source hashes
+и правильные ответы по всем сохранённым строкам.
+
+Итоговые CSV/Markdown и анализ:
+reports/comparisons/classification-validation50000-v1/.
+Проверочный manifest: reports/verification/classification_validation50000.json.
+Сырые данные/snapshots: reports/classification/validation50000-v1/.
+Source commit запуска — 30e705a. Новых доверительных интервалов нет.
+Остальные модели на полном validation — not_run; полные crops отложены.
+Старую shell-сессию 37549 и контейнер не использовать как активные.
+Автоматическое наблюдение resnet-50 останавливается после сообщения об успехе.
 
 ## Авторизация GitHub
 

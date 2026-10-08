@@ -1,0 +1,72 @@
+{
+  "schema_version": "1.0",
+  "include_ci": false,
+  "script_sha256": "20f78ecdab483e65c03d1394c6d04b5c605603e32a806fdeadbbb27bb62d5098",
+  "experiment": {
+    "schema_version": "1.0",
+    "config": {
+      "schema_version": "1.0",
+      "protocol_version": "classification-imagenet-v1",
+      "device": "cuda:0",
+      "precision": "fp32",
+      "batch_size": 1,
+      "seed": 42,
+      "warmup": 20,
+      "repeats": 3,
+      "cpu_threads": 4,
+      "top_k": 5,
+      "bootstrap_samples": 1000,
+      "models": [
+        "resnet50",
+        "efficientnet_v2_s",
+        "convnext_tiny",
+        "vit_b_16"
+      ]
+    },
+    "dataset_hash": "8e63b2a2cf3aaa72269b4d88c0b22098e93e161deffc86d54ff18a6270b11724",
+    "source_hash": "67bde956499b856cf3b84e317f30e57f856a2c7dc9dc6c93f1e214d39719b76e",
+    "model_ids": [
+      "resnet50",
+      "efficientnet_v2_s",
+      "convnext_tiny",
+      "vit_b_16"
+    ],
+    "model_hashes": {
+      "resnet50": "ca1a5b9299145ce881269e1cdc15aac66197fc991a046ebf0ce10078ceb60528",
+      "efficientnet_v2_s": "225d6594145ff6fc91899678bafae6749efe704e35e57b272a4b753edf52cb84",
+      "convnext_tiny": "6a6b2b3bab70852f8e061f1a2fea6d4ad87e049733fa5fe489951991448c715f",
+      "vit_b_16": "6edc00f83e08ded58451cbeccd887865778b9fe81b9d05bd5c9354f15131bf26"
+    },
+    "image_id": "sha256:5f22592d6a05d8add7c09a6b24d4b9a2df767003b5ddf59782b9efe954f6addc",
+    "smoke": false
+  },
+  "sources": {
+    "reports/classification/validation50000-v1/resnet50_repeat1/run.json": "6d48e9411f7fdb1863bfd7c8ad259938e92914e211d364d38e4d1985b7c95696",
+    "reports/classification/validation50000-v1/resnet50_repeat1/metrics.json": "59c4a95d59f8ad77ed24b477f4acc2121513b3b8e4cfec64882f65a43eb4d907",
+    "reports/classification/validation50000-v1/resnet50_repeat1/environment.json": "5c935b0cca4acba18486e24463d5d9f7ea88c981fb46cf4a7cab1b0b59025c03",
+    "reports/classification/validation50000-v1/resnet50_repeat1/samples.jsonl": "73cb2dd1c3a3488e81ecd8d65824dc4f05c0995f1b57e2e27ad1d762aa4ac852",
+    "reports/classification/validation50000-v1/resnet50_repeat1/model_manifest.json": "faafae9c3a321a4c44fb578327d6bea1b58155712fed3d27e7c7a9c5a5975c35",
+    "reports/classification/validation50000-v1/resnet50_repeat1/dataset_manifest.json": "808814c7878d23be1c415701a1b713d0ee31a32e814a2df98e7a10f285182632",
+    "reports/classification/validation50000-v1/resnet50_repeat1/native_config.json": "6b383b4775b01a62b7acc7ec6cca17f2b14f3a8839c51d2954f11eb17ab30fe4",
+    "reports/classification/validation50000-v1/resnet50_repeat2/run.json": "239db05bc6be67455be92eb9b4443026acaa49e2dc353f02b9d3571b8733d2d2",
+    "reports/classification/validation50000-v1/resnet50_repeat2/metrics.json": "59c4a95d59f8ad77ed24b477f4acc2121513b3b8e4cfec64882f65a43eb4d907",
+    "reports/classification/validation50000-v1/resnet50_repeat2/environment.json": "53b543c44f65c5eb1820d3b5a31a86f82ea711f152f6f4be7cad5ceb3761c7bc",
+    "reports/classification/validation50000-v1/resnet50_repeat2/samples.jsonl": "fab92724cefb823e299eabe2d5169e61b66ad9e2c7226c7effecc8010538f522",
+    "reports/classification/validation50000-v1/resnet50_repeat2/model_manifest.json": "faafae9c3a321a4c44fb578327d6bea1b58155712fed3d27e7c7a9c5a5975c35",
+    "reports/classification/validation50000-v1/resnet50_repeat2/dataset_manifest.json": "808814c7878d23be1c415701a1b713d0ee31a32e814a2df98e7a10f285182632",
+    "reports/classification/validation50000-v1/resnet50_repeat2/native_config.json": "6b383b4775b01a62b7acc7ec6cca17f2b14f3a8839c51d2954f11eb17ab30fe4",
+    "reports/classification/validation50000-v1/resnet50_repeat3/run.json": "e8ac6c82a410c3054f488c985b949977e0b57524b6e7a02a53a19795e596a4ec",
+    "reports/classification/validation50000-v1/resnet50_repeat3/metrics.json": "59c4a95d59f8ad77ed24b477f4acc2121513b3b8e4cfec64882f65a43eb4d907",
+    "reports/classification/validation50000-v1/resnet50_repeat3/environment.json": "41a52e016218a493bd06712509dca4d661264b7bf56331dae861918b4bb87e3c",
+    "reports/classification/validation50000-v1/resnet50_repeat3/samples.jsonl": "c19717dbf190359d93e1e7bd1f97712f7df2770b92a18af43fef1adc160fd181",
+    "reports/classification/validation50000-v1/resnet50_repeat3/model_manifest.json": "faafae9c3a321a4c44fb578327d6bea1b58155712fed3d27e7c7a9c5a5975c35",
+    "reports/classification/validation50000-v1/resnet50_repeat3/dataset_manifest.json": "808814c7878d23be1c415701a1b713d0ee31a32e814a2df98e7a10f285182632",
+    "reports/classification/validation50000-v1/resnet50_repeat3/native_config.json": "6b383b4775b01a62b7acc7ec6cca17f2b14f3a8839c51d2954f11eb17ab30fe4"
+  },
+  "outputs": [
+    "classification.csv",
+    "classification.md",
+    "classification_per_class.csv",
+    "classification_confusion.csv"
+  ]
+}

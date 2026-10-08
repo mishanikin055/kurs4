@@ -10,5 +10,7 @@
 
 Краткое состояние для продолжения в новом чате: [docs/classification_handoff.md](docs/classification_handoff.md).
 
-Позднейшее указание пользователя: запущен полный ImageNet50k только для ResNet-50;
-остальные full-прогоны остаются отложенными. Статус — docs/classification_handoff.md.
+Полный ImageNet50k для ResNet-50 завершён: три повтора, Top-1 80.854%, Top-5 95.438%.
+[Таблица полного прогона](reports/comparisons/classification-validation50000-v1/classification.md),
+[анализ](reports/comparisons/classification-validation50000-v1/analysis.md).
+Остальные полные прогоны остаются отложенными. Статус — docs/classification_handoff.md.

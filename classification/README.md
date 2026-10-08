@@ -185,3 +185,8 @@ scripts/classification.sh benchmark --model resnet50 --manifest data/imagenet/va
 `--model` выбирает исполняемую модель из зафиксированных четырёх, не меняя
 протокол качества и dataset identity. Для продолжения с другой моделью позже
 добавить `--resume` и другой ID, сохранив исходники/конфиг/контейнер/веса/данные.
+
+Проверено 09.10.2026: полный ResNet-50 завершил все три повтора на 50 000 изображений.
+[Итоги](../reports/comparisons/classification-validation50000-v1/classification.md):
+Top-1 80.854%, Top-5 95.438%, Macro-F1 0.80632. Остальные full-модели — not_run.
+Число обработок за три повтора — 150 000, разных изображений — 50 000.
