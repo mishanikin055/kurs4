@@ -1,0 +1,9 @@
+services:
+  benchmark:
+    volumes:
+      - ./scripts/classification_crops.sh:/workspace/scripts/classification_crops.sh:ro
+      - ./compose.classification.crops.yaml:/workspace/compose.classification.crops.yaml:ro
+  cpu:
+    volumes:
+      - ./scripts/classification_crops.sh:/workspace/scripts/classification_crops.sh:ro
+      - ./compose.classification.crops.yaml:/workspace/compose.classification.crops.yaml:ro

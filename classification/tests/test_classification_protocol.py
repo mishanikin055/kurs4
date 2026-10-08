@@ -212,6 +212,21 @@ def test_missing_runs_produce_four_empty_quality_rows(tmp_path: Path) -> None:
     assert all(r["status"] == "not_run" and r["top1"] == r["top5"] == "" for r in rows)
 
 
+def test_default_report_does_not_read_or_publish_intervals(tmp_path: Path) -> None:
+    import csv
+
+    from classification.report import build_report
+
+    runs = tmp_path / "runs"
+    runs.mkdir()
+    (runs / "bootstrap.json").write_text("legacy artifact must not be read")
+    output = tmp_path / "report"
+    build_report(runs, output)
+    with (output / "classification.csv").open(encoding="utf-8-sig") as handle:
+        assert not any("ci95" in key for key in csv.DictReader(handle).fieldnames)
+    assert not (output / "classification_paired.csv").exists()
+
+
 def test_model_child_retains_shared_lock_when_parent_is_killed(tmp_path: Path) -> None:
     from detection.common import ROOT, file_lock
 

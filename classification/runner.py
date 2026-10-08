@@ -305,6 +305,7 @@ def run_benchmark(
     limit: int | None,
     resume: bool,
     smoke: bool = False,
+    only_model: str | None = None,
 ) -> None:
     config = read_json(config_path)
     validate_config(config)
@@ -318,6 +319,8 @@ def run_benchmark(
     if smoke:
         config.update(warmup=1, repeats=1, bootstrap_samples=0)
     selected = config["models"]
+    if only_model is not None and only_model not in selected:
+        raise ValueError("Model filter is outside the frozen participants")
     source = source_fingerprint()
     manifests = {m: verify_model(m) for m in selected}
     identity = {
@@ -349,6 +352,8 @@ def run_benchmark(
         for repeat in range(config["repeats"]):
             order = selected[repeat % 4 :] + selected[: repeat % 4]
             for model in order:
+                if only_model is not None and model != only_model:
+                    continue
                 run = output / f"{model}_repeat{repeat + 1}"
                 run.mkdir(exist_ok=True)
                 meta_path = run / "run.json"

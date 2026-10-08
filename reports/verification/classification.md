@@ -1,12 +1,37 @@
-# Проверки подготовки классификации
+# Проверки классификации
 
-Дата: 08.10.2026. Реализован whole-image ImageNet benchmark; итоговая оценка ещё не выполнялась.
+Дата: 08.10.2026. Полный ImageNet50k и полные crops отложены по указанию пользователя.
 
-- Собран Linux Compose-образ с закреплёнными PyTorch 2.7.1 CUDA 12.8 / torchvision 0.22.1; pip check прошёл.
-- Четыре официальных state_dict загружены в classification/models/, проверены полные SHA-256, размеры, class order и native transforms. Веса и кэши исключены из Git.
-- Реальный офлайн GPU-smoke: ResNet-50, EfficientNetV2-S, ConvNeXt-Tiny, ViT-B/16 — smoke_passed. Каждый в отдельном последовательном child, FP32/batch1, одно изображение COCO без ImageNet GT. Native top-5/softmax parity прошла. Артефакты — reports/classification/smoke-v1; исходники/snapshot/image ID сохранены. Версионируемое происхождение — classification_smoke.json.
-- CPU-тесты классификации: 13 passed. Проверены точные Top-1/Top-5/Macro-F1 и sparse confusion, порядок эталонов, фиксированный balanced split, потерянная последняя строка resume, дубликаты/несовпадение labels, идентичность парного stratified bootstrap, изменение seed, выход пути/симлинка за data/, пустые отчёты без фиктивного качества, удержание shared lock реальным дочерним процессом после SIGKILL родителя.
-- Ruff check/format, Bash syntax, Compose WSL config проходят. Повторная проверка детекции — 13 passed; GPU-бенчмарк детекции не повторялся.
-- Dry-run ImageNet: закреплены revision и 14 validation-shards общим размером 6 693 093 726 байт; train/test не входят в загрузку.
+- Linux Compose: закреплены PyTorch 2.7.1 CUDA12.8 / torchvision0.22.1;
+  pip check успешен, фактический image ID сохранён в каждом environment.
+- Все четыре официальных state_dict скачаны и проверены по полным SHA-256,
+  размерам, label order и native transforms. Веса/кэши/токены вне Git.
+- Реальный офлайн GPU-smoke всех четырёх на одном COCO изображении без ImageNet GT:
+  native top5/softmax parity успешна, FP32/batch1, последовательные child.
+- ImageNet: авторизованная загрузка 14 validation-shards (6 693 093 726 байт),
+  полные LFS SHA-256 проверены. Потоковый импорт сохранил 50 000 исходных JPEG,
+  50 на каждый класс. Проверены synsets из имён файлов и три заранее разрешённых
+  различия написания HF/torchvision, не изменяющие class order.
+- Реальный evaluation5000: 12 успешных проходов, 5000 изображений на каждый,
+  все модели × 3 повтора. Хеши samples соответствуют manifests; предсказания
+  каждой модели идентичны между тремя повторами. Сбои/OOM не обнаружены.
+  Метрики — первый повтор, задержки и ресурсы — три, без повторного обучения.
+- Crop GPU-smoke: 4 модели × 2 режима × 2 вырезки. Все восемь модельных проходов
+  успешны. Проверены чтение, округление/обрезка рамки, top5, mapping, decisions
+  и сохранение исходной категории. В metrics.json smoke quality=null;
+  короткие проверки не выданы за итоговую crop-оценку.
+- CPU-тесты классификации и crops: 23 passed. Детекция отдельно в своём
+  закреплённом образе: 13 passed. Общая попытка в классификационном образе
+  отклонена из-за отсутствия pycocotools; зависимости не менялись ради неё.
+  Покрыты balanced split, Top1/Top5/F1, sparse confusion, source identity и resume,
+  class-agnostic matching, one-to-one/crowd, sparse category mapping,
+  исправленные/внесённые ошибки, сцены с несколькими объектами, сохранение
+  detector label и shared lock после SIGKILL родителя. Default report не читает
+  bootstrap и не публикует интервалы. Это быстрые проверки, а не model smoke.
+- Ruff check/format, Bash syntax и Compose WSL/crops config: успешны.
 
-Авторизованная загрузка и импорт реального ImageNet пока не проверены: ожидается локальный read token после принятия пользователем условий. Основные evaluation5000/validation50000 и их bootstrap не запущены. Эти проверки не создают итоговый сравнительный анализ и не доказывают качество на GT/detector-crops. Прикладной mapping/crops остаются невыполненными.
+Исходные конфиги и snapshots защищают результаты от изменений текущего кода.
+Уже рассчитанный bootstrap сохранён до отмены пользователем дальнейших CI;
+основные новые CSV/Markdown не включают интервалы. Полный validation50k,
+полное сравнение crops, dev-калибровка отказа, UI и приложение не проверялись.
+Подробные хеши запусков — classification_runs.json; загрузки — imagenet_download.json.

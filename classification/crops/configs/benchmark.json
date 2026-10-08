@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0",
+  "protocol_version": "classification-crops-v1",
+  "device": "cuda:0",
+  "precision": "fp32",
+  "batch_size": 1,
+  "seed": 42,
+  "warmup": 20,
+  "repeats": 3,
+  "cpu_threads": 4,
+  "top_k": 5,
+  "bootstrap_samples": 1000,
+  "models": [
+    "resnet50",
+    "efficientnet_v2_s",
+    "convnext_tiny",
+    "vit_b_16"
+  ],
+  "test_scenes": 500,
+  "scene_seed": 42,
+  "detector_model": "rf_detr_small",
+  "detector_repeat": 1,
+  "detector_threshold": 0.5,
+  "detector_max_per_image": 100,
+  "match_iou": 0.5,
+  "accept_score": 0.5,
+  "accept_margin": 0.1,
+  "threshold_selection": "fixed before crop evaluation; not calibrated for unknown objects"
+}

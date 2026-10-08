@@ -1,0 +1,187 @@
+{
+  "schema_version": "1.0",
+  "date": "2026-10-08",
+  "download": {
+    "schema_version": "1.0",
+    "source": {
+      "schema_version": "1.0",
+      "repo_id": "ILSVRC/imagenet-1k",
+      "revision": "49e2ee26f3810fb5a7536bbf732a7b07389a47b5",
+      "split": "validation",
+      "expected_images": 50000,
+      "classes": 1000,
+      "expected_per_class": 50,
+      "files": [
+        {
+          "path": "data/validation-00000-of-00014.parquet",
+          "size": 479922797,
+          "git_oid": "a6d75544c697a2533d41cbc9d9c0b33efc8ef760"
+        },
+        {
+          "path": "data/validation-00001-of-00014.parquet",
+          "size": 484701821,
+          "git_oid": "b960b12bc71b4ac6bec4ee3b6b244f88e1102453"
+        },
+        {
+          "path": "data/validation-00002-of-00014.parquet",
+          "size": 471258806,
+          "git_oid": "f46adf8e3dfd45dc3b8a94d5f34668906ee4fb2a"
+        },
+        {
+          "path": "data/validation-00003-of-00014.parquet",
+          "size": 477547459,
+          "git_oid": "a6e075feb0b9a64f5af9d722ee8deab48f2e581c"
+        },
+        {
+          "path": "data/validation-00004-of-00014.parquet",
+          "size": 477666614,
+          "git_oid": "466e66ccb6cff440dc4e53dd968b13d2d4eebb59"
+        },
+        {
+          "path": "data/validation-00005-of-00014.parquet",
+          "size": 476033225,
+          "git_oid": "9012009e8480963b0f875e058632372a1e7e325c"
+        },
+        {
+          "path": "data/validation-00006-of-00014.parquet",
+          "size": 479594555,
+          "git_oid": "8e8c656c749ad81900fb5b06c7837302d5314c73"
+        },
+        {
+          "path": "data/validation-00007-of-00014.parquet",
+          "size": 475711811,
+          "git_oid": "a2971652e8bf8eee997f4dd5195c38eb2ec661ba"
+        },
+        {
+          "path": "data/validation-00008-of-00014.parquet",
+          "size": 476090886,
+          "git_oid": "a9366cf490b46ed96d87c929a15a6fabdf4314c4"
+        },
+        {
+          "path": "data/validation-00009-of-00014.parquet",
+          "size": 470165919,
+          "git_oid": "8be01d837f29b58a807d1983519cb20fecdff5dd"
+        },
+        {
+          "path": "data/validation-00010-of-00014.parquet",
+          "size": 475451921,
+          "git_oid": "ab8c44a6c21296a45ad17e2e2144c77571d17665"
+        },
+        {
+          "path": "data/validation-00011-of-00014.parquet",
+          "size": 471615473,
+          "git_oid": "47ca38c375896e554bee85b3e5af11dd88b1c6a1"
+        },
+        {
+          "path": "data/validation-00012-of-00014.parquet",
+          "size": 492972415,
+          "git_oid": "8827d6b872bdf0360c3a2dfb8b502dd3bce277ce"
+        },
+        {
+          "path": "data/validation-00013-of-00014.parquet",
+          "size": 484360024,
+          "git_oid": "7e7ccf621710bdcaa1067953a9ec66b75c34484e"
+        }
+      ],
+      "sha256_status": "Gated LFS hashes unavailable before authorized access; freeze SHA-256 at verified download",
+      "terms_url": "https://huggingface.co/datasets/ILSVRC/imagenet-1k"
+    },
+    "files": [
+      {
+        "path": "data/validation-00000-of-00014.parquet",
+        "size": 479922797,
+        "git_oid": "a6d75544c697a2533d41cbc9d9c0b33efc8ef760",
+        "sha256": "5c5ebbf7dacc851d646cf343bf12412adfb79992ae4b4f245a6ed7bd935b7e96"
+      },
+      {
+        "path": "data/validation-00001-of-00014.parquet",
+        "size": 484701821,
+        "git_oid": "b960b12bc71b4ac6bec4ee3b6b244f88e1102453",
+        "sha256": "eb6ded350ef050296dec56969998b4d2d51075439afd18a661ed5bc77fc46110"
+      },
+      {
+        "path": "data/validation-00002-of-00014.parquet",
+        "size": 471258806,
+        "git_oid": "f46adf8e3dfd45dc3b8a94d5f34668906ee4fb2a",
+        "sha256": "6c3d792bd864876e4617b26d2918178aba5fde869f95b2d2d330583467e5683d"
+      },
+      {
+        "path": "data/validation-00003-of-00014.parquet",
+        "size": 477547459,
+        "git_oid": "a6e075feb0b9a64f5af9d722ee8deab48f2e581c",
+        "sha256": "b7f9d8ee5a265171ac245dbaa755b5621134fca5bcf510ad7203c6bcd8c11b9c"
+      },
+      {
+        "path": "data/validation-00004-of-00014.parquet",
+        "size": 477666614,
+        "git_oid": "466e66ccb6cff440dc4e53dd968b13d2d4eebb59",
+        "sha256": "507f5443ad75165b5747cd453c13c91309a0141c277301865ee882c9aa2b95cf"
+      },
+      {
+        "path": "data/validation-00005-of-00014.parquet",
+        "size": 476033225,
+        "git_oid": "9012009e8480963b0f875e058632372a1e7e325c",
+        "sha256": "0670d7fd838a6486da995ad4f0e09e4b4f5b56a129939dd04b18da1e88692b19"
+      },
+      {
+        "path": "data/validation-00006-of-00014.parquet",
+        "size": 479594555,
+        "git_oid": "8e8c656c749ad81900fb5b06c7837302d5314c73",
+        "sha256": "1ede790d2c28fa6f24a6b94f84b8f35e56285c39dd08de48eef04ab1adc3cac0"
+      },
+      {
+        "path": "data/validation-00007-of-00014.parquet",
+        "size": 475711811,
+        "git_oid": "a2971652e8bf8eee997f4dd5195c38eb2ec661ba",
+        "sha256": "2721f55f6bff82dac74643a1dfb59b184c82c245f30548ddc86d2d14f174a920"
+      },
+      {
+        "path": "data/validation-00008-of-00014.parquet",
+        "size": 476090886,
+        "git_oid": "a9366cf490b46ed96d87c929a15a6fabdf4314c4",
+        "sha256": "5fc969226a2a246906a8ff919e5be09df5448ba542f28208c43fb3ec87e84168"
+      },
+      {
+        "path": "data/validation-00009-of-00014.parquet",
+        "size": 470165919,
+        "git_oid": "8be01d837f29b58a807d1983519cb20fecdff5dd",
+        "sha256": "3488c9aee81cef37c21e51f2264b9ceeb9f178ed5dd1d3231daad8423ebc6690"
+      },
+      {
+        "path": "data/validation-00010-of-00014.parquet",
+        "size": 475451921,
+        "git_oid": "ab8c44a6c21296a45ad17e2e2144c77571d17665",
+        "sha256": "1bc05111b2dbf6cfe1005c209158faff4a660a462620867cfeb8681add012719"
+      },
+      {
+        "path": "data/validation-00011-of-00014.parquet",
+        "size": 471615473,
+        "git_oid": "47ca38c375896e554bee85b3e5af11dd88b1c6a1",
+        "sha256": "ec035e5b27ed626ed1f1988e60d76f341255b955c8b6485894669a4620112496"
+      },
+      {
+        "path": "data/validation-00012-of-00014.parquet",
+        "size": 492972415,
+        "git_oid": "8827d6b872bdf0360c3a2dfb8b502dd3bce277ce",
+        "sha256": "423890b715450706dade408a2e2cf0485d769b93511658a5692285e60b6a62f7"
+      },
+      {
+        "path": "data/validation-00013-of-00014.parquet",
+        "size": 484360024,
+        "git_oid": "7e7ccf621710bdcaa1067953a9ec66b75c34484e",
+        "sha256": "edeb352ae89966575738f5d7474c1a14b3bc0c275f4f39ed4d2b537b56c1cedc"
+      }
+    ],
+    "status": "verified"
+  },
+  "download_manifest_sha256": "8bd99b28acb5ba15b0223be951de10246db6f7a86c372cb7cbdd88a4c37ae619",
+  "manifests": {
+    "data/imagenet/validation.json": "808814c7878d23be1c415701a1b713d0ee31a32e814a2df98e7a10f285182632",
+    "data/imagenet/evaluation5000.json": "e07408850e78aef4c02db5cd8225c059054d411dd842b80ceff6695b1f70296e"
+  },
+  "counts": {
+    "validation": 50000,
+    "evaluation": 5000,
+    "classes": 1000
+  }
+}

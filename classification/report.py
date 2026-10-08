@@ -18,12 +18,16 @@ def write_csv(path: Path, rows: list[dict], columns: list[str] | None = None) ->
         writer.writerows(rows)
 
 
-def build_report(runs: Path, output: Path) -> None:
+def build_report(runs: Path, output: Path, include_ci: bool = False) -> None:
     output.mkdir(parents=True, exist_ok=True)
     experiment = (
         read_json(runs / "experiment.json") if (runs / "experiment.json").exists() else None
     )
-    bootstrap = read_json(runs / "bootstrap.json") if (runs / "bootstrap.json").exists() else None
+    bootstrap = (
+        read_json(runs / "bootstrap.json")
+        if include_ci and (runs / "bootstrap.json").exists()
+        else None
+    )
     if bootstrap and bootstrap["identity"]["experiment_hash"] != object_hash(experiment):
         raise ValueError("Bootstrap belongs to another experiment")
     sources = {}
@@ -164,6 +168,8 @@ def build_report(runs: Path, output: Path) -> None:
                 row[metric + "_ci95_low"], row[metric + "_ci95_high"] = bootstrap["ci95"][model_id][
                     metric
                 ]
+        if not include_ci:
+            row = {key: value for key, value in row.items() if "_ci95_" not in key}
         rows.append(row)
     write_csv(output / "classification.csv", rows)
     write_csv(
@@ -194,11 +200,12 @@ def build_report(runs: Path, output: Path) -> None:
                         "includes_zero": interval[0] <= 0 <= interval[1],
                     }
                 )
-    write_csv(
-        output / "classification_paired.csv",
-        paired,
-        ["pair", "metric", "difference", "ci95_low", "ci95_high", "includes_zero"],
-    )
+    if include_ci:
+        write_csv(
+            output / "classification_paired.csv",
+            paired,
+            ["pair", "metric", "difference", "ci95_low", "ci95_high", "includes_zero"],
+        )
 
     def fmt(value: object) -> str:
         return "—" if value is None else f"{value:.5f}" if isinstance(value, float) else str(value)
@@ -262,7 +269,7 @@ def build_report(runs: Path, output: Path) -> None:
         text.extend(
             [
                 "",
-                "Доверительные интервалы пока не рассчитаны. До полного запуска все отсутствующие числовые результаты оставлены пустыми.",
+                "Сравнение проводится по значениям качества, времени и памяти в таблице. Доверительные интервалы по указанию пользователя в основной отчёт не включены.",
             ]
         )
     if all(r["status"] == "complete" for r in rows):
@@ -271,7 +278,7 @@ def build_report(runs: Path, output: Path) -> None:
         text.extend(
             [
                 "",
-                f"На этой выборке наибольшая Top-1 у {best['model']} ({best['top1']:.5f}); минимальная медианная задержка у {fast['model']} ({fast['p50_ms']:.5f} мс). Устойчивость различий оценивается по парным CI; разность с интервалом, включающим ноль, не подтверждает превосходство.",
+                f"На этой выборке наибольшая Top-1 у {best['model']} ({best['top1']:.5f}); минимальная медианная задержка у {fast['model']} ({fast['p50_ms']:.5f} мс). Выбор классификатора для уточнения детекции требует отдельной оценки на вырезках объектов.",
             ]
         )
     else:
@@ -286,6 +293,7 @@ def build_report(runs: Path, output: Path) -> None:
         output / "classification_report_manifest.json",
         {
             "schema_version": "1.0",
+            "include_ci": include_ci,
             "script_sha256": sha256(Path(__file__)),
             "experiment": experiment,
             "sources": sources,
@@ -294,7 +302,7 @@ def build_report(runs: Path, output: Path) -> None:
                 "classification.md",
                 "classification_per_class.csv",
                 "classification_confusion.csv",
-                "classification_paired.csv",
-            ],
+            ]
+            + (["classification_paired.csv"] if include_ci else []),
         },
     )

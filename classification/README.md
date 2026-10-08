@@ -101,15 +101,13 @@ evaluation-подвыборка официальной validation, не закр
 
 ```bash
 scripts/classification.sh benchmark --output-dir reports/classification/evaluation5000-v1
-scripts/classification.sh bootstrap --runs-dir reports/classification/evaluation5000-v1 --samples 1000
-scripts/classification.sh report --runs-dir reports/classification/evaluation5000-v1 --output-dir reports/comparisons
+scripts/classification.sh report --runs-dir reports/classification/evaluation5000-v1 --output-dir reports/comparisons/classification-evaluation5000-v1
 ```
 
 Полное штатное сравнение — отдельный эксперимент с теми же настройками:
 
 ```bash
 scripts/classification.sh benchmark --manifest data/imagenet/validation.json --output-dir reports/classification/validation50000-v1
-scripts/classification.sh bootstrap --runs-dir reports/classification/validation50000-v1 --samples 1000
 scripts/classification.sh report --runs-dir reports/classification/validation50000-v1 --output-dir reports/comparisons/classification_validation50000
 ```
 
@@ -126,10 +124,10 @@ Sparse confusion CSV хранит все ненулевые клетки мат�
 Все top-5 включают полный классификационный словарь, индекс, synset, имя и
 softmax. Softmax не является оценкой неизвестного объекта или текста caption.
 
-Парный bootstrap стратифицирован по классу: выборки с возвращением внутри
-каждого класса сохраняют сбалансированный дизайн evaluation; для всех моделей
-одинаковые image_id. Сохраняются 1000 сырых значений Top-1/Top-5, percentile CI95
-и шесть парных различий. Поправка на множественные сравнения не выполняется.
+По последнему указанию пользователя новые доверительные интервалы не рассчитываются.
+Основной отчёт по умолчанию не читает bootstrap.json и не включает CI в CSV/Markdown.
+Уже рассчитанный до этого указания bootstrap сохранён в исходных артефактах;
+инструмент остаётся доступным для отдельной явно запрошенной проверки.
 Полная validation и evaluation5000 пересекаются: это не две независимые оценки.
 
 Холодная загрузка — создание модели в новом процессе (без очистки page cache),
@@ -165,10 +163,25 @@ docker compose -f compose.classification.yaml run --rm checks -m ruff format --c
 
 GPU smoke — отдельная проверка реальных моделей; CPU-тесты не скачивают веса.
 Ошибки/OOM и partial-артефакты сохраняются; CSV всегда содержит четыре строки.
-До реальных полных прогонов числовые результаты отсутствуют.
+До реального прогона соответствующие числовые результаты отсутствуют.
+08.10.2026 завершён предварительный evaluation5000: четыре модели × три повтора ×
+5000 изображений. По указанию пользователя validation50k отложен.
+После изменения исходников возобновление старого эксперимента требует его
+сохранённого source_snapshot; для новых прогонов использовать новую папку.
 
-Текущий модуль реализует whole-image ImageNet. Прикладные GT-crops,
-detector-crops, проверенный ImageNet→COCO mapping, подбор отказа на COCO dev и
-сравнение detector-only с уточнением ещё не реализованы. Их оценки нельзя
-смешивать с ImageNet Top-1/Top-5. Приложение и общий pipeline остаются отдельными
-этапами; завершённость всего раздела классификации пока не заявляется.
+Модуль реализует whole-image ImageNet и отдельные [GT/detector-crops](crops/README.md).
+Mapping, matching и диагностические метрики реализованы; оба crop-режима прошли
+только GPU-smoke по двум вырезкам для каждой модели. Эти проверки не создают
+итогового качества на crops; полные прогоны отложены. Порог отказа не калиброван
+на dev. Оценки crops не смешиваются с ImageNet Top-1/Top-5. Приложение и общий
+pipeline остаются отдельными этапами; весь раздел классификации ещё не завершён.
+
+Последующее указание: полный validation50k только для первой модели:
+
+```bash
+scripts/classification.sh benchmark --model resnet50 --manifest data/imagenet/validation.json --output-dir reports/classification/validation50000-v1
+```
+
+`--model` выбирает исполняемую модель из зафиксированных четырёх, не меняя
+протокол качества и dataset identity. Для продолжения с другой моделью позже
+добавить `--resume` и другой ID, сохранив исходники/конфиг/контейнер/веса/данные.

@@ -1,0 +1,1001 @@
+﻿index,synset,name,coco_category_id,coco_name,status
+0,n01440764,tench,,,not_mappable
+1,n01443537,goldfish,,,not_mappable
+2,n01484850,great white shark,,,not_mappable
+3,n01491361,tiger shark,,,not_mappable
+4,n01494475,hammerhead,,,not_mappable
+5,n01496331,electric ray,,,not_mappable
+6,n01498041,stingray,,,not_mappable
+7,n01514668,cock,16,bird,mapped
+8,n01514859,hen,16,bird,mapped
+9,n01518878,ostrich,16,bird,mapped
+10,n01530575,brambling,16,bird,mapped
+11,n01531178,goldfinch,16,bird,mapped
+12,n01532829,house finch,16,bird,mapped
+13,n01534433,junco,16,bird,mapped
+14,n01537544,indigo bunting,16,bird,mapped
+15,n01558993,robin,16,bird,mapped
+16,n01560419,bulbul,16,bird,mapped
+17,n01580077,jay,16,bird,mapped
+18,n01582220,magpie,16,bird,mapped
+19,n01592084,chickadee,16,bird,mapped
+20,n01601694,water ouzel,16,bird,mapped
+21,n01608432,kite,16,bird,mapped
+22,n01614925,bald eagle,16,bird,mapped
+23,n01616318,vulture,16,bird,mapped
+24,n01622779,great grey owl,16,bird,mapped
+25,n01629819,European fire salamander,,,not_mappable
+26,n01630670,common newt,,,not_mappable
+27,n01631663,eft,,,not_mappable
+28,n01632458,spotted salamander,,,not_mappable
+29,n01632777,axolotl,,,not_mappable
+30,n01641577,bullfrog,,,not_mappable
+31,n01644373,tree frog,,,not_mappable
+32,n01644900,tailed frog,,,not_mappable
+33,n01664065,loggerhead,,,not_mappable
+34,n01665541,leatherback turtle,,,not_mappable
+35,n01667114,mud turtle,,,not_mappable
+36,n01667778,terrapin,,,not_mappable
+37,n01669191,box turtle,,,not_mappable
+38,n01675722,banded gecko,,,not_mappable
+39,n01677366,common iguana,,,not_mappable
+40,n01682714,American chameleon,,,not_mappable
+41,n01685808,whiptail,,,not_mappable
+42,n01687978,agama,,,not_mappable
+43,n01688243,frilled lizard,,,not_mappable
+44,n01689811,alligator lizard,,,not_mappable
+45,n01692333,Gila monster,,,not_mappable
+46,n01693334,green lizard,,,not_mappable
+47,n01694178,African chameleon,,,not_mappable
+48,n01695060,Komodo dragon,,,not_mappable
+49,n01697457,African crocodile,,,not_mappable
+50,n01698640,American alligator,,,not_mappable
+51,n01704323,triceratops,,,not_mappable
+52,n01728572,thunder snake,,,not_mappable
+53,n01728920,ringneck snake,,,not_mappable
+54,n01729322,hognose snake,,,not_mappable
+55,n01729977,green snake,,,not_mappable
+56,n01734418,king snake,,,not_mappable
+57,n01735189,garter snake,,,not_mappable
+58,n01737021,water snake,,,not_mappable
+59,n01739381,vine snake,,,not_mappable
+60,n01740131,night snake,,,not_mappable
+61,n01742172,boa constrictor,,,not_mappable
+62,n01744401,rock python,,,not_mappable
+63,n01748264,Indian cobra,,,not_mappable
+64,n01749939,green mamba,,,not_mappable
+65,n01751748,sea snake,,,not_mappable
+66,n01753488,horned viper,,,not_mappable
+67,n01755581,diamondback,,,not_mappable
+68,n01756291,sidewinder,,,not_mappable
+69,n01768244,trilobite,,,not_mappable
+70,n01770081,harvestman,,,not_mappable
+71,n01770393,scorpion,,,not_mappable
+72,n01773157,black and gold garden spider,,,not_mappable
+73,n01773549,barn spider,,,not_mappable
+74,n01773797,garden spider,,,not_mappable
+75,n01774384,black widow,,,not_mappable
+76,n01774750,tarantula,,,not_mappable
+77,n01775062,wolf spider,,,not_mappable
+78,n01776313,tick,,,not_mappable
+79,n01784675,centipede,,,not_mappable
+80,n01795545,black grouse,16,bird,mapped
+81,n01796340,ptarmigan,16,bird,mapped
+82,n01797886,ruffed grouse,16,bird,mapped
+83,n01798484,prairie chicken,16,bird,mapped
+84,n01806143,peacock,16,bird,mapped
+85,n01806567,quail,16,bird,mapped
+86,n01807496,partridge,16,bird,mapped
+87,n01817953,African grey,16,bird,mapped
+88,n01818515,macaw,16,bird,mapped
+89,n01819313,sulphur-crested cockatoo,16,bird,mapped
+90,n01820546,lorikeet,16,bird,mapped
+91,n01824575,coucal,16,bird,mapped
+92,n01828970,bee eater,16,bird,mapped
+93,n01829413,hornbill,16,bird,mapped
+94,n01833805,hummingbird,16,bird,mapped
+95,n01843065,jacamar,16,bird,mapped
+96,n01843383,toucan,16,bird,mapped
+97,n01847000,drake,16,bird,mapped
+98,n01855032,red-breasted merganser,16,bird,mapped
+99,n01855672,goose,16,bird,mapped
+100,n01860187,black swan,16,bird,mapped
+101,n01871265,tusker,22,elephant,mapped
+102,n01872401,echidna,,,not_mappable
+103,n01873310,platypus,,,not_mappable
+104,n01877812,wallaby,,,not_mappable
+105,n01882714,koala,,,not_mappable
+106,n01883070,wombat,,,not_mappable
+107,n01910747,jellyfish,,,not_mappable
+108,n01914609,sea anemone,,,not_mappable
+109,n01917289,brain coral,,,not_mappable
+110,n01924916,flatworm,,,not_mappable
+111,n01930112,nematode,,,not_mappable
+112,n01943899,conch,,,not_mappable
+113,n01944390,snail,,,not_mappable
+114,n01945685,slug,,,not_mappable
+115,n01950731,sea slug,,,not_mappable
+116,n01955084,chiton,,,not_mappable
+117,n01968897,chambered nautilus,,,not_mappable
+118,n01978287,Dungeness crab,,,not_mappable
+119,n01978455,rock crab,,,not_mappable
+120,n01980166,fiddler crab,,,not_mappable
+121,n01981276,king crab,,,not_mappable
+122,n01983481,American lobster,,,not_mappable
+123,n01984695,spiny lobster,,,not_mappable
+124,n01985128,crayfish,,,not_mappable
+125,n01986214,hermit crab,,,not_mappable
+126,n01990800,isopod,,,not_mappable
+127,n02002556,white stork,16,bird,mapped
+128,n02002724,black stork,16,bird,mapped
+129,n02006656,spoonbill,16,bird,mapped
+130,n02007558,flamingo,16,bird,mapped
+131,n02009229,little blue heron,16,bird,mapped
+132,n02009912,American egret,16,bird,mapped
+133,n02011460,bittern,16,bird,mapped
+134,n02012849,crane bird,16,bird,mapped
+135,n02013706,limpkin,16,bird,mapped
+136,n02017213,European gallinule,16,bird,mapped
+137,n02018207,American coot,16,bird,mapped
+138,n02018795,bustard,16,bird,mapped
+139,n02025239,ruddy turnstone,16,bird,mapped
+140,n02027492,red-backed sandpiper,16,bird,mapped
+141,n02028035,redshank,16,bird,mapped
+142,n02033041,dowitcher,16,bird,mapped
+143,n02037110,oystercatcher,16,bird,mapped
+144,n02051845,pelican,16,bird,mapped
+145,n02056570,king penguin,16,bird,mapped
+146,n02058221,albatross,16,bird,mapped
+147,n02066245,grey whale,,,not_mappable
+148,n02071294,killer whale,,,not_mappable
+149,n02074367,dugong,,,not_mappable
+150,n02077923,sea lion,,,not_mappable
+151,n02085620,Chihuahua,18,dog,mapped
+152,n02085782,Japanese spaniel,18,dog,mapped
+153,n02085936,Maltese dog,18,dog,mapped
+154,n02086079,Pekinese,18,dog,mapped
+155,n02086240,Shih-Tzu,18,dog,mapped
+156,n02086646,Blenheim spaniel,18,dog,mapped
+157,n02086910,papillon,18,dog,mapped
+158,n02087046,toy terrier,18,dog,mapped
+159,n02087394,Rhodesian ridgeback,18,dog,mapped
+160,n02088094,Afghan hound,18,dog,mapped
+161,n02088238,basset,18,dog,mapped
+162,n02088364,beagle,18,dog,mapped
+163,n02088466,bloodhound,18,dog,mapped
+164,n02088632,bluetick,18,dog,mapped
+165,n02089078,black-and-tan coonhound,18,dog,mapped
+166,n02089867,Walker hound,18,dog,mapped
+167,n02089973,English foxhound,18,dog,mapped
+168,n02090379,redbone,18,dog,mapped
+169,n02090622,borzoi,18,dog,mapped
+170,n02090721,Irish wolfhound,18,dog,mapped
+171,n02091032,Italian greyhound,18,dog,mapped
+172,n02091134,whippet,18,dog,mapped
+173,n02091244,Ibizan hound,18,dog,mapped
+174,n02091467,Norwegian elkhound,18,dog,mapped
+175,n02091635,otterhound,18,dog,mapped
+176,n02091831,Saluki,18,dog,mapped
+177,n02092002,Scottish deerhound,18,dog,mapped
+178,n02092339,Weimaraner,18,dog,mapped
+179,n02093256,Staffordshire bullterrier,18,dog,mapped
+180,n02093428,American Staffordshire terrier,18,dog,mapped
+181,n02093647,Bedlington terrier,18,dog,mapped
+182,n02093754,Border terrier,18,dog,mapped
+183,n02093859,Kerry blue terrier,18,dog,mapped
+184,n02093991,Irish terrier,18,dog,mapped
+185,n02094114,Norfolk terrier,18,dog,mapped
+186,n02094258,Norwich terrier,18,dog,mapped
+187,n02094433,Yorkshire terrier,18,dog,mapped
+188,n02095314,wire-haired fox terrier,18,dog,mapped
+189,n02095570,Lakeland terrier,18,dog,mapped
+190,n02095889,Sealyham terrier,18,dog,mapped
+191,n02096051,Airedale,18,dog,mapped
+192,n02096177,cairn,18,dog,mapped
+193,n02096294,Australian terrier,18,dog,mapped
+194,n02096437,Dandie Dinmont,18,dog,mapped
+195,n02096585,Boston bull,18,dog,mapped
+196,n02097047,miniature schnauzer,18,dog,mapped
+197,n02097130,giant schnauzer,18,dog,mapped
+198,n02097209,standard schnauzer,18,dog,mapped
+199,n02097298,Scotch terrier,18,dog,mapped
+200,n02097474,Tibetan terrier,18,dog,mapped
+201,n02097658,silky terrier,18,dog,mapped
+202,n02098105,soft-coated wheaten terrier,18,dog,mapped
+203,n02098286,West Highland white terrier,18,dog,mapped
+204,n02098413,Lhasa,18,dog,mapped
+205,n02099267,flat-coated retriever,18,dog,mapped
+206,n02099429,curly-coated retriever,18,dog,mapped
+207,n02099601,golden retriever,18,dog,mapped
+208,n02099712,Labrador retriever,18,dog,mapped
+209,n02099849,Chesapeake Bay retriever,18,dog,mapped
+210,n02100236,German short-haired pointer,18,dog,mapped
+211,n02100583,vizsla,18,dog,mapped
+212,n02100735,English setter,18,dog,mapped
+213,n02100877,Irish setter,18,dog,mapped
+214,n02101006,Gordon setter,18,dog,mapped
+215,n02101388,Brittany spaniel,18,dog,mapped
+216,n02101556,clumber,18,dog,mapped
+217,n02102040,English springer,18,dog,mapped
+218,n02102177,Welsh springer spaniel,18,dog,mapped
+219,n02102318,cocker spaniel,18,dog,mapped
+220,n02102480,Sussex spaniel,18,dog,mapped
+221,n02102973,Irish water spaniel,18,dog,mapped
+222,n02104029,kuvasz,18,dog,mapped
+223,n02104365,schipperke,18,dog,mapped
+224,n02105056,groenendael,18,dog,mapped
+225,n02105162,malinois,18,dog,mapped
+226,n02105251,briard,18,dog,mapped
+227,n02105412,kelpie,18,dog,mapped
+228,n02105505,komondor,18,dog,mapped
+229,n02105641,Old English sheepdog,18,dog,mapped
+230,n02105855,Shetland sheepdog,18,dog,mapped
+231,n02106030,collie,18,dog,mapped
+232,n02106166,Border collie,18,dog,mapped
+233,n02106382,Bouvier des Flandres,18,dog,mapped
+234,n02106550,Rottweiler,18,dog,mapped
+235,n02106662,German shepherd,18,dog,mapped
+236,n02107142,Doberman,18,dog,mapped
+237,n02107312,miniature pinscher,18,dog,mapped
+238,n02107574,Greater Swiss Mountain dog,18,dog,mapped
+239,n02107683,Bernese mountain dog,18,dog,mapped
+240,n02107908,Appenzeller,18,dog,mapped
+241,n02108000,EntleBucher,18,dog,mapped
+242,n02108089,boxer,18,dog,mapped
+243,n02108422,bull mastiff,18,dog,mapped
+244,n02108551,Tibetan mastiff,18,dog,mapped
+245,n02108915,French bulldog,18,dog,mapped
+246,n02109047,Great Dane,18,dog,mapped
+247,n02109525,Saint Bernard,18,dog,mapped
+248,n02109961,Eskimo dog,18,dog,mapped
+249,n02110063,malamute,18,dog,mapped
+250,n02110185,Siberian husky,18,dog,mapped
+251,n02110341,dalmatian,18,dog,mapped
+252,n02110627,affenpinscher,18,dog,mapped
+253,n02110806,basenji,18,dog,mapped
+254,n02110958,pug,18,dog,mapped
+255,n02111129,Leonberg,18,dog,mapped
+256,n02111277,Newfoundland,18,dog,mapped
+257,n02111500,Great Pyrenees,18,dog,mapped
+258,n02111889,Samoyed,18,dog,mapped
+259,n02112018,Pomeranian,18,dog,mapped
+260,n02112137,chow,18,dog,mapped
+261,n02112350,keeshond,18,dog,mapped
+262,n02112706,Brabancon griffon,18,dog,mapped
+263,n02113023,Pembroke,18,dog,mapped
+264,n02113186,Cardigan,18,dog,mapped
+265,n02113624,toy poodle,18,dog,mapped
+266,n02113712,miniature poodle,18,dog,mapped
+267,n02113799,standard poodle,18,dog,mapped
+268,n02113978,Mexican hairless,18,dog,mapped
+269,n02114367,timber wolf,,,not_mappable
+270,n02114548,white wolf,,,not_mappable
+271,n02114712,red wolf,,,not_mappable
+272,n02114855,coyote,,,not_mappable
+273,n02115641,dingo,,,not_mappable
+274,n02115913,dhole,,,not_mappable
+275,n02116738,African hunting dog,,,not_mappable
+276,n02117135,hyena,,,not_mappable
+277,n02119022,red fox,,,not_mappable
+278,n02119789,kit fox,,,not_mappable
+279,n02120079,Arctic fox,,,not_mappable
+280,n02120505,grey fox,,,not_mappable
+281,n02123045,tabby,17,cat,mapped
+282,n02123159,tiger cat,17,cat,mapped
+283,n02123394,Persian cat,17,cat,mapped
+284,n02123597,Siamese cat,17,cat,mapped
+285,n02124075,Egyptian cat,17,cat,mapped
+286,n02125311,cougar,,,not_mappable
+287,n02127052,lynx,,,not_mappable
+288,n02128385,leopard,,,not_mappable
+289,n02128757,snow leopard,,,not_mappable
+290,n02128925,jaguar,,,not_mappable
+291,n02129165,lion,,,not_mappable
+292,n02129604,tiger,,,not_mappable
+293,n02130308,cheetah,,,not_mappable
+294,n02132136,brown bear,23,bear,mapped
+295,n02133161,American black bear,23,bear,mapped
+296,n02134084,ice bear,23,bear,mapped
+297,n02134418,sloth bear,23,bear,mapped
+298,n02137549,mongoose,,,not_mappable
+299,n02138441,meerkat,,,not_mappable
+300,n02165105,tiger beetle,,,not_mappable
+301,n02165456,ladybug,,,not_mappable
+302,n02167151,ground beetle,,,not_mappable
+303,n02168699,long-horned beetle,,,not_mappable
+304,n02169497,leaf beetle,,,not_mappable
+305,n02172182,dung beetle,,,not_mappable
+306,n02174001,rhinoceros beetle,,,not_mappable
+307,n02177972,weevil,,,not_mappable
+308,n02190166,fly,,,not_mappable
+309,n02206856,bee,,,not_mappable
+310,n02219486,ant,,,not_mappable
+311,n02226429,grasshopper,,,not_mappable
+312,n02229544,cricket,,,not_mappable
+313,n02231487,walking stick,,,not_mappable
+314,n02233338,cockroach,,,not_mappable
+315,n02236044,mantis,,,not_mappable
+316,n02256656,cicada,,,not_mappable
+317,n02259212,leafhopper,,,not_mappable
+318,n02264363,lacewing,,,not_mappable
+319,n02268443,dragonfly,,,not_mappable
+320,n02268853,damselfly,,,not_mappable
+321,n02276258,admiral,,,not_mappable
+322,n02277742,ringlet,,,not_mappable
+323,n02279972,monarch,,,not_mappable
+324,n02280649,cabbage butterfly,,,not_mappable
+325,n02281406,sulphur butterfly,,,not_mappable
+326,n02281787,lycaenid,,,not_mappable
+327,n02317335,starfish,,,not_mappable
+328,n02319095,sea urchin,,,not_mappable
+329,n02321529,sea cucumber,,,not_mappable
+330,n02325366,wood rabbit,,,not_mappable
+331,n02326432,hare,,,not_mappable
+332,n02328150,Angora,,,not_mappable
+333,n02342885,hamster,,,not_mappable
+334,n02346627,porcupine,,,not_mappable
+335,n02356798,fox squirrel,,,not_mappable
+336,n02361337,marmot,,,not_mappable
+337,n02363005,beaver,,,not_mappable
+338,n02364673,guinea pig,,,not_mappable
+339,n02389026,sorrel,19,horse,mapped
+340,n02391049,zebra,24,zebra,mapped
+341,n02395406,hog,,,not_mappable
+342,n02396427,wild boar,,,not_mappable
+343,n02397096,warthog,,,not_mappable
+344,n02398521,hippopotamus,,,not_mappable
+345,n02403003,ox,21,cow,mapped
+346,n02408429,water buffalo,,,not_mappable
+347,n02410509,bison,,,not_mappable
+348,n02412080,ram,20,sheep,mapped
+349,n02415577,bighorn,,,not_mappable
+350,n02417914,ibex,,,not_mappable
+351,n02422106,hartebeest,,,not_mappable
+352,n02422699,impala,,,not_mappable
+353,n02423022,gazelle,,,not_mappable
+354,n02437312,Arabian camel,,,not_mappable
+355,n02437616,llama,,,not_mappable
+356,n02441942,weasel,,,not_mappable
+357,n02442845,mink,,,not_mappable
+358,n02443114,polecat,,,not_mappable
+359,n02443484,black-footed ferret,,,not_mappable
+360,n02444819,otter,,,not_mappable
+361,n02445715,skunk,,,not_mappable
+362,n02447366,badger,,,not_mappable
+363,n02454379,armadillo,,,not_mappable
+364,n02457408,three-toed sloth,,,not_mappable
+365,n02480495,orangutan,,,not_mappable
+366,n02480855,gorilla,,,not_mappable
+367,n02481823,chimpanzee,,,not_mappable
+368,n02483362,gibbon,,,not_mappable
+369,n02483708,siamang,,,not_mappable
+370,n02484975,guenon,,,not_mappable
+371,n02486261,patas,,,not_mappable
+372,n02486410,baboon,,,not_mappable
+373,n02487347,macaque,,,not_mappable
+374,n02488291,langur,,,not_mappable
+375,n02488702,colobus,,,not_mappable
+376,n02489166,proboscis monkey,,,not_mappable
+377,n02490219,marmoset,,,not_mappable
+378,n02492035,capuchin,,,not_mappable
+379,n02492660,howler monkey,,,not_mappable
+380,n02493509,titi,,,not_mappable
+381,n02493793,spider monkey,,,not_mappable
+382,n02494079,squirrel monkey,,,not_mappable
+383,n02497673,Madagascar cat,,,not_mappable
+384,n02500267,indri,,,not_mappable
+385,n02504013,Indian elephant,22,elephant,mapped
+386,n02504458,African elephant,22,elephant,mapped
+387,n02509815,lesser panda,,,not_mappable
+388,n02510455,giant panda,,,not_mappable
+389,n02514041,barracouta,,,not_mappable
+390,n02526121,eel,,,not_mappable
+391,n02536864,coho,,,not_mappable
+392,n02606052,rock beauty,,,not_mappable
+393,n02607072,anemone fish,,,not_mappable
+394,n02640242,sturgeon,,,not_mappable
+395,n02641379,gar,,,not_mappable
+396,n02643566,lionfish,,,not_mappable
+397,n02655020,puffer,,,not_mappable
+398,n02666196,abacus,,,not_mappable
+399,n02667093,abaya,,,not_mappable
+400,n02669723,academic gown,,,not_mappable
+401,n02672831,accordion,,,not_mappable
+402,n02676566,acoustic guitar,,,not_mappable
+403,n02687172,aircraft carrier,9,boat,mapped
+404,n02690373,airliner,5,airplane,mapped
+405,n02692877,airship,,,not_mappable
+406,n02699494,altar,,,not_mappable
+407,n02701002,ambulance,,,not_mappable
+408,n02704792,amphibian,,,not_mappable
+409,n02708093,analog clock,85,clock,mapped
+410,n02727426,apiary,,,not_mappable
+411,n02730930,apron,,,not_mappable
+412,n02747177,ashcan,,,not_mappable
+413,n02749479,assault rifle,,,not_mappable
+414,n02769748,backpack,27,backpack,mapped
+415,n02776631,bakery,,,not_mappable
+416,n02777292,balance beam,,,not_mappable
+417,n02782093,balloon,,,not_mappable
+418,n02783161,ballpoint,,,not_mappable
+419,n02786058,Band Aid,,,not_mappable
+420,n02787622,banjo,,,not_mappable
+421,n02788148,bannister,,,not_mappable
+422,n02790996,barbell,,,not_mappable
+423,n02791124,barber chair,62,chair,mapped
+424,n02791270,barbershop,,,not_mappable
+425,n02793495,barn,,,not_mappable
+426,n02794156,barometer,,,not_mappable
+427,n02795169,barrel,,,not_mappable
+428,n02797295,barrow,,,not_mappable
+429,n02799071,baseball,37,sports ball,mapped
+430,n02802426,basketball,37,sports ball,mapped
+431,n02804414,bassinet,,,not_mappable
+432,n02804610,bassoon,,,not_mappable
+433,n02807133,bathing cap,,,not_mappable
+434,n02808304,bath towel,,,not_mappable
+435,n02808440,bathtub,,,not_mappable
+436,n02814533,beach wagon,3,car,mapped
+437,n02814860,beacon,,,not_mappable
+438,n02815834,beaker,,,not_mappable
+439,n02817516,bearskin,,,not_mappable
+440,n02823428,beer bottle,44,bottle,mapped
+441,n02823750,beer glass,,,not_mappable
+442,n02825657,bell cote,,,not_mappable
+443,n02834397,bib,,,not_mappable
+444,n02835271,bicycle-built-for-two,2,bicycle,mapped
+445,n02837789,bikini,,,not_mappable
+446,n02840245,binder,,,not_mappable
+447,n02841315,binoculars,,,not_mappable
+448,n02843684,birdhouse,,,not_mappable
+449,n02859443,boathouse,,,not_mappable
+450,n02860847,bobsled,,,not_mappable
+451,n02865351,bolo tie,,,not_mappable
+452,n02869837,bonnet,,,not_mappable
+453,n02870880,bookcase,,,not_mappable
+454,n02871525,bookshop,,,not_mappable
+455,n02877765,bottlecap,,,not_mappable
+456,n02879718,bow,,,not_mappable
+457,n02883205,bow tie,,,not_mappable
+458,n02892201,brass,,,not_mappable
+459,n02892767,brassiere,,,not_mappable
+460,n02894605,breakwater,,,not_mappable
+461,n02895154,breastplate,,,not_mappable
+462,n02906734,broom,,,not_mappable
+463,n02909870,bucket,,,not_mappable
+464,n02910353,buckle,,,not_mappable
+465,n02916936,bulletproof vest,,,not_mappable
+466,n02917067,bullet train,7,train,mapped
+467,n02927161,butcher shop,,,not_mappable
+468,n02930766,cab,3,car,mapped
+469,n02939185,caldron,,,not_mappable
+470,n02948072,candle,,,not_mappable
+471,n02950826,cannon,,,not_mappable
+472,n02951358,canoe,9,boat,mapped
+473,n02951585,can opener,,,not_mappable
+474,n02963159,cardigan,,,not_mappable
+475,n02965783,car mirror,,,not_mappable
+476,n02966193,carousel,,,not_mappable
+477,n02966687,carpenter's kit,,,not_mappable
+478,n02971356,carton,,,not_mappable
+479,n02974003,car wheel,,,not_mappable
+480,n02977058,cash machine,,,not_mappable
+481,n02978881,cassette,,,not_mappable
+482,n02979186,cassette player,,,not_mappable
+483,n02980441,castle,,,not_mappable
+484,n02981792,catamaran,9,boat,mapped
+485,n02988304,CD player,,,not_mappable
+486,n02992211,cello,,,not_mappable
+487,n02992529,cellular telephone,77,cell phone,mapped
+488,n02999410,chain,,,not_mappable
+489,n03000134,chainlink fence,,,not_mappable
+490,n03000247,chain mail,,,not_mappable
+491,n03000684,chain saw,,,not_mappable
+492,n03014705,chest,,,not_mappable
+493,n03016953,chiffonier,,,not_mappable
+494,n03017168,chime,,,not_mappable
+495,n03018349,china cabinet,,,not_mappable
+496,n03026506,Christmas stocking,,,not_mappable
+497,n03028079,church,,,not_mappable
+498,n03032252,cinema,,,not_mappable
+499,n03041632,cleaver,49,knife,mapped
+500,n03042490,cliff dwelling,,,not_mappable
+501,n03045698,cloak,,,not_mappable
+502,n03047690,clog,,,not_mappable
+503,n03062245,cocktail shaker,,,not_mappable
+504,n03063599,coffee mug,47,cup,mapped
+505,n03063689,coffeepot,,,not_mappable
+506,n03065424,coil,,,not_mappable
+507,n03075370,combination lock,,,not_mappable
+508,n03085013,computer keyboard,76,keyboard,mapped
+509,n03089624,confectionery,,,not_mappable
+510,n03095699,container ship,9,boat,mapped
+511,n03100240,convertible,3,car,mapped
+512,n03109150,corkscrew,,,not_mappable
+513,n03110669,cornet,,,not_mappable
+514,n03124043,cowboy boot,,,not_mappable
+515,n03124170,cowboy hat,,,not_mappable
+516,n03125729,cradle,,,not_mappable
+517,n03126707,crane,,,not_mappable
+518,n03127747,crash helmet,,,not_mappable
+519,n03127925,crate,,,not_mappable
+520,n03131574,crib,,,not_mappable
+521,n03133878,Crock Pot,,,not_mappable
+522,n03134739,croquet ball,37,sports ball,mapped
+523,n03141823,crutch,,,not_mappable
+524,n03146219,cuirass,,,not_mappable
+525,n03160309,dam,,,not_mappable
+526,n03179701,desk,,,not_mappable
+527,n03180011,desktop computer,,,not_mappable
+528,n03187595,dial telephone,,,not_mappable
+529,n03188531,diaper,,,not_mappable
+530,n03196217,digital clock,85,clock,mapped
+531,n03197337,digital watch,,,not_mappable
+532,n03201208,dining table,67,dining table,mapped
+533,n03207743,dishrag,,,not_mappable
+534,n03207941,dishwasher,,,not_mappable
+535,n03208938,disk brake,,,not_mappable
+536,n03216828,dock,,,not_mappable
+537,n03218198,dogsled,,,not_mappable
+538,n03220513,dome,,,not_mappable
+539,n03223299,doormat,,,not_mappable
+540,n03240683,drilling platform,,,not_mappable
+541,n03249569,drum,,,not_mappable
+542,n03250847,drumstick,,,not_mappable
+543,n03255030,dumbbell,,,not_mappable
+544,n03259280,Dutch oven,,,not_mappable
+545,n03271574,electric fan,,,not_mappable
+546,n03272010,electric guitar,,,not_mappable
+547,n03272562,electric locomotive,7,train,mapped
+548,n03290653,entertainment center,,,not_mappable
+549,n03291819,envelope,,,not_mappable
+550,n03297495,espresso maker,,,not_mappable
+551,n03314780,face powder,,,not_mappable
+552,n03325584,feather boa,,,not_mappable
+553,n03337140,file,,,not_mappable
+554,n03344393,fireboat,9,boat,mapped
+555,n03345487,fire engine,8,truck,mapped
+556,n03347037,fire screen,,,not_mappable
+557,n03355925,flagpole,,,not_mappable
+558,n03372029,flute,,,not_mappable
+559,n03376595,folding chair,62,chair,mapped
+560,n03379051,football helmet,,,not_mappable
+561,n03384352,forklift,,,not_mappable
+562,n03388043,fountain,,,not_mappable
+563,n03388183,fountain pen,,,not_mappable
+564,n03388549,four-poster,65,bed,mapped
+565,n03393912,freight car,,,not_mappable
+566,n03394916,French horn,,,not_mappable
+567,n03400231,frying pan,,,not_mappable
+568,n03404251,fur coat,,,not_mappable
+569,n03417042,garbage truck,8,truck,mapped
+570,n03424325,gasmask,,,not_mappable
+571,n03425413,gas pump,,,not_mappable
+572,n03443371,goblet,,,not_mappable
+573,n03444034,go-kart,,,not_mappable
+574,n03445777,golf ball,37,sports ball,mapped
+575,n03445924,golfcart,,,not_mappable
+576,n03447447,gondola,9,boat,mapped
+577,n03447721,gong,,,not_mappable
+578,n03450230,gown,,,not_mappable
+579,n03452741,grand piano,,,not_mappable
+580,n03457902,greenhouse,,,not_mappable
+581,n03459775,grille,,,not_mappable
+582,n03461385,grocery store,,,not_mappable
+583,n03467068,guillotine,,,not_mappable
+584,n03476684,hair slide,,,not_mappable
+585,n03476991,hair spray,,,not_mappable
+586,n03478589,half track,,,not_mappable
+587,n03481172,hammer,,,not_mappable
+588,n03482405,hamper,,,not_mappable
+589,n03483316,hand blower,89,hair drier,mapped
+590,n03485407,hand-held computer,,,not_mappable
+591,n03485794,handkerchief,,,not_mappable
+592,n03492542,hard disc,,,not_mappable
+593,n03494278,harmonica,,,not_mappable
+594,n03495258,harp,,,not_mappable
+595,n03496892,harvester,,,not_mappable
+596,n03498962,hatchet,,,not_mappable
+597,n03527444,holster,,,not_mappable
+598,n03529860,home theater,,,not_mappable
+599,n03530642,honeycomb,,,not_mappable
+600,n03532672,hook,,,not_mappable
+601,n03534580,hoopskirt,,,not_mappable
+602,n03535780,horizontal bar,,,not_mappable
+603,n03538406,horse cart,,,not_mappable
+604,n03544143,hourglass,,,not_mappable
+605,n03584254,iPod,,,not_mappable
+606,n03584829,iron,,,not_mappable
+607,n03590841,jack-o'-lantern,,,not_mappable
+608,n03594734,jean,,,not_mappable
+609,n03594945,jeep,3,car,mapped
+610,n03595614,jersey,,,not_mappable
+611,n03598930,jigsaw puzzle,,,not_mappable
+612,n03599486,jinrikisha,,,not_mappable
+613,n03602883,joystick,,,not_mappable
+614,n03617480,kimono,,,not_mappable
+615,n03623198,knee pad,,,not_mappable
+616,n03627232,knot,,,not_mappable
+617,n03630383,lab coat,,,not_mappable
+618,n03633091,ladle,,,not_mappable
+619,n03637318,lampshade,,,not_mappable
+620,n03642806,laptop,73,laptop,mapped
+621,n03649909,lawn mower,,,not_mappable
+622,n03657121,lens cap,,,not_mappable
+623,n03658185,letter opener,,,not_mappable
+624,n03661043,library,,,not_mappable
+625,n03662601,lifeboat,9,boat,mapped
+626,n03666591,lighter,,,not_mappable
+627,n03670208,limousine,3,car,mapped
+628,n03673027,liner,9,boat,mapped
+629,n03676483,lipstick,,,not_mappable
+630,n03680355,Loafer,,,not_mappable
+631,n03690938,lotion,,,not_mappable
+632,n03691459,loudspeaker,,,not_mappable
+633,n03692522,loupe,,,not_mappable
+634,n03697007,lumbermill,,,not_mappable
+635,n03706229,magnetic compass,,,not_mappable
+636,n03709823,mailbag,,,not_mappable
+637,n03710193,mailbox,,,not_mappable
+638,n03710637,maillot,,,not_mappable
+639,n03710721,maillot tank suit,,,not_mappable
+640,n03717622,manhole cover,,,not_mappable
+641,n03720891,maraca,,,not_mappable
+642,n03721384,marimba,,,not_mappable
+643,n03724870,mask,,,not_mappable
+644,n03729826,matchstick,,,not_mappable
+645,n03733131,maypole,,,not_mappable
+646,n03733281,maze,,,not_mappable
+647,n03733805,measuring cup,,,not_mappable
+648,n03742115,medicine chest,,,not_mappable
+649,n03743016,megalith,,,not_mappable
+650,n03759954,microphone,,,not_mappable
+651,n03761084,microwave,78,microwave,mapped
+652,n03763968,military uniform,,,not_mappable
+653,n03764736,milk can,,,not_mappable
+654,n03769881,minibus,6,bus,mapped
+655,n03770439,miniskirt,,,not_mappable
+656,n03770679,minivan,3,car,mapped
+657,n03773504,missile,,,not_mappable
+658,n03775071,mitten,,,not_mappable
+659,n03775546,mixing bowl,51,bowl,mapped
+660,n03776460,mobile home,,,not_mappable
+661,n03777568,Model T,3,car,mapped
+662,n03777754,modem,,,not_mappable
+663,n03781244,monastery,,,not_mappable
+664,n03782006,monitor,,,not_mappable
+665,n03785016,moped,4,motorcycle,mapped
+666,n03786901,mortar,,,not_mappable
+667,n03787032,mortarboard,,,not_mappable
+668,n03788195,mosque,,,not_mappable
+669,n03788365,mosquito net,,,not_mappable
+670,n03791053,motor scooter,4,motorcycle,mapped
+671,n03792782,mountain bike,2,bicycle,mapped
+672,n03792972,mountain tent,,,not_mappable
+673,n03793489,mouse,74,mouse,mapped
+674,n03794056,mousetrap,,,not_mappable
+675,n03796401,moving van,8,truck,mapped
+676,n03803284,muzzle,,,not_mappable
+677,n03804744,nail,,,not_mappable
+678,n03814639,neck brace,,,not_mappable
+679,n03814906,necklace,,,not_mappable
+680,n03825788,nipple,,,not_mappable
+681,n03832673,notebook,,,not_mappable
+682,n03837869,obelisk,,,not_mappable
+683,n03838899,oboe,,,not_mappable
+684,n03840681,ocarina,,,not_mappable
+685,n03841143,odometer,,,not_mappable
+686,n03843555,oil filter,,,not_mappable
+687,n03854065,organ,,,not_mappable
+688,n03857828,oscilloscope,,,not_mappable
+689,n03866082,overskirt,,,not_mappable
+690,n03868242,oxcart,,,not_mappable
+691,n03868863,oxygen mask,,,not_mappable
+692,n03871628,packet,,,not_mappable
+693,n03873416,paddle,,,not_mappable
+694,n03874293,paddlewheel,,,not_mappable
+695,n03874599,padlock,,,not_mappable
+696,n03876231,paintbrush,,,not_mappable
+697,n03877472,pajama,,,not_mappable
+698,n03877845,palace,,,not_mappable
+699,n03884397,panpipe,,,not_mappable
+700,n03887697,paper towel,,,not_mappable
+701,n03888257,parachute,,,not_mappable
+702,n03888605,parallel bars,,,not_mappable
+703,n03891251,park bench,15,bench,mapped
+704,n03891332,parking meter,14,parking meter,mapped
+705,n03895866,passenger car,,,not_mappable
+706,n03899768,patio,,,not_mappable
+707,n03902125,pay-phone,,,not_mappable
+708,n03903868,pedestal,,,not_mappable
+709,n03908618,pencil box,,,not_mappable
+710,n03908714,pencil sharpener,,,not_mappable
+711,n03916031,perfume,,,not_mappable
+712,n03920288,Petri dish,,,not_mappable
+713,n03924679,photocopier,,,not_mappable
+714,n03929660,pick,,,not_mappable
+715,n03929855,pickelhaube,,,not_mappable
+716,n03930313,picket fence,,,not_mappable
+717,n03930630,pickup,8,truck,mapped
+718,n03933933,pier,,,not_mappable
+719,n03935335,piggy bank,,,not_mappable
+720,n03937543,pill bottle,44,bottle,mapped
+721,n03938244,pillow,,,not_mappable
+722,n03942813,ping-pong ball,,,not_mappable
+723,n03944341,pinwheel,,,not_mappable
+724,n03947888,pirate,,,not_mappable
+725,n03950228,pitcher,,,not_mappable
+726,n03954731,plane,,,not_mappable
+727,n03956157,planetarium,,,not_mappable
+728,n03958227,plastic bag,,,not_mappable
+729,n03961711,plate rack,,,not_mappable
+730,n03967562,plow,,,not_mappable
+731,n03970156,plunger,,,not_mappable
+732,n03976467,Polaroid camera,,,not_mappable
+733,n03976657,pole,,,not_mappable
+734,n03977966,police van,,,not_mappable
+735,n03980874,poncho,,,not_mappable
+736,n03982430,pool table,,,not_mappable
+737,n03983396,pop bottle,44,bottle,mapped
+738,n03991062,pot,,,not_mappable
+739,n03992509,potter's wheel,,,not_mappable
+740,n03995372,power drill,,,not_mappable
+741,n03998194,prayer rug,,,not_mappable
+742,n04004767,printer,,,not_mappable
+743,n04005630,prison,,,not_mappable
+744,n04008634,projectile,,,not_mappable
+745,n04009552,projector,,,not_mappable
+746,n04019541,puck,,,not_mappable
+747,n04023962,punching bag,,,not_mappable
+748,n04026417,purse,31,handbag,mapped
+749,n04033901,quill,,,not_mappable
+750,n04033995,quilt,,,not_mappable
+751,n04037443,racer,,,not_mappable
+752,n04039381,racket,,,not_mappable
+753,n04040759,radiator,,,not_mappable
+754,n04041544,radio,,,not_mappable
+755,n04044716,radio telescope,,,not_mappable
+756,n04049303,rain barrel,,,not_mappable
+757,n04065272,recreational vehicle,,,not_mappable
+758,n04067472,reel,,,not_mappable
+759,n04069434,reflex camera,,,not_mappable
+760,n04070727,refrigerator,82,refrigerator,mapped
+761,n04074963,remote control,75,remote,mapped
+762,n04081281,restaurant,,,not_mappable
+763,n04086273,revolver,,,not_mappable
+764,n04090263,rifle,,,not_mappable
+765,n04099969,rocking chair,62,chair,mapped
+766,n04111531,rotisserie,,,not_mappable
+767,n04116512,rubber eraser,,,not_mappable
+768,n04118538,rugby ball,37,sports ball,mapped
+769,n04118776,rule,,,not_mappable
+770,n04120489,running shoe,,,not_mappable
+771,n04125021,safe,,,not_mappable
+772,n04127249,safety pin,,,not_mappable
+773,n04131690,saltshaker,,,not_mappable
+774,n04133789,sandal,,,not_mappable
+775,n04136333,sarong,,,not_mappable
+776,n04141076,sax,,,not_mappable
+777,n04141327,scabbard,,,not_mappable
+778,n04141975,scale,,,not_mappable
+779,n04146614,school bus,6,bus,mapped
+780,n04147183,schooner,9,boat,mapped
+781,n04149813,scoreboard,,,not_mappable
+782,n04152593,screen,,,not_mappable
+783,n04153751,screw,,,not_mappable
+784,n04154565,screwdriver,,,not_mappable
+785,n04162706,seat belt,,,not_mappable
+786,n04179913,sewing machine,,,not_mappable
+787,n04192698,shield,,,not_mappable
+788,n04200800,shoe shop,,,not_mappable
+789,n04201297,shoji,,,not_mappable
+790,n04204238,shopping basket,,,not_mappable
+791,n04204347,shopping cart,,,not_mappable
+792,n04208210,shovel,,,not_mappable
+793,n04209133,shower cap,,,not_mappable
+794,n04209239,shower curtain,,,not_mappable
+795,n04228054,ski,35,skis,mapped
+796,n04229816,ski mask,,,not_mappable
+797,n04235860,sleeping bag,,,not_mappable
+798,n04238763,slide rule,,,not_mappable
+799,n04239074,sliding door,,,not_mappable
+800,n04243546,slot,,,not_mappable
+801,n04251144,snorkel,,,not_mappable
+802,n04252077,snowmobile,,,not_mappable
+803,n04252225,snowplow,,,not_mappable
+804,n04254120,soap dispenser,,,not_mappable
+805,n04254680,soccer ball,37,sports ball,mapped
+806,n04254777,sock,,,not_mappable
+807,n04258138,solar dish,,,not_mappable
+808,n04259630,sombrero,,,not_mappable
+809,n04263257,soup bowl,51,bowl,mapped
+810,n04264628,space bar,,,not_mappable
+811,n04265275,space heater,,,not_mappable
+812,n04266014,space shuttle,,,not_mappable
+813,n04270147,spatula,,,not_mappable
+814,n04273569,speedboat,9,boat,mapped
+815,n04275548,spider web,,,not_mappable
+816,n04277352,spindle,,,not_mappable
+817,n04285008,sports car,3,car,mapped
+818,n04286575,spotlight,,,not_mappable
+819,n04296562,stage,,,not_mappable
+820,n04310018,steam locomotive,7,train,mapped
+821,n04311004,steel arch bridge,,,not_mappable
+822,n04311174,steel drum,,,not_mappable
+823,n04317175,stethoscope,,,not_mappable
+824,n04325704,stole,,,not_mappable
+825,n04326547,stone wall,,,not_mappable
+826,n04328186,stopwatch,,,not_mappable
+827,n04330267,stove,,,not_mappable
+828,n04332243,strainer,,,not_mappable
+829,n04335435,streetcar,,,not_mappable
+830,n04336792,stretcher,,,not_mappable
+831,n04344873,studio couch,63,couch,mapped
+832,n04346328,stupa,,,not_mappable
+833,n04347754,submarine,,,not_mappable
+834,n04350905,suit,,,not_mappable
+835,n04355338,sundial,,,not_mappable
+836,n04355933,sunglass,,,not_mappable
+837,n04356056,sunglasses,,,not_mappable
+838,n04357314,sunscreen,,,not_mappable
+839,n04366367,suspension bridge,,,not_mappable
+840,n04367480,swab,,,not_mappable
+841,n04370456,sweatshirt,,,not_mappable
+842,n04371430,swimming trunks,,,not_mappable
+843,n04371774,swing,,,not_mappable
+844,n04372370,switch,,,not_mappable
+845,n04376876,syringe,,,not_mappable
+846,n04380533,table lamp,,,not_mappable
+847,n04389033,tank,,,not_mappable
+848,n04392985,tape player,,,not_mappable
+849,n04398044,teapot,,,not_mappable
+850,n04399382,teddy,88,teddy bear,mapped
+851,n04404412,television,72,tv,mapped
+852,n04409515,tennis ball,37,sports ball,mapped
+853,n04417672,thatch,,,not_mappable
+854,n04418357,theater curtain,,,not_mappable
+855,n04423845,thimble,,,not_mappable
+856,n04428191,thresher,,,not_mappable
+857,n04429376,throne,62,chair,mapped
+858,n04435653,tile roof,,,not_mappable
+859,n04442312,toaster,80,toaster,mapped
+860,n04443257,tobacco shop,,,not_mappable
+861,n04447861,toilet seat,,,not_mappable
+862,n04456115,torch,,,not_mappable
+863,n04458633,totem pole,,,not_mappable
+864,n04461696,tow truck,8,truck,mapped
+865,n04462240,toyshop,,,not_mappable
+866,n04465501,tractor,,,not_mappable
+867,n04467665,trailer truck,8,truck,mapped
+868,n04476259,tray,,,not_mappable
+869,n04479046,trench coat,,,not_mappable
+870,n04482393,tricycle,,,not_mappable
+871,n04483307,trimaran,9,boat,mapped
+872,n04485082,tripod,,,not_mappable
+873,n04486054,triumphal arch,,,not_mappable
+874,n04487081,trolleybus,6,bus,mapped
+875,n04487394,trombone,,,not_mappable
+876,n04493381,tub,,,not_mappable
+877,n04501370,turnstile,,,not_mappable
+878,n04505470,typewriter keyboard,,,not_mappable
+879,n04507155,umbrella,28,umbrella,mapped
+880,n04509417,unicycle,,,not_mappable
+881,n04515003,upright,,,not_mappable
+882,n04517823,vacuum,,,not_mappable
+883,n04522168,vase,86,vase,mapped
+884,n04523525,vault,,,not_mappable
+885,n04525038,velvet,,,not_mappable
+886,n04525305,vending machine,,,not_mappable
+887,n04532106,vestment,,,not_mappable
+888,n04532670,viaduct,,,not_mappable
+889,n04536866,violin,,,not_mappable
+890,n04540053,volleyball,37,sports ball,mapped
+891,n04542943,waffle iron,,,not_mappable
+892,n04548280,wall clock,85,clock,mapped
+893,n04548362,wallet,,,not_mappable
+894,n04550184,wardrobe,,,not_mappable
+895,n04552348,warplane,5,airplane,mapped
+896,n04553703,washbasin,81,sink,mapped
+897,n04554684,washer,,,not_mappable
+898,n04557648,water bottle,44,bottle,mapped
+899,n04560804,water jug,,,not_mappable
+900,n04562935,water tower,,,not_mappable
+901,n04579145,whiskey jug,,,not_mappable
+902,n04579432,whistle,,,not_mappable
+903,n04584207,wig,,,not_mappable
+904,n04589890,window screen,,,not_mappable
+905,n04590129,window shade,,,not_mappable
+906,n04591157,Windsor tie,32,tie,mapped
+907,n04591713,wine bottle,44,bottle,mapped
+908,n04592741,wing,,,not_mappable
+909,n04596742,wok,,,not_mappable
+910,n04597913,wooden spoon,50,spoon,mapped
+911,n04599235,wool,,,not_mappable
+912,n04604644,worm fence,,,not_mappable
+913,n04606251,wreck,,,not_mappable
+914,n04612504,yawl,9,boat,mapped
+915,n04613696,yurt,,,not_mappable
+916,n06359193,web site,,,not_mappable
+917,n06596364,comic book,84,book,mapped
+918,n06785654,crossword puzzle,,,not_mappable
+919,n06794110,street sign,,,not_mappable
+920,n06874185,traffic light,,,not_mappable
+921,n07248320,book jacket,,,not_mappable
+922,n07565083,menu,,,not_mappable
+923,n07579787,plate,,,not_mappable
+924,n07583066,guacamole,,,not_mappable
+925,n07584110,consomme,,,not_mappable
+926,n07590611,hot pot,,,not_mappable
+927,n07613480,trifle,,,not_mappable
+928,n07614500,ice cream,,,not_mappable
+929,n07615774,ice lolly,,,not_mappable
+930,n07684084,French loaf,,,not_mappable
+931,n07693725,bagel,,,not_mappable
+932,n07695742,pretzel,,,not_mappable
+933,n07697313,cheeseburger,54,sandwich,mapped
+934,n07697537,hotdog,58,hot dog,mapped
+935,n07711569,mashed potato,,,not_mappable
+936,n07714571,head cabbage,,,not_mappable
+937,n07714990,broccoli,56,broccoli,mapped
+938,n07715103,cauliflower,,,not_mappable
+939,n07716358,zucchini,,,not_mappable
+940,n07716906,spaghetti squash,,,not_mappable
+941,n07717410,acorn squash,,,not_mappable
+942,n07717556,butternut squash,,,not_mappable
+943,n07718472,cucumber,,,not_mappable
+944,n07718747,artichoke,,,not_mappable
+945,n07720875,bell pepper,,,not_mappable
+946,n07730033,cardoon,,,not_mappable
+947,n07734744,mushroom,,,not_mappable
+948,n07742313,Granny Smith,53,apple,mapped
+949,n07745940,strawberry,,,not_mappable
+950,n07747607,orange,55,orange,mapped
+951,n07749582,lemon,,,not_mappable
+952,n07753113,fig,,,not_mappable
+953,n07753275,pineapple,,,not_mappable
+954,n07753592,banana,52,banana,mapped
+955,n07754684,jackfruit,,,not_mappable
+956,n07760859,custard apple,,,not_mappable
+957,n07768694,pomegranate,,,not_mappable
+958,n07802026,hay,,,not_mappable
+959,n07831146,carbonara,,,not_mappable
+960,n07836838,chocolate sauce,,,not_mappable
+961,n07860988,dough,,,not_mappable
+962,n07871810,meat loaf,,,not_mappable
+963,n07873807,pizza,59,pizza,mapped
+964,n07875152,potpie,,,not_mappable
+965,n07880968,burrito,,,not_mappable
+966,n07892512,red wine,,,not_mappable
+967,n07920052,espresso,,,not_mappable
+968,n07930864,cup,,,not_mappable
+969,n07932039,eggnog,,,not_mappable
+970,n09193705,alp,,,not_mappable
+971,n09229709,bubble,,,not_mappable
+972,n09246464,cliff,,,not_mappable
+973,n09256479,coral reef,,,not_mappable
+974,n09288635,geyser,,,not_mappable
+975,n09332890,lakeside,,,not_mappable
+976,n09399592,promontory,,,not_mappable
+977,n09421951,sandbar,,,not_mappable
+978,n09428293,seashore,,,not_mappable
+979,n09468604,valley,,,not_mappable
+980,n09472597,volcano,,,not_mappable
+981,n09835506,ballplayer,,,not_mappable
+982,n10148035,groom,,,not_mappable
+983,n10565667,scuba diver,,,not_mappable
+984,n11879895,rapeseed,,,not_mappable
+985,n11939491,daisy,,,not_mappable
+986,n12057211,yellow lady's slipper,,,not_mappable
+987,n12144580,corn,,,not_mappable
+988,n12267677,acorn,,,not_mappable
+989,n12620546,hip,,,not_mappable
+990,n12768682,buckeye,,,not_mappable
+991,n12985857,coral fungus,,,not_mappable
+992,n12998815,agaric,,,not_mappable
+993,n13037406,gyromitra,,,not_mappable
+994,n13040303,stinkhorn,,,not_mappable
+995,n13044778,earthstar,,,not_mappable
+996,n13052670,hen-of-the-woods,,,not_mappable
+997,n13054560,bolete,,,not_mappable
+998,n13133613,ear,,,not_mappable
+999,n15075141,toilet tissue,,,not_mappable

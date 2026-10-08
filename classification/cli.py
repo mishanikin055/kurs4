@@ -31,6 +31,11 @@ def main() -> None:
         bench.add_argument("--resume", action="store_true")
         if name == "benchmark":
             bench.add_argument(
+                "--model",
+                choices=[m["id"] for m in registry()["models"]],
+                help="Выполнить только одну модель общего протокола",
+            )
+            bench.add_argument(
                 "--manifest", type=Path, default=ROOT / "data/imagenet/evaluation5000.json"
             )
             bench.add_argument("--limit", type=int)
@@ -101,7 +106,14 @@ def main() -> None:
             )
             run_benchmark(args.config, path, args.output_dir, None, args.resume, True)
         else:
-            run_benchmark(args.config, args.manifest, args.output_dir, args.limit, args.resume)
+            run_benchmark(
+                args.config,
+                args.manifest,
+                args.output_dir,
+                args.limit,
+                args.resume,
+                only_model=args.model,
+            )
     elif args.command == "_worker":
         from classification.runner import worker
 

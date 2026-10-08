@@ -1,0 +1,8066 @@
+{
+  "schema_version": "1.0",
+  "mapping_version": "imagenet-coco-conservative-v1",
+  "selection_date": "2026-10-08",
+  "kind": "manual semantic subclass correspondence; partial category coverage, no breed ground truth",
+  "supported_categories": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    27,
+    28,
+    31,
+    32,
+    35,
+    37,
+    44,
+    47,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    58,
+    59,
+    62,
+    63,
+    65,
+    67,
+    72,
+    73,
+    74,
+    75,
+    76,
+    77,
+    78,
+    80,
+    81,
+    82,
+    84,
+    85,
+    86,
+    88,
+    89
+  ],
+  "classes": [
+    {
+      "index": 0,
+      "synset": "n01440764",
+      "name": "tench",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 1,
+      "synset": "n01443537",
+      "name": "goldfish",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 2,
+      "synset": "n01484850",
+      "name": "great white shark",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 3,
+      "synset": "n01491361",
+      "name": "tiger shark",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 4,
+      "synset": "n01494475",
+      "name": "hammerhead",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 5,
+      "synset": "n01496331",
+      "name": "electric ray",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 6,
+      "synset": "n01498041",
+      "name": "stingray",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 7,
+      "synset": "n01514668",
+      "name": "cock",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 8,
+      "synset": "n01514859",
+      "name": "hen",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 9,
+      "synset": "n01518878",
+      "name": "ostrich",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 10,
+      "synset": "n01530575",
+      "name": "brambling",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 11,
+      "synset": "n01531178",
+      "name": "goldfinch",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 12,
+      "synset": "n01532829",
+      "name": "house finch",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 13,
+      "synset": "n01534433",
+      "name": "junco",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 14,
+      "synset": "n01537544",
+      "name": "indigo bunting",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 15,
+      "synset": "n01558993",
+      "name": "robin",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 16,
+      "synset": "n01560419",
+      "name": "bulbul",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 17,
+      "synset": "n01580077",
+      "name": "jay",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 18,
+      "synset": "n01582220",
+      "name": "magpie",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 19,
+      "synset": "n01592084",
+      "name": "chickadee",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 20,
+      "synset": "n01601694",
+      "name": "water ouzel",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 21,
+      "synset": "n01608432",
+      "name": "kite",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 22,
+      "synset": "n01614925",
+      "name": "bald eagle",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 23,
+      "synset": "n01616318",
+      "name": "vulture",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 24,
+      "synset": "n01622779",
+      "name": "great grey owl",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 25,
+      "synset": "n01629819",
+      "name": "European fire salamander",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 26,
+      "synset": "n01630670",
+      "name": "common newt",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 27,
+      "synset": "n01631663",
+      "name": "eft",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 28,
+      "synset": "n01632458",
+      "name": "spotted salamander",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 29,
+      "synset": "n01632777",
+      "name": "axolotl",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 30,
+      "synset": "n01641577",
+      "name": "bullfrog",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 31,
+      "synset": "n01644373",
+      "name": "tree frog",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 32,
+      "synset": "n01644900",
+      "name": "tailed frog",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 33,
+      "synset": "n01664065",
+      "name": "loggerhead",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 34,
+      "synset": "n01665541",
+      "name": "leatherback turtle",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 35,
+      "synset": "n01667114",
+      "name": "mud turtle",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 36,
+      "synset": "n01667778",
+      "name": "terrapin",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 37,
+      "synset": "n01669191",
+      "name": "box turtle",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 38,
+      "synset": "n01675722",
+      "name": "banded gecko",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 39,
+      "synset": "n01677366",
+      "name": "common iguana",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 40,
+      "synset": "n01682714",
+      "name": "American chameleon",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 41,
+      "synset": "n01685808",
+      "name": "whiptail",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 42,
+      "synset": "n01687978",
+      "name": "agama",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 43,
+      "synset": "n01688243",
+      "name": "frilled lizard",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 44,
+      "synset": "n01689811",
+      "name": "alligator lizard",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 45,
+      "synset": "n01692333",
+      "name": "Gila monster",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 46,
+      "synset": "n01693334",
+      "name": "green lizard",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 47,
+      "synset": "n01694178",
+      "name": "African chameleon",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 48,
+      "synset": "n01695060",
+      "name": "Komodo dragon",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 49,
+      "synset": "n01697457",
+      "name": "African crocodile",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 50,
+      "synset": "n01698640",
+      "name": "American alligator",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 51,
+      "synset": "n01704323",
+      "name": "triceratops",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 52,
+      "synset": "n01728572",
+      "name": "thunder snake",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 53,
+      "synset": "n01728920",
+      "name": "ringneck snake",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 54,
+      "synset": "n01729322",
+      "name": "hognose snake",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 55,
+      "synset": "n01729977",
+      "name": "green snake",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 56,
+      "synset": "n01734418",
+      "name": "king snake",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 57,
+      "synset": "n01735189",
+      "name": "garter snake",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 58,
+      "synset": "n01737021",
+      "name": "water snake",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 59,
+      "synset": "n01739381",
+      "name": "vine snake",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 60,
+      "synset": "n01740131",
+      "name": "night snake",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 61,
+      "synset": "n01742172",
+      "name": "boa constrictor",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 62,
+      "synset": "n01744401",
+      "name": "rock python",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 63,
+      "synset": "n01748264",
+      "name": "Indian cobra",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 64,
+      "synset": "n01749939",
+      "name": "green mamba",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 65,
+      "synset": "n01751748",
+      "name": "sea snake",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 66,
+      "synset": "n01753488",
+      "name": "horned viper",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 67,
+      "synset": "n01755581",
+      "name": "diamondback",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 68,
+      "synset": "n01756291",
+      "name": "sidewinder",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 69,
+      "synset": "n01768244",
+      "name": "trilobite",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 70,
+      "synset": "n01770081",
+      "name": "harvestman",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 71,
+      "synset": "n01770393",
+      "name": "scorpion",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 72,
+      "synset": "n01773157",
+      "name": "black and gold garden spider",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 73,
+      "synset": "n01773549",
+      "name": "barn spider",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 74,
+      "synset": "n01773797",
+      "name": "garden spider",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 75,
+      "synset": "n01774384",
+      "name": "black widow",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 76,
+      "synset": "n01774750",
+      "name": "tarantula",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 77,
+      "synset": "n01775062",
+      "name": "wolf spider",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 78,
+      "synset": "n01776313",
+      "name": "tick",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 79,
+      "synset": "n01784675",
+      "name": "centipede",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 80,
+      "synset": "n01795545",
+      "name": "black grouse",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 81,
+      "synset": "n01796340",
+      "name": "ptarmigan",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 82,
+      "synset": "n01797886",
+      "name": "ruffed grouse",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 83,
+      "synset": "n01798484",
+      "name": "prairie chicken",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 84,
+      "synset": "n01806143",
+      "name": "peacock",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 85,
+      "synset": "n01806567",
+      "name": "quail",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 86,
+      "synset": "n01807496",
+      "name": "partridge",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 87,
+      "synset": "n01817953",
+      "name": "African grey",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 88,
+      "synset": "n01818515",
+      "name": "macaw",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 89,
+      "synset": "n01819313",
+      "name": "sulphur-crested cockatoo",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 90,
+      "synset": "n01820546",
+      "name": "lorikeet",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 91,
+      "synset": "n01824575",
+      "name": "coucal",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 92,
+      "synset": "n01828970",
+      "name": "bee eater",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 93,
+      "synset": "n01829413",
+      "name": "hornbill",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 94,
+      "synset": "n01833805",
+      "name": "hummingbird",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 95,
+      "synset": "n01843065",
+      "name": "jacamar",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 96,
+      "synset": "n01843383",
+      "name": "toucan",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 97,
+      "synset": "n01847000",
+      "name": "drake",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 98,
+      "synset": "n01855032",
+      "name": "red-breasted merganser",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 99,
+      "synset": "n01855672",
+      "name": "goose",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 100,
+      "synset": "n01860187",
+      "name": "black swan",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 101,
+      "synset": "n01871265",
+      "name": "tusker",
+      "coco_category_id": 22,
+      "coco_name": "elephant",
+      "status": "mapped"
+    },
+    {
+      "index": 102,
+      "synset": "n01872401",
+      "name": "echidna",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 103,
+      "synset": "n01873310",
+      "name": "platypus",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 104,
+      "synset": "n01877812",
+      "name": "wallaby",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 105,
+      "synset": "n01882714",
+      "name": "koala",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 106,
+      "synset": "n01883070",
+      "name": "wombat",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 107,
+      "synset": "n01910747",
+      "name": "jellyfish",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 108,
+      "synset": "n01914609",
+      "name": "sea anemone",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 109,
+      "synset": "n01917289",
+      "name": "brain coral",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 110,
+      "synset": "n01924916",
+      "name": "flatworm",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 111,
+      "synset": "n01930112",
+      "name": "nematode",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 112,
+      "synset": "n01943899",
+      "name": "conch",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 113,
+      "synset": "n01944390",
+      "name": "snail",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 114,
+      "synset": "n01945685",
+      "name": "slug",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 115,
+      "synset": "n01950731",
+      "name": "sea slug",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 116,
+      "synset": "n01955084",
+      "name": "chiton",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 117,
+      "synset": "n01968897",
+      "name": "chambered nautilus",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 118,
+      "synset": "n01978287",
+      "name": "Dungeness crab",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 119,
+      "synset": "n01978455",
+      "name": "rock crab",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 120,
+      "synset": "n01980166",
+      "name": "fiddler crab",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 121,
+      "synset": "n01981276",
+      "name": "king crab",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 122,
+      "synset": "n01983481",
+      "name": "American lobster",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 123,
+      "synset": "n01984695",
+      "name": "spiny lobster",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 124,
+      "synset": "n01985128",
+      "name": "crayfish",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 125,
+      "synset": "n01986214",
+      "name": "hermit crab",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 126,
+      "synset": "n01990800",
+      "name": "isopod",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 127,
+      "synset": "n02002556",
+      "name": "white stork",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 128,
+      "synset": "n02002724",
+      "name": "black stork",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 129,
+      "synset": "n02006656",
+      "name": "spoonbill",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 130,
+      "synset": "n02007558",
+      "name": "flamingo",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 131,
+      "synset": "n02009229",
+      "name": "little blue heron",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 132,
+      "synset": "n02009912",
+      "name": "American egret",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 133,
+      "synset": "n02011460",
+      "name": "bittern",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 134,
+      "synset": "n02012849",
+      "name": "crane bird",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 135,
+      "synset": "n02013706",
+      "name": "limpkin",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 136,
+      "synset": "n02017213",
+      "name": "European gallinule",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 137,
+      "synset": "n02018207",
+      "name": "American coot",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 138,
+      "synset": "n02018795",
+      "name": "bustard",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 139,
+      "synset": "n02025239",
+      "name": "ruddy turnstone",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 140,
+      "synset": "n02027492",
+      "name": "red-backed sandpiper",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 141,
+      "synset": "n02028035",
+      "name": "redshank",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 142,
+      "synset": "n02033041",
+      "name": "dowitcher",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 143,
+      "synset": "n02037110",
+      "name": "oystercatcher",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 144,
+      "synset": "n02051845",
+      "name": "pelican",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 145,
+      "synset": "n02056570",
+      "name": "king penguin",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 146,
+      "synset": "n02058221",
+      "name": "albatross",
+      "coco_category_id": 16,
+      "coco_name": "bird",
+      "status": "mapped"
+    },
+    {
+      "index": 147,
+      "synset": "n02066245",
+      "name": "grey whale",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 148,
+      "synset": "n02071294",
+      "name": "killer whale",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 149,
+      "synset": "n02074367",
+      "name": "dugong",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 150,
+      "synset": "n02077923",
+      "name": "sea lion",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 151,
+      "synset": "n02085620",
+      "name": "Chihuahua",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 152,
+      "synset": "n02085782",
+      "name": "Japanese spaniel",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 153,
+      "synset": "n02085936",
+      "name": "Maltese dog",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 154,
+      "synset": "n02086079",
+      "name": "Pekinese",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 155,
+      "synset": "n02086240",
+      "name": "Shih-Tzu",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 156,
+      "synset": "n02086646",
+      "name": "Blenheim spaniel",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 157,
+      "synset": "n02086910",
+      "name": "papillon",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 158,
+      "synset": "n02087046",
+      "name": "toy terrier",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 159,
+      "synset": "n02087394",
+      "name": "Rhodesian ridgeback",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 160,
+      "synset": "n02088094",
+      "name": "Afghan hound",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 161,
+      "synset": "n02088238",
+      "name": "basset",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 162,
+      "synset": "n02088364",
+      "name": "beagle",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 163,
+      "synset": "n02088466",
+      "name": "bloodhound",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 164,
+      "synset": "n02088632",
+      "name": "bluetick",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 165,
+      "synset": "n02089078",
+      "name": "black-and-tan coonhound",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 166,
+      "synset": "n02089867",
+      "name": "Walker hound",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 167,
+      "synset": "n02089973",
+      "name": "English foxhound",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 168,
+      "synset": "n02090379",
+      "name": "redbone",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 169,
+      "synset": "n02090622",
+      "name": "borzoi",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 170,
+      "synset": "n02090721",
+      "name": "Irish wolfhound",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 171,
+      "synset": "n02091032",
+      "name": "Italian greyhound",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 172,
+      "synset": "n02091134",
+      "name": "whippet",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 173,
+      "synset": "n02091244",
+      "name": "Ibizan hound",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 174,
+      "synset": "n02091467",
+      "name": "Norwegian elkhound",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 175,
+      "synset": "n02091635",
+      "name": "otterhound",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 176,
+      "synset": "n02091831",
+      "name": "Saluki",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 177,
+      "synset": "n02092002",
+      "name": "Scottish deerhound",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 178,
+      "synset": "n02092339",
+      "name": "Weimaraner",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 179,
+      "synset": "n02093256",
+      "name": "Staffordshire bullterrier",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 180,
+      "synset": "n02093428",
+      "name": "American Staffordshire terrier",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 181,
+      "synset": "n02093647",
+      "name": "Bedlington terrier",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 182,
+      "synset": "n02093754",
+      "name": "Border terrier",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 183,
+      "synset": "n02093859",
+      "name": "Kerry blue terrier",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 184,
+      "synset": "n02093991",
+      "name": "Irish terrier",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 185,
+      "synset": "n02094114",
+      "name": "Norfolk terrier",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 186,
+      "synset": "n02094258",
+      "name": "Norwich terrier",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 187,
+      "synset": "n02094433",
+      "name": "Yorkshire terrier",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 188,
+      "synset": "n02095314",
+      "name": "wire-haired fox terrier",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 189,
+      "synset": "n02095570",
+      "name": "Lakeland terrier",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 190,
+      "synset": "n02095889",
+      "name": "Sealyham terrier",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 191,
+      "synset": "n02096051",
+      "name": "Airedale",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 192,
+      "synset": "n02096177",
+      "name": "cairn",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 193,
+      "synset": "n02096294",
+      "name": "Australian terrier",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 194,
+      "synset": "n02096437",
+      "name": "Dandie Dinmont",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 195,
+      "synset": "n02096585",
+      "name": "Boston bull",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 196,
+      "synset": "n02097047",
+      "name": "miniature schnauzer",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 197,
+      "synset": "n02097130",
+      "name": "giant schnauzer",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 198,
+      "synset": "n02097209",
+      "name": "standard schnauzer",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 199,
+      "synset": "n02097298",
+      "name": "Scotch terrier",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 200,
+      "synset": "n02097474",
+      "name": "Tibetan terrier",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 201,
+      "synset": "n02097658",
+      "name": "silky terrier",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 202,
+      "synset": "n02098105",
+      "name": "soft-coated wheaten terrier",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 203,
+      "synset": "n02098286",
+      "name": "West Highland white terrier",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 204,
+      "synset": "n02098413",
+      "name": "Lhasa",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 205,
+      "synset": "n02099267",
+      "name": "flat-coated retriever",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 206,
+      "synset": "n02099429",
+      "name": "curly-coated retriever",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 207,
+      "synset": "n02099601",
+      "name": "golden retriever",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 208,
+      "synset": "n02099712",
+      "name": "Labrador retriever",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 209,
+      "synset": "n02099849",
+      "name": "Chesapeake Bay retriever",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 210,
+      "synset": "n02100236",
+      "name": "German short-haired pointer",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 211,
+      "synset": "n02100583",
+      "name": "vizsla",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 212,
+      "synset": "n02100735",
+      "name": "English setter",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 213,
+      "synset": "n02100877",
+      "name": "Irish setter",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 214,
+      "synset": "n02101006",
+      "name": "Gordon setter",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 215,
+      "synset": "n02101388",
+      "name": "Brittany spaniel",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 216,
+      "synset": "n02101556",
+      "name": "clumber",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 217,
+      "synset": "n02102040",
+      "name": "English springer",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 218,
+      "synset": "n02102177",
+      "name": "Welsh springer spaniel",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 219,
+      "synset": "n02102318",
+      "name": "cocker spaniel",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 220,
+      "synset": "n02102480",
+      "name": "Sussex spaniel",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 221,
+      "synset": "n02102973",
+      "name": "Irish water spaniel",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 222,
+      "synset": "n02104029",
+      "name": "kuvasz",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 223,
+      "synset": "n02104365",
+      "name": "schipperke",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 224,
+      "synset": "n02105056",
+      "name": "groenendael",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 225,
+      "synset": "n02105162",
+      "name": "malinois",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 226,
+      "synset": "n02105251",
+      "name": "briard",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 227,
+      "synset": "n02105412",
+      "name": "kelpie",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 228,
+      "synset": "n02105505",
+      "name": "komondor",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 229,
+      "synset": "n02105641",
+      "name": "Old English sheepdog",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 230,
+      "synset": "n02105855",
+      "name": "Shetland sheepdog",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 231,
+      "synset": "n02106030",
+      "name": "collie",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 232,
+      "synset": "n02106166",
+      "name": "Border collie",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 233,
+      "synset": "n02106382",
+      "name": "Bouvier des Flandres",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 234,
+      "synset": "n02106550",
+      "name": "Rottweiler",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 235,
+      "synset": "n02106662",
+      "name": "German shepherd",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 236,
+      "synset": "n02107142",
+      "name": "Doberman",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 237,
+      "synset": "n02107312",
+      "name": "miniature pinscher",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 238,
+      "synset": "n02107574",
+      "name": "Greater Swiss Mountain dog",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 239,
+      "synset": "n02107683",
+      "name": "Bernese mountain dog",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 240,
+      "synset": "n02107908",
+      "name": "Appenzeller",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 241,
+      "synset": "n02108000",
+      "name": "EntleBucher",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 242,
+      "synset": "n02108089",
+      "name": "boxer",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 243,
+      "synset": "n02108422",
+      "name": "bull mastiff",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 244,
+      "synset": "n02108551",
+      "name": "Tibetan mastiff",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 245,
+      "synset": "n02108915",
+      "name": "French bulldog",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 246,
+      "synset": "n02109047",
+      "name": "Great Dane",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 247,
+      "synset": "n02109525",
+      "name": "Saint Bernard",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 248,
+      "synset": "n02109961",
+      "name": "Eskimo dog",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 249,
+      "synset": "n02110063",
+      "name": "malamute",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 250,
+      "synset": "n02110185",
+      "name": "Siberian husky",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 251,
+      "synset": "n02110341",
+      "name": "dalmatian",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 252,
+      "synset": "n02110627",
+      "name": "affenpinscher",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 253,
+      "synset": "n02110806",
+      "name": "basenji",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 254,
+      "synset": "n02110958",
+      "name": "pug",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 255,
+      "synset": "n02111129",
+      "name": "Leonberg",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 256,
+      "synset": "n02111277",
+      "name": "Newfoundland",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 257,
+      "synset": "n02111500",
+      "name": "Great Pyrenees",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 258,
+      "synset": "n02111889",
+      "name": "Samoyed",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 259,
+      "synset": "n02112018",
+      "name": "Pomeranian",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 260,
+      "synset": "n02112137",
+      "name": "chow",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 261,
+      "synset": "n02112350",
+      "name": "keeshond",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 262,
+      "synset": "n02112706",
+      "name": "Brabancon griffon",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 263,
+      "synset": "n02113023",
+      "name": "Pembroke",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 264,
+      "synset": "n02113186",
+      "name": "Cardigan",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 265,
+      "synset": "n02113624",
+      "name": "toy poodle",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 266,
+      "synset": "n02113712",
+      "name": "miniature poodle",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 267,
+      "synset": "n02113799",
+      "name": "standard poodle",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 268,
+      "synset": "n02113978",
+      "name": "Mexican hairless",
+      "coco_category_id": 18,
+      "coco_name": "dog",
+      "status": "mapped"
+    },
+    {
+      "index": 269,
+      "synset": "n02114367",
+      "name": "timber wolf",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 270,
+      "synset": "n02114548",
+      "name": "white wolf",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 271,
+      "synset": "n02114712",
+      "name": "red wolf",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 272,
+      "synset": "n02114855",
+      "name": "coyote",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 273,
+      "synset": "n02115641",
+      "name": "dingo",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 274,
+      "synset": "n02115913",
+      "name": "dhole",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 275,
+      "synset": "n02116738",
+      "name": "African hunting dog",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 276,
+      "synset": "n02117135",
+      "name": "hyena",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 277,
+      "synset": "n02119022",
+      "name": "red fox",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 278,
+      "synset": "n02119789",
+      "name": "kit fox",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 279,
+      "synset": "n02120079",
+      "name": "Arctic fox",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 280,
+      "synset": "n02120505",
+      "name": "grey fox",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 281,
+      "synset": "n02123045",
+      "name": "tabby",
+      "coco_category_id": 17,
+      "coco_name": "cat",
+      "status": "mapped"
+    },
+    {
+      "index": 282,
+      "synset": "n02123159",
+      "name": "tiger cat",
+      "coco_category_id": 17,
+      "coco_name": "cat",
+      "status": "mapped"
+    },
+    {
+      "index": 283,
+      "synset": "n02123394",
+      "name": "Persian cat",
+      "coco_category_id": 17,
+      "coco_name": "cat",
+      "status": "mapped"
+    },
+    {
+      "index": 284,
+      "synset": "n02123597",
+      "name": "Siamese cat",
+      "coco_category_id": 17,
+      "coco_name": "cat",
+      "status": "mapped"
+    },
+    {
+      "index": 285,
+      "synset": "n02124075",
+      "name": "Egyptian cat",
+      "coco_category_id": 17,
+      "coco_name": "cat",
+      "status": "mapped"
+    },
+    {
+      "index": 286,
+      "synset": "n02125311",
+      "name": "cougar",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 287,
+      "synset": "n02127052",
+      "name": "lynx",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 288,
+      "synset": "n02128385",
+      "name": "leopard",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 289,
+      "synset": "n02128757",
+      "name": "snow leopard",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 290,
+      "synset": "n02128925",
+      "name": "jaguar",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 291,
+      "synset": "n02129165",
+      "name": "lion",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 292,
+      "synset": "n02129604",
+      "name": "tiger",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 293,
+      "synset": "n02130308",
+      "name": "cheetah",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 294,
+      "synset": "n02132136",
+      "name": "brown bear",
+      "coco_category_id": 23,
+      "coco_name": "bear",
+      "status": "mapped"
+    },
+    {
+      "index": 295,
+      "synset": "n02133161",
+      "name": "American black bear",
+      "coco_category_id": 23,
+      "coco_name": "bear",
+      "status": "mapped"
+    },
+    {
+      "index": 296,
+      "synset": "n02134084",
+      "name": "ice bear",
+      "coco_category_id": 23,
+      "coco_name": "bear",
+      "status": "mapped"
+    },
+    {
+      "index": 297,
+      "synset": "n02134418",
+      "name": "sloth bear",
+      "coco_category_id": 23,
+      "coco_name": "bear",
+      "status": "mapped"
+    },
+    {
+      "index": 298,
+      "synset": "n02137549",
+      "name": "mongoose",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 299,
+      "synset": "n02138441",
+      "name": "meerkat",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 300,
+      "synset": "n02165105",
+      "name": "tiger beetle",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 301,
+      "synset": "n02165456",
+      "name": "ladybug",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 302,
+      "synset": "n02167151",
+      "name": "ground beetle",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 303,
+      "synset": "n02168699",
+      "name": "long-horned beetle",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 304,
+      "synset": "n02169497",
+      "name": "leaf beetle",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 305,
+      "synset": "n02172182",
+      "name": "dung beetle",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 306,
+      "synset": "n02174001",
+      "name": "rhinoceros beetle",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 307,
+      "synset": "n02177972",
+      "name": "weevil",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 308,
+      "synset": "n02190166",
+      "name": "fly",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 309,
+      "synset": "n02206856",
+      "name": "bee",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 310,
+      "synset": "n02219486",
+      "name": "ant",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 311,
+      "synset": "n02226429",
+      "name": "grasshopper",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 312,
+      "synset": "n02229544",
+      "name": "cricket",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 313,
+      "synset": "n02231487",
+      "name": "walking stick",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 314,
+      "synset": "n02233338",
+      "name": "cockroach",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 315,
+      "synset": "n02236044",
+      "name": "mantis",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 316,
+      "synset": "n02256656",
+      "name": "cicada",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 317,
+      "synset": "n02259212",
+      "name": "leafhopper",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 318,
+      "synset": "n02264363",
+      "name": "lacewing",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 319,
+      "synset": "n02268443",
+      "name": "dragonfly",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 320,
+      "synset": "n02268853",
+      "name": "damselfly",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 321,
+      "synset": "n02276258",
+      "name": "admiral",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 322,
+      "synset": "n02277742",
+      "name": "ringlet",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 323,
+      "synset": "n02279972",
+      "name": "monarch",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 324,
+      "synset": "n02280649",
+      "name": "cabbage butterfly",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 325,
+      "synset": "n02281406",
+      "name": "sulphur butterfly",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 326,
+      "synset": "n02281787",
+      "name": "lycaenid",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 327,
+      "synset": "n02317335",
+      "name": "starfish",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 328,
+      "synset": "n02319095",
+      "name": "sea urchin",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 329,
+      "synset": "n02321529",
+      "name": "sea cucumber",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 330,
+      "synset": "n02325366",
+      "name": "wood rabbit",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 331,
+      "synset": "n02326432",
+      "name": "hare",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 332,
+      "synset": "n02328150",
+      "name": "Angora",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 333,
+      "synset": "n02342885",
+      "name": "hamster",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 334,
+      "synset": "n02346627",
+      "name": "porcupine",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 335,
+      "synset": "n02356798",
+      "name": "fox squirrel",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 336,
+      "synset": "n02361337",
+      "name": "marmot",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 337,
+      "synset": "n02363005",
+      "name": "beaver",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 338,
+      "synset": "n02364673",
+      "name": "guinea pig",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 339,
+      "synset": "n02389026",
+      "name": "sorrel",
+      "coco_category_id": 19,
+      "coco_name": "horse",
+      "status": "mapped"
+    },
+    {
+      "index": 340,
+      "synset": "n02391049",
+      "name": "zebra",
+      "coco_category_id": 24,
+      "coco_name": "zebra",
+      "status": "mapped"
+    },
+    {
+      "index": 341,
+      "synset": "n02395406",
+      "name": "hog",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 342,
+      "synset": "n02396427",
+      "name": "wild boar",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 343,
+      "synset": "n02397096",
+      "name": "warthog",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 344,
+      "synset": "n02398521",
+      "name": "hippopotamus",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 345,
+      "synset": "n02403003",
+      "name": "ox",
+      "coco_category_id": 21,
+      "coco_name": "cow",
+      "status": "mapped"
+    },
+    {
+      "index": 346,
+      "synset": "n02408429",
+      "name": "water buffalo",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 347,
+      "synset": "n02410509",
+      "name": "bison",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 348,
+      "synset": "n02412080",
+      "name": "ram",
+      "coco_category_id": 20,
+      "coco_name": "sheep",
+      "status": "mapped"
+    },
+    {
+      "index": 349,
+      "synset": "n02415577",
+      "name": "bighorn",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 350,
+      "synset": "n02417914",
+      "name": "ibex",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 351,
+      "synset": "n02422106",
+      "name": "hartebeest",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 352,
+      "synset": "n02422699",
+      "name": "impala",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 353,
+      "synset": "n02423022",
+      "name": "gazelle",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 354,
+      "synset": "n02437312",
+      "name": "Arabian camel",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 355,
+      "synset": "n02437616",
+      "name": "llama",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 356,
+      "synset": "n02441942",
+      "name": "weasel",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 357,
+      "synset": "n02442845",
+      "name": "mink",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 358,
+      "synset": "n02443114",
+      "name": "polecat",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 359,
+      "synset": "n02443484",
+      "name": "black-footed ferret",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 360,
+      "synset": "n02444819",
+      "name": "otter",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 361,
+      "synset": "n02445715",
+      "name": "skunk",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 362,
+      "synset": "n02447366",
+      "name": "badger",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 363,
+      "synset": "n02454379",
+      "name": "armadillo",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 364,
+      "synset": "n02457408",
+      "name": "three-toed sloth",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 365,
+      "synset": "n02480495",
+      "name": "orangutan",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 366,
+      "synset": "n02480855",
+      "name": "gorilla",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 367,
+      "synset": "n02481823",
+      "name": "chimpanzee",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 368,
+      "synset": "n02483362",
+      "name": "gibbon",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 369,
+      "synset": "n02483708",
+      "name": "siamang",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 370,
+      "synset": "n02484975",
+      "name": "guenon",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 371,
+      "synset": "n02486261",
+      "name": "patas",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 372,
+      "synset": "n02486410",
+      "name": "baboon",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 373,
+      "synset": "n02487347",
+      "name": "macaque",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 374,
+      "synset": "n02488291",
+      "name": "langur",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 375,
+      "synset": "n02488702",
+      "name": "colobus",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 376,
+      "synset": "n02489166",
+      "name": "proboscis monkey",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 377,
+      "synset": "n02490219",
+      "name": "marmoset",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 378,
+      "synset": "n02492035",
+      "name": "capuchin",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 379,
+      "synset": "n02492660",
+      "name": "howler monkey",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 380,
+      "synset": "n02493509",
+      "name": "titi",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 381,
+      "synset": "n02493793",
+      "name": "spider monkey",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 382,
+      "synset": "n02494079",
+      "name": "squirrel monkey",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 383,
+      "synset": "n02497673",
+      "name": "Madagascar cat",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 384,
+      "synset": "n02500267",
+      "name": "indri",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 385,
+      "synset": "n02504013",
+      "name": "Indian elephant",
+      "coco_category_id": 22,
+      "coco_name": "elephant",
+      "status": "mapped"
+    },
+    {
+      "index": 386,
+      "synset": "n02504458",
+      "name": "African elephant",
+      "coco_category_id": 22,
+      "coco_name": "elephant",
+      "status": "mapped"
+    },
+    {
+      "index": 387,
+      "synset": "n02509815",
+      "name": "lesser panda",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 388,
+      "synset": "n02510455",
+      "name": "giant panda",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 389,
+      "synset": "n02514041",
+      "name": "barracouta",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 390,
+      "synset": "n02526121",
+      "name": "eel",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 391,
+      "synset": "n02536864",
+      "name": "coho",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 392,
+      "synset": "n02606052",
+      "name": "rock beauty",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 393,
+      "synset": "n02607072",
+      "name": "anemone fish",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 394,
+      "synset": "n02640242",
+      "name": "sturgeon",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 395,
+      "synset": "n02641379",
+      "name": "gar",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 396,
+      "synset": "n02643566",
+      "name": "lionfish",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 397,
+      "synset": "n02655020",
+      "name": "puffer",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 398,
+      "synset": "n02666196",
+      "name": "abacus",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 399,
+      "synset": "n02667093",
+      "name": "abaya",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 400,
+      "synset": "n02669723",
+      "name": "academic gown",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 401,
+      "synset": "n02672831",
+      "name": "accordion",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 402,
+      "synset": "n02676566",
+      "name": "acoustic guitar",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 403,
+      "synset": "n02687172",
+      "name": "aircraft carrier",
+      "coco_category_id": 9,
+      "coco_name": "boat",
+      "status": "mapped"
+    },
+    {
+      "index": 404,
+      "synset": "n02690373",
+      "name": "airliner",
+      "coco_category_id": 5,
+      "coco_name": "airplane",
+      "status": "mapped"
+    },
+    {
+      "index": 405,
+      "synset": "n02692877",
+      "name": "airship",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 406,
+      "synset": "n02699494",
+      "name": "altar",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 407,
+      "synset": "n02701002",
+      "name": "ambulance",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 408,
+      "synset": "n02704792",
+      "name": "amphibian",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 409,
+      "synset": "n02708093",
+      "name": "analog clock",
+      "coco_category_id": 85,
+      "coco_name": "clock",
+      "status": "mapped"
+    },
+    {
+      "index": 410,
+      "synset": "n02727426",
+      "name": "apiary",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 411,
+      "synset": "n02730930",
+      "name": "apron",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 412,
+      "synset": "n02747177",
+      "name": "ashcan",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 413,
+      "synset": "n02749479",
+      "name": "assault rifle",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 414,
+      "synset": "n02769748",
+      "name": "backpack",
+      "coco_category_id": 27,
+      "coco_name": "backpack",
+      "status": "mapped"
+    },
+    {
+      "index": 415,
+      "synset": "n02776631",
+      "name": "bakery",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 416,
+      "synset": "n02777292",
+      "name": "balance beam",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 417,
+      "synset": "n02782093",
+      "name": "balloon",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 418,
+      "synset": "n02783161",
+      "name": "ballpoint",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 419,
+      "synset": "n02786058",
+      "name": "Band Aid",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 420,
+      "synset": "n02787622",
+      "name": "banjo",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 421,
+      "synset": "n02788148",
+      "name": "bannister",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 422,
+      "synset": "n02790996",
+      "name": "barbell",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 423,
+      "synset": "n02791124",
+      "name": "barber chair",
+      "coco_category_id": 62,
+      "coco_name": "chair",
+      "status": "mapped"
+    },
+    {
+      "index": 424,
+      "synset": "n02791270",
+      "name": "barbershop",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 425,
+      "synset": "n02793495",
+      "name": "barn",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 426,
+      "synset": "n02794156",
+      "name": "barometer",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 427,
+      "synset": "n02795169",
+      "name": "barrel",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 428,
+      "synset": "n02797295",
+      "name": "barrow",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 429,
+      "synset": "n02799071",
+      "name": "baseball",
+      "coco_category_id": 37,
+      "coco_name": "sports ball",
+      "status": "mapped"
+    },
+    {
+      "index": 430,
+      "synset": "n02802426",
+      "name": "basketball",
+      "coco_category_id": 37,
+      "coco_name": "sports ball",
+      "status": "mapped"
+    },
+    {
+      "index": 431,
+      "synset": "n02804414",
+      "name": "bassinet",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 432,
+      "synset": "n02804610",
+      "name": "bassoon",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 433,
+      "synset": "n02807133",
+      "name": "bathing cap",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 434,
+      "synset": "n02808304",
+      "name": "bath towel",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 435,
+      "synset": "n02808440",
+      "name": "bathtub",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 436,
+      "synset": "n02814533",
+      "name": "beach wagon",
+      "coco_category_id": 3,
+      "coco_name": "car",
+      "status": "mapped"
+    },
+    {
+      "index": 437,
+      "synset": "n02814860",
+      "name": "beacon",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 438,
+      "synset": "n02815834",
+      "name": "beaker",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 439,
+      "synset": "n02817516",
+      "name": "bearskin",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 440,
+      "synset": "n02823428",
+      "name": "beer bottle",
+      "coco_category_id": 44,
+      "coco_name": "bottle",
+      "status": "mapped"
+    },
+    {
+      "index": 441,
+      "synset": "n02823750",
+      "name": "beer glass",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 442,
+      "synset": "n02825657",
+      "name": "bell cote",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 443,
+      "synset": "n02834397",
+      "name": "bib",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 444,
+      "synset": "n02835271",
+      "name": "bicycle-built-for-two",
+      "coco_category_id": 2,
+      "coco_name": "bicycle",
+      "status": "mapped"
+    },
+    {
+      "index": 445,
+      "synset": "n02837789",
+      "name": "bikini",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 446,
+      "synset": "n02840245",
+      "name": "binder",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 447,
+      "synset": "n02841315",
+      "name": "binoculars",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 448,
+      "synset": "n02843684",
+      "name": "birdhouse",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 449,
+      "synset": "n02859443",
+      "name": "boathouse",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 450,
+      "synset": "n02860847",
+      "name": "bobsled",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 451,
+      "synset": "n02865351",
+      "name": "bolo tie",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 452,
+      "synset": "n02869837",
+      "name": "bonnet",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 453,
+      "synset": "n02870880",
+      "name": "bookcase",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 454,
+      "synset": "n02871525",
+      "name": "bookshop",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 455,
+      "synset": "n02877765",
+      "name": "bottlecap",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 456,
+      "synset": "n02879718",
+      "name": "bow",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 457,
+      "synset": "n02883205",
+      "name": "bow tie",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 458,
+      "synset": "n02892201",
+      "name": "brass",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 459,
+      "synset": "n02892767",
+      "name": "brassiere",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 460,
+      "synset": "n02894605",
+      "name": "breakwater",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 461,
+      "synset": "n02895154",
+      "name": "breastplate",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 462,
+      "synset": "n02906734",
+      "name": "broom",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 463,
+      "synset": "n02909870",
+      "name": "bucket",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 464,
+      "synset": "n02910353",
+      "name": "buckle",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 465,
+      "synset": "n02916936",
+      "name": "bulletproof vest",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 466,
+      "synset": "n02917067",
+      "name": "bullet train",
+      "coco_category_id": 7,
+      "coco_name": "train",
+      "status": "mapped"
+    },
+    {
+      "index": 467,
+      "synset": "n02927161",
+      "name": "butcher shop",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 468,
+      "synset": "n02930766",
+      "name": "cab",
+      "coco_category_id": 3,
+      "coco_name": "car",
+      "status": "mapped"
+    },
+    {
+      "index": 469,
+      "synset": "n02939185",
+      "name": "caldron",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 470,
+      "synset": "n02948072",
+      "name": "candle",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 471,
+      "synset": "n02950826",
+      "name": "cannon",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 472,
+      "synset": "n02951358",
+      "name": "canoe",
+      "coco_category_id": 9,
+      "coco_name": "boat",
+      "status": "mapped"
+    },
+    {
+      "index": 473,
+      "synset": "n02951585",
+      "name": "can opener",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 474,
+      "synset": "n02963159",
+      "name": "cardigan",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 475,
+      "synset": "n02965783",
+      "name": "car mirror",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 476,
+      "synset": "n02966193",
+      "name": "carousel",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 477,
+      "synset": "n02966687",
+      "name": "carpenter's kit",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 478,
+      "synset": "n02971356",
+      "name": "carton",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 479,
+      "synset": "n02974003",
+      "name": "car wheel",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 480,
+      "synset": "n02977058",
+      "name": "cash machine",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 481,
+      "synset": "n02978881",
+      "name": "cassette",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 482,
+      "synset": "n02979186",
+      "name": "cassette player",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 483,
+      "synset": "n02980441",
+      "name": "castle",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 484,
+      "synset": "n02981792",
+      "name": "catamaran",
+      "coco_category_id": 9,
+      "coco_name": "boat",
+      "status": "mapped"
+    },
+    {
+      "index": 485,
+      "synset": "n02988304",
+      "name": "CD player",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 486,
+      "synset": "n02992211",
+      "name": "cello",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 487,
+      "synset": "n02992529",
+      "name": "cellular telephone",
+      "coco_category_id": 77,
+      "coco_name": "cell phone",
+      "status": "mapped"
+    },
+    {
+      "index": 488,
+      "synset": "n02999410",
+      "name": "chain",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 489,
+      "synset": "n03000134",
+      "name": "chainlink fence",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 490,
+      "synset": "n03000247",
+      "name": "chain mail",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 491,
+      "synset": "n03000684",
+      "name": "chain saw",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 492,
+      "synset": "n03014705",
+      "name": "chest",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 493,
+      "synset": "n03016953",
+      "name": "chiffonier",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 494,
+      "synset": "n03017168",
+      "name": "chime",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 495,
+      "synset": "n03018349",
+      "name": "china cabinet",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 496,
+      "synset": "n03026506",
+      "name": "Christmas stocking",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 497,
+      "synset": "n03028079",
+      "name": "church",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 498,
+      "synset": "n03032252",
+      "name": "cinema",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 499,
+      "synset": "n03041632",
+      "name": "cleaver",
+      "coco_category_id": 49,
+      "coco_name": "knife",
+      "status": "mapped"
+    },
+    {
+      "index": 500,
+      "synset": "n03042490",
+      "name": "cliff dwelling",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 501,
+      "synset": "n03045698",
+      "name": "cloak",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 502,
+      "synset": "n03047690",
+      "name": "clog",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 503,
+      "synset": "n03062245",
+      "name": "cocktail shaker",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 504,
+      "synset": "n03063599",
+      "name": "coffee mug",
+      "coco_category_id": 47,
+      "coco_name": "cup",
+      "status": "mapped"
+    },
+    {
+      "index": 505,
+      "synset": "n03063689",
+      "name": "coffeepot",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 506,
+      "synset": "n03065424",
+      "name": "coil",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 507,
+      "synset": "n03075370",
+      "name": "combination lock",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 508,
+      "synset": "n03085013",
+      "name": "computer keyboard",
+      "coco_category_id": 76,
+      "coco_name": "keyboard",
+      "status": "mapped"
+    },
+    {
+      "index": 509,
+      "synset": "n03089624",
+      "name": "confectionery",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 510,
+      "synset": "n03095699",
+      "name": "container ship",
+      "coco_category_id": 9,
+      "coco_name": "boat",
+      "status": "mapped"
+    },
+    {
+      "index": 511,
+      "synset": "n03100240",
+      "name": "convertible",
+      "coco_category_id": 3,
+      "coco_name": "car",
+      "status": "mapped"
+    },
+    {
+      "index": 512,
+      "synset": "n03109150",
+      "name": "corkscrew",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 513,
+      "synset": "n03110669",
+      "name": "cornet",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 514,
+      "synset": "n03124043",
+      "name": "cowboy boot",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 515,
+      "synset": "n03124170",
+      "name": "cowboy hat",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 516,
+      "synset": "n03125729",
+      "name": "cradle",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 517,
+      "synset": "n03126707",
+      "name": "crane",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 518,
+      "synset": "n03127747",
+      "name": "crash helmet",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 519,
+      "synset": "n03127925",
+      "name": "crate",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 520,
+      "synset": "n03131574",
+      "name": "crib",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 521,
+      "synset": "n03133878",
+      "name": "Crock Pot",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 522,
+      "synset": "n03134739",
+      "name": "croquet ball",
+      "coco_category_id": 37,
+      "coco_name": "sports ball",
+      "status": "mapped"
+    },
+    {
+      "index": 523,
+      "synset": "n03141823",
+      "name": "crutch",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 524,
+      "synset": "n03146219",
+      "name": "cuirass",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 525,
+      "synset": "n03160309",
+      "name": "dam",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 526,
+      "synset": "n03179701",
+      "name": "desk",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 527,
+      "synset": "n03180011",
+      "name": "desktop computer",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 528,
+      "synset": "n03187595",
+      "name": "dial telephone",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 529,
+      "synset": "n03188531",
+      "name": "diaper",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 530,
+      "synset": "n03196217",
+      "name": "digital clock",
+      "coco_category_id": 85,
+      "coco_name": "clock",
+      "status": "mapped"
+    },
+    {
+      "index": 531,
+      "synset": "n03197337",
+      "name": "digital watch",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 532,
+      "synset": "n03201208",
+      "name": "dining table",
+      "coco_category_id": 67,
+      "coco_name": "dining table",
+      "status": "mapped"
+    },
+    {
+      "index": 533,
+      "synset": "n03207743",
+      "name": "dishrag",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 534,
+      "synset": "n03207941",
+      "name": "dishwasher",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 535,
+      "synset": "n03208938",
+      "name": "disk brake",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 536,
+      "synset": "n03216828",
+      "name": "dock",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 537,
+      "synset": "n03218198",
+      "name": "dogsled",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 538,
+      "synset": "n03220513",
+      "name": "dome",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 539,
+      "synset": "n03223299",
+      "name": "doormat",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 540,
+      "synset": "n03240683",
+      "name": "drilling platform",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 541,
+      "synset": "n03249569",
+      "name": "drum",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 542,
+      "synset": "n03250847",
+      "name": "drumstick",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 543,
+      "synset": "n03255030",
+      "name": "dumbbell",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 544,
+      "synset": "n03259280",
+      "name": "Dutch oven",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 545,
+      "synset": "n03271574",
+      "name": "electric fan",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 546,
+      "synset": "n03272010",
+      "name": "electric guitar",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 547,
+      "synset": "n03272562",
+      "name": "electric locomotive",
+      "coco_category_id": 7,
+      "coco_name": "train",
+      "status": "mapped"
+    },
+    {
+      "index": 548,
+      "synset": "n03290653",
+      "name": "entertainment center",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 549,
+      "synset": "n03291819",
+      "name": "envelope",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 550,
+      "synset": "n03297495",
+      "name": "espresso maker",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 551,
+      "synset": "n03314780",
+      "name": "face powder",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 552,
+      "synset": "n03325584",
+      "name": "feather boa",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 553,
+      "synset": "n03337140",
+      "name": "file",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 554,
+      "synset": "n03344393",
+      "name": "fireboat",
+      "coco_category_id": 9,
+      "coco_name": "boat",
+      "status": "mapped"
+    },
+    {
+      "index": 555,
+      "synset": "n03345487",
+      "name": "fire engine",
+      "coco_category_id": 8,
+      "coco_name": "truck",
+      "status": "mapped"
+    },
+    {
+      "index": 556,
+      "synset": "n03347037",
+      "name": "fire screen",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 557,
+      "synset": "n03355925",
+      "name": "flagpole",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 558,
+      "synset": "n03372029",
+      "name": "flute",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 559,
+      "synset": "n03376595",
+      "name": "folding chair",
+      "coco_category_id": 62,
+      "coco_name": "chair",
+      "status": "mapped"
+    },
+    {
+      "index": 560,
+      "synset": "n03379051",
+      "name": "football helmet",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 561,
+      "synset": "n03384352",
+      "name": "forklift",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 562,
+      "synset": "n03388043",
+      "name": "fountain",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 563,
+      "synset": "n03388183",
+      "name": "fountain pen",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 564,
+      "synset": "n03388549",
+      "name": "four-poster",
+      "coco_category_id": 65,
+      "coco_name": "bed",
+      "status": "mapped"
+    },
+    {
+      "index": 565,
+      "synset": "n03393912",
+      "name": "freight car",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 566,
+      "synset": "n03394916",
+      "name": "French horn",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 567,
+      "synset": "n03400231",
+      "name": "frying pan",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 568,
+      "synset": "n03404251",
+      "name": "fur coat",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 569,
+      "synset": "n03417042",
+      "name": "garbage truck",
+      "coco_category_id": 8,
+      "coco_name": "truck",
+      "status": "mapped"
+    },
+    {
+      "index": 570,
+      "synset": "n03424325",
+      "name": "gasmask",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 571,
+      "synset": "n03425413",
+      "name": "gas pump",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 572,
+      "synset": "n03443371",
+      "name": "goblet",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 573,
+      "synset": "n03444034",
+      "name": "go-kart",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 574,
+      "synset": "n03445777",
+      "name": "golf ball",
+      "coco_category_id": 37,
+      "coco_name": "sports ball",
+      "status": "mapped"
+    },
+    {
+      "index": 575,
+      "synset": "n03445924",
+      "name": "golfcart",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 576,
+      "synset": "n03447447",
+      "name": "gondola",
+      "coco_category_id": 9,
+      "coco_name": "boat",
+      "status": "mapped"
+    },
+    {
+      "index": 577,
+      "synset": "n03447721",
+      "name": "gong",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 578,
+      "synset": "n03450230",
+      "name": "gown",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 579,
+      "synset": "n03452741",
+      "name": "grand piano",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 580,
+      "synset": "n03457902",
+      "name": "greenhouse",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 581,
+      "synset": "n03459775",
+      "name": "grille",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 582,
+      "synset": "n03461385",
+      "name": "grocery store",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 583,
+      "synset": "n03467068",
+      "name": "guillotine",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 584,
+      "synset": "n03476684",
+      "name": "hair slide",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 585,
+      "synset": "n03476991",
+      "name": "hair spray",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 586,
+      "synset": "n03478589",
+      "name": "half track",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 587,
+      "synset": "n03481172",
+      "name": "hammer",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 588,
+      "synset": "n03482405",
+      "name": "hamper",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 589,
+      "synset": "n03483316",
+      "name": "hand blower",
+      "coco_category_id": 89,
+      "coco_name": "hair drier",
+      "status": "mapped"
+    },
+    {
+      "index": 590,
+      "synset": "n03485407",
+      "name": "hand-held computer",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 591,
+      "synset": "n03485794",
+      "name": "handkerchief",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 592,
+      "synset": "n03492542",
+      "name": "hard disc",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 593,
+      "synset": "n03494278",
+      "name": "harmonica",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 594,
+      "synset": "n03495258",
+      "name": "harp",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 595,
+      "synset": "n03496892",
+      "name": "harvester",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 596,
+      "synset": "n03498962",
+      "name": "hatchet",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 597,
+      "synset": "n03527444",
+      "name": "holster",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 598,
+      "synset": "n03529860",
+      "name": "home theater",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 599,
+      "synset": "n03530642",
+      "name": "honeycomb",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 600,
+      "synset": "n03532672",
+      "name": "hook",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 601,
+      "synset": "n03534580",
+      "name": "hoopskirt",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 602,
+      "synset": "n03535780",
+      "name": "horizontal bar",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 603,
+      "synset": "n03538406",
+      "name": "horse cart",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 604,
+      "synset": "n03544143",
+      "name": "hourglass",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 605,
+      "synset": "n03584254",
+      "name": "iPod",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 606,
+      "synset": "n03584829",
+      "name": "iron",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 607,
+      "synset": "n03590841",
+      "name": "jack-o'-lantern",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 608,
+      "synset": "n03594734",
+      "name": "jean",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 609,
+      "synset": "n03594945",
+      "name": "jeep",
+      "coco_category_id": 3,
+      "coco_name": "car",
+      "status": "mapped"
+    },
+    {
+      "index": 610,
+      "synset": "n03595614",
+      "name": "jersey",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 611,
+      "synset": "n03598930",
+      "name": "jigsaw puzzle",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 612,
+      "synset": "n03599486",
+      "name": "jinrikisha",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 613,
+      "synset": "n03602883",
+      "name": "joystick",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 614,
+      "synset": "n03617480",
+      "name": "kimono",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 615,
+      "synset": "n03623198",
+      "name": "knee pad",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 616,
+      "synset": "n03627232",
+      "name": "knot",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 617,
+      "synset": "n03630383",
+      "name": "lab coat",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 618,
+      "synset": "n03633091",
+      "name": "ladle",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 619,
+      "synset": "n03637318",
+      "name": "lampshade",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 620,
+      "synset": "n03642806",
+      "name": "laptop",
+      "coco_category_id": 73,
+      "coco_name": "laptop",
+      "status": "mapped"
+    },
+    {
+      "index": 621,
+      "synset": "n03649909",
+      "name": "lawn mower",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 622,
+      "synset": "n03657121",
+      "name": "lens cap",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 623,
+      "synset": "n03658185",
+      "name": "letter opener",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 624,
+      "synset": "n03661043",
+      "name": "library",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 625,
+      "synset": "n03662601",
+      "name": "lifeboat",
+      "coco_category_id": 9,
+      "coco_name": "boat",
+      "status": "mapped"
+    },
+    {
+      "index": 626,
+      "synset": "n03666591",
+      "name": "lighter",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 627,
+      "synset": "n03670208",
+      "name": "limousine",
+      "coco_category_id": 3,
+      "coco_name": "car",
+      "status": "mapped"
+    },
+    {
+      "index": 628,
+      "synset": "n03673027",
+      "name": "liner",
+      "coco_category_id": 9,
+      "coco_name": "boat",
+      "status": "mapped"
+    },
+    {
+      "index": 629,
+      "synset": "n03676483",
+      "name": "lipstick",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 630,
+      "synset": "n03680355",
+      "name": "Loafer",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 631,
+      "synset": "n03690938",
+      "name": "lotion",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 632,
+      "synset": "n03691459",
+      "name": "loudspeaker",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 633,
+      "synset": "n03692522",
+      "name": "loupe",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 634,
+      "synset": "n03697007",
+      "name": "lumbermill",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 635,
+      "synset": "n03706229",
+      "name": "magnetic compass",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 636,
+      "synset": "n03709823",
+      "name": "mailbag",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 637,
+      "synset": "n03710193",
+      "name": "mailbox",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 638,
+      "synset": "n03710637",
+      "name": "maillot",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 639,
+      "synset": "n03710721",
+      "name": "maillot tank suit",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 640,
+      "synset": "n03717622",
+      "name": "manhole cover",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 641,
+      "synset": "n03720891",
+      "name": "maraca",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 642,
+      "synset": "n03721384",
+      "name": "marimba",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 643,
+      "synset": "n03724870",
+      "name": "mask",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 644,
+      "synset": "n03729826",
+      "name": "matchstick",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 645,
+      "synset": "n03733131",
+      "name": "maypole",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 646,
+      "synset": "n03733281",
+      "name": "maze",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 647,
+      "synset": "n03733805",
+      "name": "measuring cup",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 648,
+      "synset": "n03742115",
+      "name": "medicine chest",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 649,
+      "synset": "n03743016",
+      "name": "megalith",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 650,
+      "synset": "n03759954",
+      "name": "microphone",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 651,
+      "synset": "n03761084",
+      "name": "microwave",
+      "coco_category_id": 78,
+      "coco_name": "microwave",
+      "status": "mapped"
+    },
+    {
+      "index": 652,
+      "synset": "n03763968",
+      "name": "military uniform",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 653,
+      "synset": "n03764736",
+      "name": "milk can",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 654,
+      "synset": "n03769881",
+      "name": "minibus",
+      "coco_category_id": 6,
+      "coco_name": "bus",
+      "status": "mapped"
+    },
+    {
+      "index": 655,
+      "synset": "n03770439",
+      "name": "miniskirt",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 656,
+      "synset": "n03770679",
+      "name": "minivan",
+      "coco_category_id": 3,
+      "coco_name": "car",
+      "status": "mapped"
+    },
+    {
+      "index": 657,
+      "synset": "n03773504",
+      "name": "missile",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 658,
+      "synset": "n03775071",
+      "name": "mitten",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 659,
+      "synset": "n03775546",
+      "name": "mixing bowl",
+      "coco_category_id": 51,
+      "coco_name": "bowl",
+      "status": "mapped"
+    },
+    {
+      "index": 660,
+      "synset": "n03776460",
+      "name": "mobile home",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 661,
+      "synset": "n03777568",
+      "name": "Model T",
+      "coco_category_id": 3,
+      "coco_name": "car",
+      "status": "mapped"
+    },
+    {
+      "index": 662,
+      "synset": "n03777754",
+      "name": "modem",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 663,
+      "synset": "n03781244",
+      "name": "monastery",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 664,
+      "synset": "n03782006",
+      "name": "monitor",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 665,
+      "synset": "n03785016",
+      "name": "moped",
+      "coco_category_id": 4,
+      "coco_name": "motorcycle",
+      "status": "mapped"
+    },
+    {
+      "index": 666,
+      "synset": "n03786901",
+      "name": "mortar",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 667,
+      "synset": "n03787032",
+      "name": "mortarboard",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 668,
+      "synset": "n03788195",
+      "name": "mosque",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 669,
+      "synset": "n03788365",
+      "name": "mosquito net",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 670,
+      "synset": "n03791053",
+      "name": "motor scooter",
+      "coco_category_id": 4,
+      "coco_name": "motorcycle",
+      "status": "mapped"
+    },
+    {
+      "index": 671,
+      "synset": "n03792782",
+      "name": "mountain bike",
+      "coco_category_id": 2,
+      "coco_name": "bicycle",
+      "status": "mapped"
+    },
+    {
+      "index": 672,
+      "synset": "n03792972",
+      "name": "mountain tent",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 673,
+      "synset": "n03793489",
+      "name": "mouse",
+      "coco_category_id": 74,
+      "coco_name": "mouse",
+      "status": "mapped"
+    },
+    {
+      "index": 674,
+      "synset": "n03794056",
+      "name": "mousetrap",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 675,
+      "synset": "n03796401",
+      "name": "moving van",
+      "coco_category_id": 8,
+      "coco_name": "truck",
+      "status": "mapped"
+    },
+    {
+      "index": 676,
+      "synset": "n03803284",
+      "name": "muzzle",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 677,
+      "synset": "n03804744",
+      "name": "nail",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 678,
+      "synset": "n03814639",
+      "name": "neck brace",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 679,
+      "synset": "n03814906",
+      "name": "necklace",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 680,
+      "synset": "n03825788",
+      "name": "nipple",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 681,
+      "synset": "n03832673",
+      "name": "notebook",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 682,
+      "synset": "n03837869",
+      "name": "obelisk",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 683,
+      "synset": "n03838899",
+      "name": "oboe",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 684,
+      "synset": "n03840681",
+      "name": "ocarina",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 685,
+      "synset": "n03841143",
+      "name": "odometer",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 686,
+      "synset": "n03843555",
+      "name": "oil filter",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 687,
+      "synset": "n03854065",
+      "name": "organ",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 688,
+      "synset": "n03857828",
+      "name": "oscilloscope",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 689,
+      "synset": "n03866082",
+      "name": "overskirt",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 690,
+      "synset": "n03868242",
+      "name": "oxcart",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 691,
+      "synset": "n03868863",
+      "name": "oxygen mask",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 692,
+      "synset": "n03871628",
+      "name": "packet",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 693,
+      "synset": "n03873416",
+      "name": "paddle",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 694,
+      "synset": "n03874293",
+      "name": "paddlewheel",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 695,
+      "synset": "n03874599",
+      "name": "padlock",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 696,
+      "synset": "n03876231",
+      "name": "paintbrush",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 697,
+      "synset": "n03877472",
+      "name": "pajama",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 698,
+      "synset": "n03877845",
+      "name": "palace",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 699,
+      "synset": "n03884397",
+      "name": "panpipe",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 700,
+      "synset": "n03887697",
+      "name": "paper towel",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 701,
+      "synset": "n03888257",
+      "name": "parachute",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 702,
+      "synset": "n03888605",
+      "name": "parallel bars",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 703,
+      "synset": "n03891251",
+      "name": "park bench",
+      "coco_category_id": 15,
+      "coco_name": "bench",
+      "status": "mapped"
+    },
+    {
+      "index": 704,
+      "synset": "n03891332",
+      "name": "parking meter",
+      "coco_category_id": 14,
+      "coco_name": "parking meter",
+      "status": "mapped"
+    },
+    {
+      "index": 705,
+      "synset": "n03895866",
+      "name": "passenger car",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 706,
+      "synset": "n03899768",
+      "name": "patio",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 707,
+      "synset": "n03902125",
+      "name": "pay-phone",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 708,
+      "synset": "n03903868",
+      "name": "pedestal",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 709,
+      "synset": "n03908618",
+      "name": "pencil box",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 710,
+      "synset": "n03908714",
+      "name": "pencil sharpener",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 711,
+      "synset": "n03916031",
+      "name": "perfume",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 712,
+      "synset": "n03920288",
+      "name": "Petri dish",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 713,
+      "synset": "n03924679",
+      "name": "photocopier",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 714,
+      "synset": "n03929660",
+      "name": "pick",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 715,
+      "synset": "n03929855",
+      "name": "pickelhaube",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 716,
+      "synset": "n03930313",
+      "name": "picket fence",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 717,
+      "synset": "n03930630",
+      "name": "pickup",
+      "coco_category_id": 8,
+      "coco_name": "truck",
+      "status": "mapped"
+    },
+    {
+      "index": 718,
+      "synset": "n03933933",
+      "name": "pier",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 719,
+      "synset": "n03935335",
+      "name": "piggy bank",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 720,
+      "synset": "n03937543",
+      "name": "pill bottle",
+      "coco_category_id": 44,
+      "coco_name": "bottle",
+      "status": "mapped"
+    },
+    {
+      "index": 721,
+      "synset": "n03938244",
+      "name": "pillow",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 722,
+      "synset": "n03942813",
+      "name": "ping-pong ball",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 723,
+      "synset": "n03944341",
+      "name": "pinwheel",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 724,
+      "synset": "n03947888",
+      "name": "pirate",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 725,
+      "synset": "n03950228",
+      "name": "pitcher",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 726,
+      "synset": "n03954731",
+      "name": "plane",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 727,
+      "synset": "n03956157",
+      "name": "planetarium",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 728,
+      "synset": "n03958227",
+      "name": "plastic bag",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 729,
+      "synset": "n03961711",
+      "name": "plate rack",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 730,
+      "synset": "n03967562",
+      "name": "plow",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 731,
+      "synset": "n03970156",
+      "name": "plunger",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 732,
+      "synset": "n03976467",
+      "name": "Polaroid camera",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 733,
+      "synset": "n03976657",
+      "name": "pole",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 734,
+      "synset": "n03977966",
+      "name": "police van",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 735,
+      "synset": "n03980874",
+      "name": "poncho",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 736,
+      "synset": "n03982430",
+      "name": "pool table",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 737,
+      "synset": "n03983396",
+      "name": "pop bottle",
+      "coco_category_id": 44,
+      "coco_name": "bottle",
+      "status": "mapped"
+    },
+    {
+      "index": 738,
+      "synset": "n03991062",
+      "name": "pot",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 739,
+      "synset": "n03992509",
+      "name": "potter's wheel",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 740,
+      "synset": "n03995372",
+      "name": "power drill",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 741,
+      "synset": "n03998194",
+      "name": "prayer rug",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 742,
+      "synset": "n04004767",
+      "name": "printer",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 743,
+      "synset": "n04005630",
+      "name": "prison",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 744,
+      "synset": "n04008634",
+      "name": "projectile",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 745,
+      "synset": "n04009552",
+      "name": "projector",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 746,
+      "synset": "n04019541",
+      "name": "puck",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 747,
+      "synset": "n04023962",
+      "name": "punching bag",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 748,
+      "synset": "n04026417",
+      "name": "purse",
+      "coco_category_id": 31,
+      "coco_name": "handbag",
+      "status": "mapped"
+    },
+    {
+      "index": 749,
+      "synset": "n04033901",
+      "name": "quill",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 750,
+      "synset": "n04033995",
+      "name": "quilt",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 751,
+      "synset": "n04037443",
+      "name": "racer",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 752,
+      "synset": "n04039381",
+      "name": "racket",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 753,
+      "synset": "n04040759",
+      "name": "radiator",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 754,
+      "synset": "n04041544",
+      "name": "radio",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 755,
+      "synset": "n04044716",
+      "name": "radio telescope",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 756,
+      "synset": "n04049303",
+      "name": "rain barrel",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 757,
+      "synset": "n04065272",
+      "name": "recreational vehicle",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 758,
+      "synset": "n04067472",
+      "name": "reel",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 759,
+      "synset": "n04069434",
+      "name": "reflex camera",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 760,
+      "synset": "n04070727",
+      "name": "refrigerator",
+      "coco_category_id": 82,
+      "coco_name": "refrigerator",
+      "status": "mapped"
+    },
+    {
+      "index": 761,
+      "synset": "n04074963",
+      "name": "remote control",
+      "coco_category_id": 75,
+      "coco_name": "remote",
+      "status": "mapped"
+    },
+    {
+      "index": 762,
+      "synset": "n04081281",
+      "name": "restaurant",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 763,
+      "synset": "n04086273",
+      "name": "revolver",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 764,
+      "synset": "n04090263",
+      "name": "rifle",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 765,
+      "synset": "n04099969",
+      "name": "rocking chair",
+      "coco_category_id": 62,
+      "coco_name": "chair",
+      "status": "mapped"
+    },
+    {
+      "index": 766,
+      "synset": "n04111531",
+      "name": "rotisserie",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 767,
+      "synset": "n04116512",
+      "name": "rubber eraser",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 768,
+      "synset": "n04118538",
+      "name": "rugby ball",
+      "coco_category_id": 37,
+      "coco_name": "sports ball",
+      "status": "mapped"
+    },
+    {
+      "index": 769,
+      "synset": "n04118776",
+      "name": "rule",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 770,
+      "synset": "n04120489",
+      "name": "running shoe",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 771,
+      "synset": "n04125021",
+      "name": "safe",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 772,
+      "synset": "n04127249",
+      "name": "safety pin",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 773,
+      "synset": "n04131690",
+      "name": "saltshaker",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 774,
+      "synset": "n04133789",
+      "name": "sandal",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 775,
+      "synset": "n04136333",
+      "name": "sarong",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 776,
+      "synset": "n04141076",
+      "name": "sax",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 777,
+      "synset": "n04141327",
+      "name": "scabbard",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 778,
+      "synset": "n04141975",
+      "name": "scale",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 779,
+      "synset": "n04146614",
+      "name": "school bus",
+      "coco_category_id": 6,
+      "coco_name": "bus",
+      "status": "mapped"
+    },
+    {
+      "index": 780,
+      "synset": "n04147183",
+      "name": "schooner",
+      "coco_category_id": 9,
+      "coco_name": "boat",
+      "status": "mapped"
+    },
+    {
+      "index": 781,
+      "synset": "n04149813",
+      "name": "scoreboard",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 782,
+      "synset": "n04152593",
+      "name": "screen",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 783,
+      "synset": "n04153751",
+      "name": "screw",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 784,
+      "synset": "n04154565",
+      "name": "screwdriver",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 785,
+      "synset": "n04162706",
+      "name": "seat belt",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 786,
+      "synset": "n04179913",
+      "name": "sewing machine",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 787,
+      "synset": "n04192698",
+      "name": "shield",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 788,
+      "synset": "n04200800",
+      "name": "shoe shop",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 789,
+      "synset": "n04201297",
+      "name": "shoji",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 790,
+      "synset": "n04204238",
+      "name": "shopping basket",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 791,
+      "synset": "n04204347",
+      "name": "shopping cart",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 792,
+      "synset": "n04208210",
+      "name": "shovel",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 793,
+      "synset": "n04209133",
+      "name": "shower cap",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 794,
+      "synset": "n04209239",
+      "name": "shower curtain",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 795,
+      "synset": "n04228054",
+      "name": "ski",
+      "coco_category_id": 35,
+      "coco_name": "skis",
+      "status": "mapped"
+    },
+    {
+      "index": 796,
+      "synset": "n04229816",
+      "name": "ski mask",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 797,
+      "synset": "n04235860",
+      "name": "sleeping bag",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 798,
+      "synset": "n04238763",
+      "name": "slide rule",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 799,
+      "synset": "n04239074",
+      "name": "sliding door",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 800,
+      "synset": "n04243546",
+      "name": "slot",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 801,
+      "synset": "n04251144",
+      "name": "snorkel",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 802,
+      "synset": "n04252077",
+      "name": "snowmobile",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 803,
+      "synset": "n04252225",
+      "name": "snowplow",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 804,
+      "synset": "n04254120",
+      "name": "soap dispenser",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 805,
+      "synset": "n04254680",
+      "name": "soccer ball",
+      "coco_category_id": 37,
+      "coco_name": "sports ball",
+      "status": "mapped"
+    },
+    {
+      "index": 806,
+      "synset": "n04254777",
+      "name": "sock",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 807,
+      "synset": "n04258138",
+      "name": "solar dish",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 808,
+      "synset": "n04259630",
+      "name": "sombrero",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 809,
+      "synset": "n04263257",
+      "name": "soup bowl",
+      "coco_category_id": 51,
+      "coco_name": "bowl",
+      "status": "mapped"
+    },
+    {
+      "index": 810,
+      "synset": "n04264628",
+      "name": "space bar",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 811,
+      "synset": "n04265275",
+      "name": "space heater",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 812,
+      "synset": "n04266014",
+      "name": "space shuttle",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 813,
+      "synset": "n04270147",
+      "name": "spatula",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 814,
+      "synset": "n04273569",
+      "name": "speedboat",
+      "coco_category_id": 9,
+      "coco_name": "boat",
+      "status": "mapped"
+    },
+    {
+      "index": 815,
+      "synset": "n04275548",
+      "name": "spider web",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 816,
+      "synset": "n04277352",
+      "name": "spindle",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 817,
+      "synset": "n04285008",
+      "name": "sports car",
+      "coco_category_id": 3,
+      "coco_name": "car",
+      "status": "mapped"
+    },
+    {
+      "index": 818,
+      "synset": "n04286575",
+      "name": "spotlight",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 819,
+      "synset": "n04296562",
+      "name": "stage",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 820,
+      "synset": "n04310018",
+      "name": "steam locomotive",
+      "coco_category_id": 7,
+      "coco_name": "train",
+      "status": "mapped"
+    },
+    {
+      "index": 821,
+      "synset": "n04311004",
+      "name": "steel arch bridge",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 822,
+      "synset": "n04311174",
+      "name": "steel drum",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 823,
+      "synset": "n04317175",
+      "name": "stethoscope",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 824,
+      "synset": "n04325704",
+      "name": "stole",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 825,
+      "synset": "n04326547",
+      "name": "stone wall",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 826,
+      "synset": "n04328186",
+      "name": "stopwatch",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 827,
+      "synset": "n04330267",
+      "name": "stove",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 828,
+      "synset": "n04332243",
+      "name": "strainer",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 829,
+      "synset": "n04335435",
+      "name": "streetcar",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 830,
+      "synset": "n04336792",
+      "name": "stretcher",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 831,
+      "synset": "n04344873",
+      "name": "studio couch",
+      "coco_category_id": 63,
+      "coco_name": "couch",
+      "status": "mapped"
+    },
+    {
+      "index": 832,
+      "synset": "n04346328",
+      "name": "stupa",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 833,
+      "synset": "n04347754",
+      "name": "submarine",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 834,
+      "synset": "n04350905",
+      "name": "suit",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 835,
+      "synset": "n04355338",
+      "name": "sundial",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 836,
+      "synset": "n04355933",
+      "name": "sunglass",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 837,
+      "synset": "n04356056",
+      "name": "sunglasses",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 838,
+      "synset": "n04357314",
+      "name": "sunscreen",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 839,
+      "synset": "n04366367",
+      "name": "suspension bridge",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 840,
+      "synset": "n04367480",
+      "name": "swab",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 841,
+      "synset": "n04370456",
+      "name": "sweatshirt",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 842,
+      "synset": "n04371430",
+      "name": "swimming trunks",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 843,
+      "synset": "n04371774",
+      "name": "swing",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 844,
+      "synset": "n04372370",
+      "name": "switch",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 845,
+      "synset": "n04376876",
+      "name": "syringe",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 846,
+      "synset": "n04380533",
+      "name": "table lamp",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 847,
+      "synset": "n04389033",
+      "name": "tank",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 848,
+      "synset": "n04392985",
+      "name": "tape player",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 849,
+      "synset": "n04398044",
+      "name": "teapot",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 850,
+      "synset": "n04399382",
+      "name": "teddy",
+      "coco_category_id": 88,
+      "coco_name": "teddy bear",
+      "status": "mapped"
+    },
+    {
+      "index": 851,
+      "synset": "n04404412",
+      "name": "television",
+      "coco_category_id": 72,
+      "coco_name": "tv",
+      "status": "mapped"
+    },
+    {
+      "index": 852,
+      "synset": "n04409515",
+      "name": "tennis ball",
+      "coco_category_id": 37,
+      "coco_name": "sports ball",
+      "status": "mapped"
+    },
+    {
+      "index": 853,
+      "synset": "n04417672",
+      "name": "thatch",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 854,
+      "synset": "n04418357",
+      "name": "theater curtain",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 855,
+      "synset": "n04423845",
+      "name": "thimble",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 856,
+      "synset": "n04428191",
+      "name": "thresher",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 857,
+      "synset": "n04429376",
+      "name": "throne",
+      "coco_category_id": 62,
+      "coco_name": "chair",
+      "status": "mapped"
+    },
+    {
+      "index": 858,
+      "synset": "n04435653",
+      "name": "tile roof",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 859,
+      "synset": "n04442312",
+      "name": "toaster",
+      "coco_category_id": 80,
+      "coco_name": "toaster",
+      "status": "mapped"
+    },
+    {
+      "index": 860,
+      "synset": "n04443257",
+      "name": "tobacco shop",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 861,
+      "synset": "n04447861",
+      "name": "toilet seat",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 862,
+      "synset": "n04456115",
+      "name": "torch",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 863,
+      "synset": "n04458633",
+      "name": "totem pole",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 864,
+      "synset": "n04461696",
+      "name": "tow truck",
+      "coco_category_id": 8,
+      "coco_name": "truck",
+      "status": "mapped"
+    },
+    {
+      "index": 865,
+      "synset": "n04462240",
+      "name": "toyshop",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 866,
+      "synset": "n04465501",
+      "name": "tractor",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 867,
+      "synset": "n04467665",
+      "name": "trailer truck",
+      "coco_category_id": 8,
+      "coco_name": "truck",
+      "status": "mapped"
+    },
+    {
+      "index": 868,
+      "synset": "n04476259",
+      "name": "tray",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 869,
+      "synset": "n04479046",
+      "name": "trench coat",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 870,
+      "synset": "n04482393",
+      "name": "tricycle",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 871,
+      "synset": "n04483307",
+      "name": "trimaran",
+      "coco_category_id": 9,
+      "coco_name": "boat",
+      "status": "mapped"
+    },
+    {
+      "index": 872,
+      "synset": "n04485082",
+      "name": "tripod",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 873,
+      "synset": "n04486054",
+      "name": "triumphal arch",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 874,
+      "synset": "n04487081",
+      "name": "trolleybus",
+      "coco_category_id": 6,
+      "coco_name": "bus",
+      "status": "mapped"
+    },
+    {
+      "index": 875,
+      "synset": "n04487394",
+      "name": "trombone",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 876,
+      "synset": "n04493381",
+      "name": "tub",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 877,
+      "synset": "n04501370",
+      "name": "turnstile",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 878,
+      "synset": "n04505470",
+      "name": "typewriter keyboard",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 879,
+      "synset": "n04507155",
+      "name": "umbrella",
+      "coco_category_id": 28,
+      "coco_name": "umbrella",
+      "status": "mapped"
+    },
+    {
+      "index": 880,
+      "synset": "n04509417",
+      "name": "unicycle",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 881,
+      "synset": "n04515003",
+      "name": "upright",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 882,
+      "synset": "n04517823",
+      "name": "vacuum",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 883,
+      "synset": "n04522168",
+      "name": "vase",
+      "coco_category_id": 86,
+      "coco_name": "vase",
+      "status": "mapped"
+    },
+    {
+      "index": 884,
+      "synset": "n04523525",
+      "name": "vault",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 885,
+      "synset": "n04525038",
+      "name": "velvet",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 886,
+      "synset": "n04525305",
+      "name": "vending machine",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 887,
+      "synset": "n04532106",
+      "name": "vestment",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 888,
+      "synset": "n04532670",
+      "name": "viaduct",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 889,
+      "synset": "n04536866",
+      "name": "violin",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 890,
+      "synset": "n04540053",
+      "name": "volleyball",
+      "coco_category_id": 37,
+      "coco_name": "sports ball",
+      "status": "mapped"
+    },
+    {
+      "index": 891,
+      "synset": "n04542943",
+      "name": "waffle iron",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 892,
+      "synset": "n04548280",
+      "name": "wall clock",
+      "coco_category_id": 85,
+      "coco_name": "clock",
+      "status": "mapped"
+    },
+    {
+      "index": 893,
+      "synset": "n04548362",
+      "name": "wallet",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 894,
+      "synset": "n04550184",
+      "name": "wardrobe",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 895,
+      "synset": "n04552348",
+      "name": "warplane",
+      "coco_category_id": 5,
+      "coco_name": "airplane",
+      "status": "mapped"
+    },
+    {
+      "index": 896,
+      "synset": "n04553703",
+      "name": "washbasin",
+      "coco_category_id": 81,
+      "coco_name": "sink",
+      "status": "mapped"
+    },
+    {
+      "index": 897,
+      "synset": "n04554684",
+      "name": "washer",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 898,
+      "synset": "n04557648",
+      "name": "water bottle",
+      "coco_category_id": 44,
+      "coco_name": "bottle",
+      "status": "mapped"
+    },
+    {
+      "index": 899,
+      "synset": "n04560804",
+      "name": "water jug",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 900,
+      "synset": "n04562935",
+      "name": "water tower",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 901,
+      "synset": "n04579145",
+      "name": "whiskey jug",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 902,
+      "synset": "n04579432",
+      "name": "whistle",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 903,
+      "synset": "n04584207",
+      "name": "wig",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 904,
+      "synset": "n04589890",
+      "name": "window screen",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 905,
+      "synset": "n04590129",
+      "name": "window shade",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 906,
+      "synset": "n04591157",
+      "name": "Windsor tie",
+      "coco_category_id": 32,
+      "coco_name": "tie",
+      "status": "mapped"
+    },
+    {
+      "index": 907,
+      "synset": "n04591713",
+      "name": "wine bottle",
+      "coco_category_id": 44,
+      "coco_name": "bottle",
+      "status": "mapped"
+    },
+    {
+      "index": 908,
+      "synset": "n04592741",
+      "name": "wing",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 909,
+      "synset": "n04596742",
+      "name": "wok",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 910,
+      "synset": "n04597913",
+      "name": "wooden spoon",
+      "coco_category_id": 50,
+      "coco_name": "spoon",
+      "status": "mapped"
+    },
+    {
+      "index": 911,
+      "synset": "n04599235",
+      "name": "wool",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 912,
+      "synset": "n04604644",
+      "name": "worm fence",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 913,
+      "synset": "n04606251",
+      "name": "wreck",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 914,
+      "synset": "n04612504",
+      "name": "yawl",
+      "coco_category_id": 9,
+      "coco_name": "boat",
+      "status": "mapped"
+    },
+    {
+      "index": 915,
+      "synset": "n04613696",
+      "name": "yurt",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 916,
+      "synset": "n06359193",
+      "name": "web site",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 917,
+      "synset": "n06596364",
+      "name": "comic book",
+      "coco_category_id": 84,
+      "coco_name": "book",
+      "status": "mapped"
+    },
+    {
+      "index": 918,
+      "synset": "n06785654",
+      "name": "crossword puzzle",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 919,
+      "synset": "n06794110",
+      "name": "street sign",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 920,
+      "synset": "n06874185",
+      "name": "traffic light",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 921,
+      "synset": "n07248320",
+      "name": "book jacket",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 922,
+      "synset": "n07565083",
+      "name": "menu",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 923,
+      "synset": "n07579787",
+      "name": "plate",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 924,
+      "synset": "n07583066",
+      "name": "guacamole",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 925,
+      "synset": "n07584110",
+      "name": "consomme",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 926,
+      "synset": "n07590611",
+      "name": "hot pot",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 927,
+      "synset": "n07613480",
+      "name": "trifle",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 928,
+      "synset": "n07614500",
+      "name": "ice cream",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 929,
+      "synset": "n07615774",
+      "name": "ice lolly",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 930,
+      "synset": "n07684084",
+      "name": "French loaf",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 931,
+      "synset": "n07693725",
+      "name": "bagel",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 932,
+      "synset": "n07695742",
+      "name": "pretzel",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 933,
+      "synset": "n07697313",
+      "name": "cheeseburger",
+      "coco_category_id": 54,
+      "coco_name": "sandwich",
+      "status": "mapped"
+    },
+    {
+      "index": 934,
+      "synset": "n07697537",
+      "name": "hotdog",
+      "coco_category_id": 58,
+      "coco_name": "hot dog",
+      "status": "mapped"
+    },
+    {
+      "index": 935,
+      "synset": "n07711569",
+      "name": "mashed potato",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 936,
+      "synset": "n07714571",
+      "name": "head cabbage",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 937,
+      "synset": "n07714990",
+      "name": "broccoli",
+      "coco_category_id": 56,
+      "coco_name": "broccoli",
+      "status": "mapped"
+    },
+    {
+      "index": 938,
+      "synset": "n07715103",
+      "name": "cauliflower",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 939,
+      "synset": "n07716358",
+      "name": "zucchini",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 940,
+      "synset": "n07716906",
+      "name": "spaghetti squash",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 941,
+      "synset": "n07717410",
+      "name": "acorn squash",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 942,
+      "synset": "n07717556",
+      "name": "butternut squash",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 943,
+      "synset": "n07718472",
+      "name": "cucumber",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 944,
+      "synset": "n07718747",
+      "name": "artichoke",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 945,
+      "synset": "n07720875",
+      "name": "bell pepper",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 946,
+      "synset": "n07730033",
+      "name": "cardoon",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 947,
+      "synset": "n07734744",
+      "name": "mushroom",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 948,
+      "synset": "n07742313",
+      "name": "Granny Smith",
+      "coco_category_id": 53,
+      "coco_name": "apple",
+      "status": "mapped"
+    },
+    {
+      "index": 949,
+      "synset": "n07745940",
+      "name": "strawberry",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 950,
+      "synset": "n07747607",
+      "name": "orange",
+      "coco_category_id": 55,
+      "coco_name": "orange",
+      "status": "mapped"
+    },
+    {
+      "index": 951,
+      "synset": "n07749582",
+      "name": "lemon",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 952,
+      "synset": "n07753113",
+      "name": "fig",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 953,
+      "synset": "n07753275",
+      "name": "pineapple",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 954,
+      "synset": "n07753592",
+      "name": "banana",
+      "coco_category_id": 52,
+      "coco_name": "banana",
+      "status": "mapped"
+    },
+    {
+      "index": 955,
+      "synset": "n07754684",
+      "name": "jackfruit",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 956,
+      "synset": "n07760859",
+      "name": "custard apple",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 957,
+      "synset": "n07768694",
+      "name": "pomegranate",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 958,
+      "synset": "n07802026",
+      "name": "hay",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 959,
+      "synset": "n07831146",
+      "name": "carbonara",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 960,
+      "synset": "n07836838",
+      "name": "chocolate sauce",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 961,
+      "synset": "n07860988",
+      "name": "dough",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 962,
+      "synset": "n07871810",
+      "name": "meat loaf",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 963,
+      "synset": "n07873807",
+      "name": "pizza",
+      "coco_category_id": 59,
+      "coco_name": "pizza",
+      "status": "mapped"
+    },
+    {
+      "index": 964,
+      "synset": "n07875152",
+      "name": "potpie",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 965,
+      "synset": "n07880968",
+      "name": "burrito",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 966,
+      "synset": "n07892512",
+      "name": "red wine",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 967,
+      "synset": "n07920052",
+      "name": "espresso",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 968,
+      "synset": "n07930864",
+      "name": "cup",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 969,
+      "synset": "n07932039",
+      "name": "eggnog",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 970,
+      "synset": "n09193705",
+      "name": "alp",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 971,
+      "synset": "n09229709",
+      "name": "bubble",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 972,
+      "synset": "n09246464",
+      "name": "cliff",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 973,
+      "synset": "n09256479",
+      "name": "coral reef",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 974,
+      "synset": "n09288635",
+      "name": "geyser",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 975,
+      "synset": "n09332890",
+      "name": "lakeside",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 976,
+      "synset": "n09399592",
+      "name": "promontory",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 977,
+      "synset": "n09421951",
+      "name": "sandbar",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 978,
+      "synset": "n09428293",
+      "name": "seashore",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 979,
+      "synset": "n09468604",
+      "name": "valley",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 980,
+      "synset": "n09472597",
+      "name": "volcano",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 981,
+      "synset": "n09835506",
+      "name": "ballplayer",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 982,
+      "synset": "n10148035",
+      "name": "groom",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 983,
+      "synset": "n10565667",
+      "name": "scuba diver",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 984,
+      "synset": "n11879895",
+      "name": "rapeseed",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 985,
+      "synset": "n11939491",
+      "name": "daisy",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 986,
+      "synset": "n12057211",
+      "name": "yellow lady's slipper",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 987,
+      "synset": "n12144580",
+      "name": "corn",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 988,
+      "synset": "n12267677",
+      "name": "acorn",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 989,
+      "synset": "n12620546",
+      "name": "hip",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 990,
+      "synset": "n12768682",
+      "name": "buckeye",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 991,
+      "synset": "n12985857",
+      "name": "coral fungus",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 992,
+      "synset": "n12998815",
+      "name": "agaric",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 993,
+      "synset": "n13037406",
+      "name": "gyromitra",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 994,
+      "synset": "n13040303",
+      "name": "stinkhorn",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 995,
+      "synset": "n13044778",
+      "name": "earthstar",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 996,
+      "synset": "n13052670",
+      "name": "hen-of-the-woods",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 997,
+      "synset": "n13054560",
+      "name": "bolete",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 998,
+      "synset": "n13133613",
+      "name": "ear",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    },
+    {
+      "index": 999,
+      "synset": "n15075141",
+      "name": "toilet tissue",
+      "coco_category_id": null,
+      "coco_name": null,
+      "status": "not_mappable"
+    }
+  ]
+}
