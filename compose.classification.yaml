@@ -1,0 +1,62 @@
+x-runtime: &runtime
+  image: kurs4-classification:v1
+  build:
+    context: .
+    dockerfile: classification/Dockerfile
+  init: true
+  working_dir: /workspace
+  user: "${LOCAL_UID:-1000}:${LOCAL_GID:-1000}"
+  environment:
+    HOME: /tmp
+    CONTAINER_IMAGE_ID: "${CLASSIFICATION_IMAGE_ID:-unrecorded}"
+    PROJECT_GIT_COMMIT: "${PROJECT_GIT_COMMIT:-}"
+    PROJECT_GIT_STATUS: "${PROJECT_GIT_STATUS:-}"
+  volumes:
+    - ./classification:/workspace/classification:ro
+    - ./detection:/workspace/detection:ro
+    - ./scripts/classification.sh:/workspace/scripts/classification.sh:ro
+    - ./compose.classification.yaml:/workspace/compose.classification.yaml:ro
+    - ./compose.classification.wsl.yaml:/workspace/compose.classification.wsl.yaml:ro
+    - ./data:/workspace/data:ro
+    - ./reports:/workspace/reports
+    - ./storage/locks:/workspace/storage/locks
+    - ./.git:/workspace/.git:ro
+  mem_limit: 6g
+  shm_size: 256m
+  network_mode: none
+services:
+  benchmark:
+    <<: *runtime
+    gpus: all
+  cpu:
+    <<: *runtime
+  tools:
+    <<: *runtime
+    network_mode: bridge
+    environment:
+      HOME: /tmp
+      HF_HUB_OFFLINE: "0"
+      CONTAINER_IMAGE_ID: "${CLASSIFICATION_IMAGE_ID:-unrecorded}"
+    volumes:
+      - ./classification:/workspace/classification
+      - ./detection:/workspace/detection:ro
+      - ./data:/workspace/data
+      - ./reports:/workspace/reports
+      - ./storage/locks:/workspace/storage/locks
+      - ./.secrets:/run/project-secrets:ro
+  checks:
+    image: kurs4-classification:v1
+    working_dir: /workspace
+    init: true
+    user: "${LOCAL_UID:-1000}:${LOCAL_GID:-1000}"
+    entrypoint: ["python"]
+    environment:
+      HOME: /tmp
+      RUFF_CACHE_DIR: /tmp/ruff
+    volumes:
+      - ./:/workspace
+      - ./classification/models:/workspace/classification/models:ro
+      - ./detection/models:/workspace/detection/models:ro
+      - ./data:/workspace/data:ro
+    network_mode: none
+    mem_limit: 6g

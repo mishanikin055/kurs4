@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0",
+  "protocol_version": "classification-imagenet-v1",
+  "device": "cuda:0",
+  "precision": "fp32",
+  "batch_size": 1,
+  "seed": 42,
+  "warmup": 20,
+  "repeats": 3,
+  "cpu_threads": 4,
+  "top_k": 5,
+  "bootstrap_samples": 1000,
+  "models": ["resnet50", "efficientnet_v2_s", "convnext_tiny", "vit_b_16"]
+}

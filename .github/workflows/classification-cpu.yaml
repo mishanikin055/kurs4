@@ -1,0 +1,12 @@
+name: Classification CPU checks
+on: [push, pull_request]
+jobs:
+  checks:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: mkdir -p data reports storage/locks classification/models .secrets
+      - run: docker compose -f compose.classification.yaml build tools
+      - run: docker compose -f compose.classification.yaml run --rm checks -m pytest classification/tests
+      - run: docker compose -f compose.classification.yaml run --rm checks -m ruff check .
+      - run: docker compose -f compose.classification.yaml run --rm checks -m ruff format --check .

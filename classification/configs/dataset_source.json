@@ -1,0 +1,83 @@
+{
+  "schema_version": "1.0",
+  "repo_id": "ILSVRC/imagenet-1k",
+  "revision": "49e2ee26f3810fb5a7536bbf732a7b07389a47b5",
+  "split": "validation",
+  "expected_images": 50000,
+  "classes": 1000,
+  "expected_per_class": 50,
+  "files": [
+    {
+      "path": "data/validation-00000-of-00014.parquet",
+      "size": 479922797,
+      "git_oid": "a6d75544c697a2533d41cbc9d9c0b33efc8ef760"
+    },
+    {
+      "path": "data/validation-00001-of-00014.parquet",
+      "size": 484701821,
+      "git_oid": "b960b12bc71b4ac6bec4ee3b6b244f88e1102453"
+    },
+    {
+      "path": "data/validation-00002-of-00014.parquet",
+      "size": 471258806,
+      "git_oid": "f46adf8e3dfd45dc3b8a94d5f34668906ee4fb2a"
+    },
+    {
+      "path": "data/validation-00003-of-00014.parquet",
+      "size": 477547459,
+      "git_oid": "a6e075feb0b9a64f5af9d722ee8deab48f2e581c"
+    },
+    {
+      "path": "data/validation-00004-of-00014.parquet",
+      "size": 477666614,
+      "git_oid": "466e66ccb6cff440dc4e53dd968b13d2d4eebb59"
+    },
+    {
+      "path": "data/validation-00005-of-00014.parquet",
+      "size": 476033225,
+      "git_oid": "9012009e8480963b0f875e058632372a1e7e325c"
+    },
+    {
+      "path": "data/validation-00006-of-00014.parquet",
+      "size": 479594555,
+      "git_oid": "8e8c656c749ad81900fb5b06c7837302d5314c73"
+    },
+    {
+      "path": "data/validation-00007-of-00014.parquet",
+      "size": 475711811,
+      "git_oid": "a2971652e8bf8eee997f4dd5195c38eb2ec661ba"
+    },
+    {
+      "path": "data/validation-00008-of-00014.parquet",
+      "size": 476090886,
+      "git_oid": "a9366cf490b46ed96d87c929a15a6fabdf4314c4"
+    },
+    {
+      "path": "data/validation-00009-of-00014.parquet",
+      "size": 470165919,
+      "git_oid": "8be01d837f29b58a807d1983519cb20fecdff5dd"
+    },
+    {
+      "path": "data/validation-00010-of-00014.parquet",
+      "size": 475451921,
+      "git_oid": "ab8c44a6c21296a45ad17e2e2144c77571d17665"
+    },
+    {
+      "path": "data/validation-00011-of-00014.parquet",
+      "size": 471615473,
+      "git_oid": "47ca38c375896e554bee85b3e5af11dd88b1c6a1"
+    },
+    {
+      "path": "data/validation-00012-of-00014.parquet",
+      "size": 492972415,
+      "git_oid": "8827d6b872bdf0360c3a2dfb8b502dd3bce277ce"
+    },
+    {
+      "path": "data/validation-00013-of-00014.parquet",
+      "size": 484360024,
+      "git_oid": "7e7ccf621710bdcaa1067953a9ec66b75c34484e"
+    }
+  ],
+  "sha256_status": "Gated LFS hashes unavailable before authorized access; freeze SHA-256 at verified download",
+  "terms_url": "https://huggingface.co/datasets/ILSVRC/imagenet-1k"
+}

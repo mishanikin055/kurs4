@@ -1,0 +1,94 @@
+{
+  "schema_version": "1.0",
+  "date": "2026-10-08",
+  "kind": "real_offline_gpu_smoke_on_one_COCO_image_without_ImageNet_ground_truth",
+  "models": [
+    {
+      "model_id": "convnext_tiny",
+      "status": "smoke_passed",
+      "processed": 1,
+      "resources": {
+        "rss_peak_bytes": 1209540608,
+        "cuda_allocated_peak_bytes": 163267072,
+        "cuda_reserved_peak_bytes": 192937984
+      },
+      "native_parity": {
+        "schema_version": "1.0",
+        "status": "passed",
+        "max_score_difference": 0.0
+      },
+      "container_image_id": "sha256:5f22592d6a05d8add7c09a6b24d4b9a2df767003b5ddf59782b9efe954f6addc",
+      "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU"
+    },
+    {
+      "model_id": "efficientnet_v2_s",
+      "status": "smoke_passed",
+      "processed": 1,
+      "resources": {
+        "rss_peak_bytes": 1337004032,
+        "cuda_allocated_peak_bytes": 142408704,
+        "cuda_reserved_peak_bytes": 159383552
+      },
+      "native_parity": {
+        "schema_version": "1.0",
+        "status": "passed",
+        "max_score_difference": 0.0
+      },
+      "container_image_id": "sha256:5f22592d6a05d8add7c09a6b24d4b9a2df767003b5ddf59782b9efe954f6addc",
+      "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU"
+    },
+    {
+      "model_id": "resnet50",
+      "status": "smoke_passed",
+      "processed": 1,
+      "resources": {
+        "rss_peak_bytes": 1284018176,
+        "cuda_allocated_peak_bytes": 165299712,
+        "cuda_reserved_peak_bytes": 209715200
+      },
+      "native_parity": {
+        "schema_version": "1.0",
+        "status": "passed",
+        "max_score_difference": 0.0
+      },
+      "container_image_id": "sha256:5f22592d6a05d8add7c09a6b24d4b9a2df767003b5ddf59782b9efe954f6addc",
+      "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU"
+    },
+    {
+      "model_id": "vit_b_16",
+      "status": "smoke_passed",
+      "processed": 1,
+      "resources": {
+        "rss_peak_bytes": 1465208832,
+        "cuda_allocated_peak_bytes": 388294656,
+        "cuda_reserved_peak_bytes": 440401920
+      },
+      "native_parity": {
+        "schema_version": "1.0",
+        "status": "passed",
+        "max_score_difference": 0.0
+      },
+      "container_image_id": "sha256:5f22592d6a05d8add7c09a6b24d4b9a2df767003b5ddf59782b9efe954f6addc",
+      "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU"
+    }
+  ],
+  "sources": {
+    "reports/classification/smoke-v1/convnext_tiny_repeat1/run.json": "8eaeaadbfb9c7457d1ab04c17cdb8dd86675e78b714d3b7587a12119a595fb4b",
+    "reports/classification/smoke-v1/convnext_tiny_repeat1/environment.json": "29012096d9ba5de285482421b70d81a63bfe1c96cd55bfd652c1e5d3f68400d0",
+    "reports/classification/smoke-v1/convnext_tiny_repeat1/native_parity.json": "8500c69639fc4073377524d38c8cab74510b445c5ad10c90e7a75d391d6d0397",
+    "reports/classification/smoke-v1/convnext_tiny_repeat1/samples.jsonl": "9f050c03f72d6522f49c11199a71f286700dd6ed0f47f2d9ce6d4973e68deacc",
+    "reports/classification/smoke-v1/efficientnet_v2_s_repeat1/run.json": "4ed14a2aa4170d814da1bc429c23960a26eef8e45b7b1c740822874b65648fdb",
+    "reports/classification/smoke-v1/efficientnet_v2_s_repeat1/environment.json": "823e5f7dedc800306ea797ed3c4c595075ce5bbe8d561bd7c7b25e90443ca24e",
+    "reports/classification/smoke-v1/efficientnet_v2_s_repeat1/native_parity.json": "8500c69639fc4073377524d38c8cab74510b445c5ad10c90e7a75d391d6d0397",
+    "reports/classification/smoke-v1/efficientnet_v2_s_repeat1/samples.jsonl": "c367d29b983d79b062de52354bc86941a70a5271e31a6af84bbe81189359ec79",
+    "reports/classification/smoke-v1/resnet50_repeat1/run.json": "77fe026d41a9ccc01b48ef12582d85ce74841299d0f3cbd41b8b18cc94524f1f",
+    "reports/classification/smoke-v1/resnet50_repeat1/environment.json": "4bf5b0c12f41becd98bb79b576ca2ab4bdd6d34573e9ea5e46d8911ce609e502",
+    "reports/classification/smoke-v1/resnet50_repeat1/native_parity.json": "8500c69639fc4073377524d38c8cab74510b445c5ad10c90e7a75d391d6d0397",
+    "reports/classification/smoke-v1/resnet50_repeat1/samples.jsonl": "efa31b4be1aa31313532024560a125dfd4bef2c8f4c7947f843fbd6d4155e103",
+    "reports/classification/smoke-v1/vit_b_16_repeat1/run.json": "33144638f47c4beee76d53138263b76237f4345546e021d58a69ba3178b527ba",
+    "reports/classification/smoke-v1/vit_b_16_repeat1/environment.json": "1c9b1ecab289a17960018ad7259c9ecf7569bce87c981d7038d2b1940ddfe18a",
+    "reports/classification/smoke-v1/vit_b_16_repeat1/native_parity.json": "8500c69639fc4073377524d38c8cab74510b445c5ad10c90e7a75d391d6d0397",
+    "reports/classification/smoke-v1/vit_b_16_repeat1/samples.jsonl": "ff96f44f4bd63a0a3cbc20eefee5e75c2e0eb6c29d1b2a05f195ade214acbe42"
+  },
+  "imagenet_evaluation_status": "not_run"
+}

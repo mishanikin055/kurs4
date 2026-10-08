@@ -1,0 +1,108 @@
+{
+  "schema_version": "1.0",
+  "protocol_version": "classification-imagenet-v1",
+  "selection_date": "2026-10-08",
+  "selection_kind": "user_fixed_architecture_representatives",
+  "models": [
+    {
+      "id": "resnet50",
+      "name": "ResNet-50",
+      "backend": "torchvision",
+      "weights": "IMAGENET1K_V2",
+      "revision": "resnet50-11ad3fa6.pth",
+      "license": "BSD-3-Clause (implementation; pretrained data has separate terms)",
+      "weight_file": "resnet50-11ad3fa6.pth",
+      "source": "https://docs.pytorch.org/vision/0.22/models/generated/torchvision.models.resnet50.html",
+      "files": [
+        {
+          "path": "resnet50-11ad3fa6.pth",
+          "url": "https://download.pytorch.org/models/resnet50-11ad3fa6.pth",
+          "size": 102540417,
+          "sha256_prefix": "11ad3fa6",
+          "sha256": "11ad3fa62ca79e40addfd354a8ec4b7c75143b3038b8d2a807fbc68deab379ca"
+        },
+        {
+          "path": "LICENSE",
+          "url": "https://raw.githubusercontent.com/pytorch/vision/v0.22.1/LICENSE",
+          "size": 1517,
+          "sha256": "6502f676851cfe25f8af75531dfb32375b7325b73c37e7b43741fa422893e71d"
+        }
+      ]
+    },
+    {
+      "id": "efficientnet_v2_s",
+      "name": "EfficientNetV2-S",
+      "backend": "torchvision",
+      "weights": "IMAGENET1K_V1",
+      "revision": "efficientnet_v2_s-dd5fe13b.pth",
+      "license": "BSD-3-Clause (implementation; pretrained data has separate terms)",
+      "weight_file": "efficientnet_v2_s-dd5fe13b.pth",
+      "source": "https://docs.pytorch.org/vision/0.22/models/generated/torchvision.models.efficientnet_v2_s.html",
+      "files": [
+        {
+          "path": "efficientnet_v2_s-dd5fe13b.pth",
+          "url": "https://download.pytorch.org/models/efficientnet_v2_s-dd5fe13b.pth",
+          "size": 86721253,
+          "sha256_prefix": "dd5fe13b",
+          "sha256": "dd5fe13b1d60ec15317ccc8ca158186e134d3366c3dde9cb9a4e301f2dc66c74"
+        },
+        {
+          "path": "LICENSE",
+          "url": "https://raw.githubusercontent.com/pytorch/vision/v0.22.1/LICENSE",
+          "size": 1517,
+          "sha256": "6502f676851cfe25f8af75531dfb32375b7325b73c37e7b43741fa422893e71d"
+        }
+      ]
+    },
+    {
+      "id": "convnext_tiny",
+      "name": "ConvNeXt-Tiny",
+      "backend": "torchvision",
+      "weights": "IMAGENET1K_V1",
+      "revision": "convnext_tiny-983f1562.pth",
+      "license": "BSD-3-Clause (implementation; pretrained data has separate terms)",
+      "weight_file": "convnext_tiny-983f1562.pth",
+      "source": "https://docs.pytorch.org/vision/0.22/models/generated/torchvision.models.convnext_tiny.html",
+      "files": [
+        {
+          "path": "convnext_tiny-983f1562.pth",
+          "url": "https://download.pytorch.org/models/convnext_tiny-983f1562.pth",
+          "size": 114419221,
+          "sha256_prefix": "983f1562",
+          "sha256": "983f1562536e84ff750a1576fb08e54de751dbf2e17c0d8a4a13704341fdcd3d"
+        },
+        {
+          "path": "LICENSE",
+          "url": "https://raw.githubusercontent.com/pytorch/vision/v0.22.1/LICENSE",
+          "size": 1517,
+          "sha256": "6502f676851cfe25f8af75531dfb32375b7325b73c37e7b43741fa422893e71d"
+        }
+      ]
+    },
+    {
+      "id": "vit_b_16",
+      "name": "ViT-B/16",
+      "backend": "torchvision",
+      "weights": "IMAGENET1K_V1",
+      "revision": "vit_b_16-c867db91.pth",
+      "license": "BSD-3-Clause (implementation; pretrained data has separate terms)",
+      "weight_file": "vit_b_16-c867db91.pth",
+      "source": "https://docs.pytorch.org/vision/0.22/models/generated/torchvision.models.vit_b_16.html",
+      "files": [
+        {
+          "path": "vit_b_16-c867db91.pth",
+          "url": "https://download.pytorch.org/models/vit_b_16-c867db91.pth",
+          "size": 346328529,
+          "sha256_prefix": "c867db91",
+          "sha256": "c867db91d3e12c6cbadabb610d73c24a546bf82d8c03a9fea34f43a712ddb0e9"
+        },
+        {
+          "path": "LICENSE",
+          "url": "https://raw.githubusercontent.com/pytorch/vision/v0.22.1/LICENSE",
+          "size": 1517,
+          "sha256": "6502f676851cfe25f8af75531dfb32375b7325b73c37e7b43741fa422893e71d"
+        }
+      ]
+    }
+  ]
+}

@@ -12,3 +12,10 @@ storage/
 reports/detection/
 detection/models/.download.lock
 ~$*
+
+# Классификация: веса, сырые эксперименты и локальные токены.
+classification/models/*/
+classification/models/*.part
+classification/models/.download.lock
+reports/classification/
+.secrets/

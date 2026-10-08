@@ -1,0 +1,10 @@
+services:
+  benchmark:
+    gpus: !reset []
+    devices:
+      - /dev/dxg:/dev/dxg
+    volumes:
+      - /usr/lib/wsl/lib:/usr/lib/wsl/lib:ro
+      - /usr/lib/wsl/drivers:/usr/lib/wsl/drivers:ro
+    environment:
+      LD_LIBRARY_PATH: /usr/lib/wsl/lib:/opt/conda/lib
