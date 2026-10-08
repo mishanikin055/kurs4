@@ -97,3 +97,21 @@ Windows Git Credential Manager, но авторизация пока не зав
 не меняющий зафиксированных участников и experiment identity. Другие модели
 остаются not_run до отдельного запуска; resume требует прежних исходников.
 Три повтора, FP32/batch1 и параметры checkpoint сохраняются, CI не запускается.
+
+
+## 08.10.2026 — Сохранённый вход GitHub и начало full ResNet-50
+
+Windows GCM 2.6.1 подключён как постоянный credential helper этой копии.
+Повторные окна вызваны тем, что GCM_INTERACTIVE из Linux не передавался
+Windows-процессу; теперь передача задаётся через WSLENV. После одного явного
+browser login аккаунт mishanikin055 сохранён в Windows credential store.
+Без интерактивного входа успешно выполнены push обеих веток и ls-remote:
+origin/codex/detection-comparison → 3492a99,
+origin/codex/classification-comparison → 30e705a. Токен не выводился и не
+сохранялся в файлах репозитория. Эта запись заменяет прежний статус блокировки push.
+
+Full ResNet-50 реально запущен на всех 50 000 validation по новому указанию:
+первый repeat уже обрабатывает изображения. Источник 30e705a, каталог
+reports/classification/validation50000-v1; три повтора, только resnet50.
+Окончательных full-метрик пока нет; после завершения родитель сохранит отчёт.
+Другие модели и полные crops не запускались, новый bootstrap не вызывается.

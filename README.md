@@ -9,3 +9,6 @@
 Полное сравнение детекторов завершено: COCO test 4500 изображений, три повтора, 1000 парных bootstrap-выборок. [Таблица](reports/comparisons/detection.md), [анализ](reports/comparisons/detection_analysis.md), [описание результатов](Описание%20результатов%20детекции.md). Исходные сбои test-v1 сохранены; восстановление и происхождение отражены в test-v2/recovery.json.
 
 Краткое состояние для продолжения в новом чате: [docs/classification_handoff.md](docs/classification_handoff.md).
+
+Позднейшее указание пользователя: запущен полный ImageNet50k только для ResNet-50;
+остальные full-прогоны остаются отложенными. Статус — docs/classification_handoff.md.

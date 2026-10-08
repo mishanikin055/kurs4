@@ -13,13 +13,16 @@
 - Новые доверительные интервалы не рассчитывать. Основной отчёт без CI;
   ранее выполненный bootstrap сохранён в исходных артефактах.
 - Коммитить проверенные изменения и пушить в существующий origin.
-  Для push ещё нужно завершить авторизацию GitHub из WSL. Секреты в чат не выводить.
+  Авторизация GitHub сохранена Windows GCM; push обеих веток проверен. Секреты в чат не выводить.
 
 ## Завершено
 
 - `3492a99`: детекция, четыре модели × три повтора × 4500 COCO test,
   таблицы/анализ reports/comparisons/detection.*. Ранние 500 были dev.
 - `1c2b98c`: классификация, четыре готовых ImageNet1K головы, контейнеры и GPU smoke.
+- `30e705a`: предварительные результаты, crops-модуль/smoke и --model;
+  отправлен в origin/codex/classification-comparison. Детекция отправлена
+  в origin/codex/detection-comparison; remote commit refs сверены с локальными.
 - ImageNet validation полностью загружен: 14 HF-шардов, 50 000 исходных JPEG,
   50 на класс; SHA-256 и labels проверены. Revision
   `49e2ee26f3810fb5a7536bbf732a7b07389a47b5`, ILSVRC/imagenet-1k.
@@ -36,6 +39,29 @@
   Пока выполнен только GPU-smoke по две вырезки каждого режима для каждой
   модели. Качество smoke отсутствует; полный сравнительный анализ не выполнен.
 - Верификация: reports/verification/classification_runs.json и classification.md.
+
+## Активный запуск
+
+Full ResNet-50 запущен командой из classification/README.md.
+Docker container: kurs4-benchmark-run-0c68c4ce1cd4; shell session текущего чата: 37549.
+Первый повтор: running, более 3600 / 50 000 обработано на момент записи.
+Все три повтора выполняются одним родительским расписанием; следующие модели
+пропускаются фильтром --model resnet50. Source commit запуска — 30e705a.
+Смотреть reports/classification/validation50000-v1/resnet50_repeat*/run.json
+и process.log. **Не запускать второй GPU-процесс и не менять исходники из
+source fingerprint, конфиг/manifest/контейнер до окончания.** Родитель после
+трёх повторов сам генерирует comparison без доверительных интервалов.
+Фактические результаты full брать только после status=complete во всех трёх.
+
+## Авторизация GitHub
+
+В .git/config настроен существующий Windows GCM (mingw64/bin), wincred,
+username mishanikin055; аккаунт сохранён после одного browser login.
+Для проверок/пуша без новых окон задавать GCM_INTERACTIVE=never и
+GIT_TERMINAL_PROMPT=0 и передавать эти имена через WSLENV: Linux-переменные
+не поступают в Windows-процессы автоматически. Значения секретов не выводить.
+Новых browser login без необходимости не открывать. Повторные git push и
+ls-remote уже успешно выполнены без окна входа.
 
 ## Воспроизводимость и ограничения
 
