@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "model_id": "yolo26s",
+  "parameters": 9496140,
+  "original_recorded_parameters": 0,
+  "method": "sum(p.numel() for p in adapter.module.model.parameters())",
+  "mode": "post-hoc metadata, CPU, no inference, same pinned image and weights",
+  "container_image_id": "sha256:72b472f15ea77dc0f8526857fd50a6ada2a53de827e822cf8122a13898e0bc42",
+  "model_manifest_sha256": "ea58e884777f0cf3f0cee543e7f76bac2ab6c5811c059a430ca6d38a5e5b6d1d",
+  "script_sha256": "6178a9ddb64801bde9658cdd80d3436c8eced3c99f0d55a9b975df131f5a80b7"
+}

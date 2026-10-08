@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0",
+  "protocol_version": "detection-v1",
+  "device": "cuda:0",
+  "precision": "fp32",
+  "batch_size": 1,
+  "seed": 42,
+  "warmup": 20,
+  "repeats": 3,
+  "score_floor": 0.001,
+  "operating_threshold": 0.5,
+  "operating_iou": 0.5,
+  "max_detections": 300,
+  "cpu_threads": 4,
+  "bootstrap_samples": 1000,
+  "models": ["yolo26s", "rtdetr_v2_r18vd", "rf_detr_small", "fasterrcnn_resnet50_fpn_v2"]
+}

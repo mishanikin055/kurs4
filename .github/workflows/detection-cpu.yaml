@@ -1,0 +1,12 @@
+name: Detection CPU checks
+on: [push, pull_request]
+jobs:
+  checks:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: mkdir -p data reports storage/locks detection/models
+      - run: docker compose -f compose.detection.yaml build tools
+      - run: docker compose -f compose.detection.yaml run --rm checks -m pytest
+      - run: docker compose -f compose.detection.yaml run --rm checks -m ruff check .
+      - run: docker compose -f compose.detection.yaml run --rm checks -m ruff format --check .

@@ -1,0 +1,132 @@
+{
+  "date": "2026-10-08",
+  "rtdetr_hub": {
+    "_id": "679d0414c968f2ff57bb4339",
+    "id": "PekingU/rtdetr_v2_r18vd",
+    "private": false,
+    "pipeline_tag": "object-detection",
+    "library_name": "transformers",
+    "tags": [
+      "transformers",
+      "safetensors",
+      "rt_detr_v2",
+      "object-detection",
+      "vision",
+      "en",
+      "dataset:coco",
+      "arxiv:2407.17140",
+      "license:apache-2.0",
+      "endpoints_compatible",
+      "deploy:azure",
+      "region:us"
+    ],
+    "downloads": 447151,
+    "likes": 9,
+    "modelId": "PekingU/rtdetr_v2_r18vd",
+    "author": "PekingU",
+    "sha": "5650961749fa93567c0d46fc7f43ea4f9e914107",
+    "lastModified": "2025-02-06T18:21:53.000Z",
+    "gated": false,
+    "disabled": false,
+    "widgetData": [
+      {
+        "src": "https://huggingface.co/datasets/mishig/sample_images/resolve/main/savanna.jpg",
+        "example_title": "Savanna"
+      },
+      {
+        "src": "https://huggingface.co/datasets/mishig/sample_images/resolve/main/football-match.jpg",
+        "example_title": "Football Match"
+      },
+      {
+        "src": "https://huggingface.co/datasets/mishig/sample_images/resolve/main/airport.jpg",
+        "example_title": "Airport"
+      }
+    ],
+    "model-index": null,
+    "config": {
+      "architectures": [
+        "RtDetrV2ForObjectDetection"
+      ],
+      "model_type": "rt_detr_v2"
+    },
+    "cardData": {
+      "library_name": "transformers",
+      "license": "apache-2.0",
+      "language": [
+        "en"
+      ],
+      "pipeline_tag": "object-detection",
+      "tags": [
+        "object-detection",
+        "vision"
+      ],
+      "datasets": [
+        "coco"
+      ],
+      "widget": [
+        {
+          "src": "https://huggingface.co/datasets/mishig/sample_images/resolve/main/savanna.jpg",
+          "example_title": "Savanna"
+        },
+        {
+          "src": "https://huggingface.co/datasets/mishig/sample_images/resolve/main/football-match.jpg",
+          "example_title": "Football Match"
+        },
+        {
+          "src": "https://huggingface.co/datasets/mishig/sample_images/resolve/main/airport.jpg",
+          "example_title": "Airport"
+        }
+      ]
+    },
+    "transformersInfo": {
+      "auto_model": "RtDetrV2ForObjectDetection",
+      "processor": "AutoTokenizer"
+    },
+    "siblings": [
+      {
+        "rfilename": ".gitattributes",
+        "blobId": "a6344aac8c09253b3b630fb776ae94478aa0275b",
+        "size": 1519
+      },
+      {
+        "rfilename": "README.md",
+        "blobId": "37d358fb4e1d91881c4081fc8df0b75d0c2cd99e",
+        "size": 3542
+      },
+      {
+        "rfilename": "config.json",
+        "blobId": "6f984c30c65857419deeeebfdf7dc4e7d7bce6f8",
+        "size": 5437
+      },
+      {
+        "rfilename": "model.safetensors",
+        "blobId": "820a37cacd1a40bd83f736222a2f6ddd5e1f4eab",
+        "size": 80904640,
+        "lfs": {
+          "sha256": "d18309d0d7ea57048138885c4c6ecfcb1e24506fc6153b94ad484f8ab62c7115",
+          "size": 80904640,
+          "pointerSize": 133
+        }
+      },
+      {
+        "rfilename": "preprocessor_config.json",
+        "blobId": "fcdff16b42e5ebc51d28f59184490c6eff91a88b",
+        "size": 444
+      }
+    ],
+    "spaces": [
+      "tardellirs/model-pulse"
+    ],
+    "createdAt": "2025-01-31T17:10:44.000Z",
+    "safetensors": {
+      "parameters": {
+        "F32": 20209716
+      },
+      "total": 20209716
+    },
+    "usedStorage": 80904640
+  },
+  "rfdetr_code_commit": "7433d5919d0f7e72cc6cb78663e0a731afd499e0",
+  "ultralytics_code_commit": "ac5c3c0099109dff0a372b5ec80778deb1dd9057",
+  "ranking": null
+}

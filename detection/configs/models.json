@@ -1,0 +1,140 @@
+{
+  "schema_version": "1.0",
+  "protocol_version": "detection-v1",
+  "selection_date": "2026-10-08",
+  "selection_kind": "architecture_representatives_from_project_plan",
+  "models": [
+    {
+      "id": "yolo26s",
+      "name": "YOLO26s",
+      "backend": "ultralytics",
+      "revision": "assets/v8.4.0",
+      "code_revision": "ac5c3c0099109dff0a372b5ec80778deb1dd9057",
+      "license": "AGPL-3.0",
+      "mapping": "contiguous_0",
+      "input": "letterbox 640; rect=True; RGB/255",
+      "files": [
+        {
+          "path": "yolo26s.pt",
+          "url": "https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo26s.pt",
+          "size": 20422725,
+          "sha256": "646f8bc3fe0a656803d95c294f7852321748cb29d13466a1af8862e2db384a1b"
+        },
+        {
+          "path": "LICENSE",
+          "url": "https://raw.githubusercontent.com/ultralytics/ultralytics/ac5c3c0099109dff0a372b5ec80778deb1dd9057/LICENSE",
+          "size": 34523,
+          "sha256": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0"
+        },
+        {
+          "path": "label_mapping.json",
+          "generated": "coco_categories"
+        }
+      ],
+      "source": "https://docs.ultralytics.com/models/yolo26/",
+      "categories_sha256": "cfd019047d8954a0e8e17bfd69720e5cfe0242cc3126224df7b8bb6c9984640a"
+    },
+    {
+      "id": "rtdetr_v2_r18vd",
+      "name": "RT-DETRv2 R18",
+      "backend": "transformers",
+      "revision": "5650961749fa93567c0d46fc7f43ea4f9e914107",
+      "license": "Apache-2.0",
+      "mapping": "contiguous_0",
+      "input": "checkpoint RTDetrImageProcessor: resize 640x640, rescale; no ImageNet normalization",
+      "files": [
+        {
+          "path": "README.md",
+          "url": "https://huggingface.co/PekingU/rtdetr_v2_r18vd/resolve/5650961749fa93567c0d46fc7f43ea4f9e914107/README.md",
+          "size": 3542,
+          "sha256": "4a26a3a6de73500f181e4edbc75b3f3f19ca6dde0fdaceeeb78167f223973305"
+        },
+        {
+          "path": "config.json",
+          "url": "https://huggingface.co/PekingU/rtdetr_v2_r18vd/resolve/5650961749fa93567c0d46fc7f43ea4f9e914107/config.json",
+          "size": 5437,
+          "sha256": "ed051ec77cb41c5d9d5e3af21a979b1e890599dfd68434d7636ff82ded4c1527"
+        },
+        {
+          "path": "model.safetensors",
+          "url": "https://huggingface.co/PekingU/rtdetr_v2_r18vd/resolve/5650961749fa93567c0d46fc7f43ea4f9e914107/model.safetensors",
+          "size": 80904640,
+          "sha256": "d18309d0d7ea57048138885c4c6ecfcb1e24506fc6153b94ad484f8ab62c7115"
+        },
+        {
+          "path": "preprocessor_config.json",
+          "url": "https://huggingface.co/PekingU/rtdetr_v2_r18vd/resolve/5650961749fa93567c0d46fc7f43ea4f9e914107/preprocessor_config.json",
+          "size": 444,
+          "sha256": "cd38cd59999e7a95d68e487fbe5132df3d4e5c32a0836add57e6126ba0c4eaf1"
+        },
+        {
+          "path": "label_mapping.json",
+          "generated": "coco_categories"
+        }
+      ],
+      "source": "https://huggingface.co/PekingU/rtdetr_v2_r18vd",
+      "categories_sha256": "cfd019047d8954a0e8e17bfd69720e5cfe0242cc3126224df7b8bb6c9984640a"
+    },
+    {
+      "id": "rf_detr_small",
+      "name": "RF-DETR Small",
+      "backend": "rfdetr",
+      "revision": "gcs-generation-1753220474114031",
+      "code_revision": "7433d5919d0f7e72cc6cb78663e0a731afd499e0",
+      "license": "Apache-2.0",
+      "mapping": "coco_sparse",
+      "input": "resize 512x512 bilinear antialias=False; ImageNet normalization",
+      "files": [
+        {
+          "path": "rf-detr-small.pth",
+          "url": "https://storage.googleapis.com/rfdetr/small_coco/checkpoint_best_regular.pth?generation=1753220474114031",
+          "size": 386045550,
+          "md5": "fb37061c1af7bace359c91b723a8d5c1",
+          "sha256": "d81979a9213a2109345158ce9232668df4c1ae52e9b8db3f2ec0a8cbad959b33"
+        },
+        {
+          "path": "LICENSE",
+          "url": "https://raw.githubusercontent.com/roboflow/rf-detr/7433d5919d0f7e72cc6cb78663e0a731afd499e0/LICENSE",
+          "size": 11345,
+          "sha256": "8cabf52c61130fc97a7e5da5e3685ccf44841c0c53d6f881189369b136603cca"
+        },
+        {
+          "path": "label_mapping.json",
+          "generated": "coco_categories"
+        }
+      ],
+      "source": "https://github.com/roboflow/rf-detr",
+      "categories_sha256": "cfd019047d8954a0e8e17bfd69720e5cfe0242cc3126224df7b8bb6c9984640a"
+    },
+    {
+      "id": "fasterrcnn_resnet50_fpn_v2",
+      "name": "Faster R-CNN ResNet50 FPN V2",
+      "backend": "torchvision",
+      "revision": "COCO_V1-dd69338a",
+      "license": "BSD-3-Clause",
+      "mapping": "coco_sparse",
+      "input": "short side 800, max 1333; ImageNet normalization; native NMS",
+      "files": [
+        {
+          "path": "fasterrcnn_resnet50_fpn_v2_coco-dd69338a.pth",
+          "url": "https://download.pytorch.org/models/fasterrcnn_resnet50_fpn_v2_coco-dd69338a.pth",
+          "size": 175221657,
+          "sha256_prefix": "dd69338a",
+          "sha256": "dd69338a24b8d7381807e247652bdc356325bcbaf1cd3e092e00e0a1a58706bf"
+        },
+        {
+          "path": "LICENSE",
+          "url": "https://raw.githubusercontent.com/pytorch/vision/v0.22.1/LICENSE",
+          "size": 1517,
+          "sha256": "6502f676851cfe25f8af75531dfb32375b7325b73c37e7b43741fa422893e71d"
+        },
+        {
+          "path": "label_mapping.json",
+          "generated": "coco_categories"
+        }
+      ],
+      "source": "https://docs.pytorch.org/vision/stable/models/generated/torchvision.models.detection.fasterrcnn_resnet50_fpn_v2.html",
+      "categories_sha256": "cfd019047d8954a0e8e17bfd69720e5cfe0242cc3126224df7b8bb6c9984640a"
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "schema_version": "1.0",
+  "issue": "RF-DETR unused COCO slot 66 at image 179285; rg unavailable on host",
+  "tests": {
+    "pytest_passed": 13,
+    "ruff_check": "passed",
+    "ruff_format_check": "passed",
+    "bash_syntax": "passed",
+    "compose_wsl_config": "passed"
+  },
+  "smoke": {
+    "path": "reports/detection/smoke-rf-gap-fix/rf_detr_small_repeat1",
+    "native_parity": "passed",
+    "image_size": [
+      428,
+      640
+    ],
+    "valid_predictions": 296,
+    "excluded_coco_gap_predictions": 3
+  },
+  "recovery": {
+    "original": "reports/detection/test-v1",
+    "corrected": "reports/detection/test-v2",
+    "carried_forward_completed_runs": 9,
+    "RF_DETR_rerun_from_start": true,
+    "original_failures_preserved": 3
+  },
+  "full_benchmark_status": "complete",
+  "bootstrap_status": "complete",
+  "full_benchmark_runs": 12,
+  "full_benchmark_images_per_run": 4500,
+  "checks": {
+    "12_complete_runs": true,
+    "4500_images_each": true,
+    "original_failures_preserved": true,
+    "source_provenance_present": true
+  },
+  "bootstrap_samples": 1000,
+  "bootstrap_models": 4,
+  "bootstrap_seed": 42,
+  "final_report_status": "complete",
+  "final_csv": "reports/comparisons/detection.csv",
+  "analysis": "reports/comparisons/detection_analysis.md",
+  "bootstrap_sha256": "4fbc05067c007dc52c7b40c437665cfff95218ec4654742c53b35ed59dfab336",
+  "mAP_ci95": {
+    "rtdetr_v2_r18vd": [
+      0.473681859404862,
+      0.4941710017211293
+    ],
+    "rf_detr_small": [
+      0.5219612800132767,
+      0.5418329858170476
+    ],
+    "yolo26s": [
+      0.4686153327106262,
+      0.4883536745881572
+    ],
+    "fasterrcnn_resnet50_fpn_v2": [
+      0.46419851212167157,
+      0.48340345657351225
+    ]
+  },
+  "paired_mAP_difference_ci95": {
+    "rtdetr_v2_r18vd - rf_detr_small": [
+      -0.0542124110338538,
+      -0.0405720741108056
+    ],
+    "rtdetr_v2_r18vd - yolo26s": [
+      4.5395707035543e-07,
+      0.011342913599912087
+    ],
+    "rtdetr_v2_r18vd - fasterrcnn_resnet50_fpn_v2": [
+      0.0038255769515204998,
+      0.015927539768588225
+    ],
+    "rf_detr_small - yolo26s": [
+      0.04776744747761721,
+      0.05921279730784599
+    ],
+    "rf_detr_small - fasterrcnn_resnet50_fpn_v2": [
+      0.05151046454029002,
+      0.06406290508980049
+    ],
+    "yolo26s - fasterrcnn_resnet50_fpn_v2": [
+      -0.0012790130925054474,
+      0.01000820827482369
+    ]
+  }
+}

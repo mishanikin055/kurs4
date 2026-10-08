@@ -1,0 +1,8 @@
+{
+  "schema_version": "1.0",
+  "comparison": "reports/detection/test-v2/comparison/detection.csv",
+  "comparison_sha256": "22d3d6e341efa9d475cd01de3d483fdca84156b9afed883dac8a7d6320590a03",
+  "bootstrap": "reports/detection/test-v2/bootstrap.json",
+  "bootstrap_sha256": "4fbc05067c007dc52c7b40c437665cfff95218ec4654742c53b35ed59dfab336",
+  "script_sha256": "d6d600b82f6259de7c5b964e9364bf88346a5793cce30924398b4ab03209974c"
+}
