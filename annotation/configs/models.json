@@ -1,0 +1,297 @@
+{
+  "checked_at": "2026-10-09",
+  "criterion": "Four preselected representatives of captioning and compact VLM families; not a popularity top-4",
+  "weight_directory": "annotation/models",
+  "models": [
+    {
+      "id": "blip_base",
+      "repo_id": "Salesforce/blip-image-captioning-base",
+      "revision": "82a37760796d32b1411fe092ab5d4e227313294b",
+      "license": "bsd-3-clause",
+      "source": "https://huggingface.co/Salesforce/blip-image-captioning-base",
+      "downloads_last_month": 1360503,
+      "files": [
+        {
+          "path": ".gitattributes",
+          "size": 1477,
+          "expected_sha256": null
+        },
+        {
+          "path": "README.md",
+          "size": 6359,
+          "expected_sha256": null
+        },
+        {
+          "path": "config.json",
+          "size": 4563,
+          "expected_sha256": null
+        },
+        {
+          "path": "preprocessor_config.json",
+          "size": 287,
+          "expected_sha256": null
+        },
+        {
+          "path": "special_tokens_map.json",
+          "size": 125,
+          "expected_sha256": null
+        },
+        {
+          "path": "tokenizer.json",
+          "size": 711396,
+          "expected_sha256": null
+        },
+        {
+          "path": "tokenizer_config.json",
+          "size": 506,
+          "expected_sha256": null
+        },
+        {
+          "path": "vocab.txt",
+          "size": 231508,
+          "expected_sha256": null
+        },
+        {
+          "path": "pytorch_model.bin",
+          "size": 989820849,
+          "expected_sha256": "d6638651a5526cc2ede56f2b5104d6851b0755816d220e5e046870430180c767"
+        }
+      ]
+    },
+    {
+      "id": "florence2_base_ft",
+      "repo_id": "microsoft/Florence-2-base-ft",
+      "revision": "f6c1a25888ffc1d945ee8a1a77ac833c7303d46e",
+      "license": "mit",
+      "source": "https://huggingface.co/microsoft/Florence-2-base-ft",
+      "downloads_last_month": 194253,
+      "files": [
+        {
+          "path": ".gitattributes",
+          "size": 1560,
+          "expected_sha256": null
+        },
+        {
+          "path": "CODE_OF_CONDUCT.md",
+          "size": 444,
+          "expected_sha256": null
+        },
+        {
+          "path": "LICENSE",
+          "size": 1141,
+          "expected_sha256": null
+        },
+        {
+          "path": "README.md",
+          "size": 14820,
+          "expected_sha256": null
+        },
+        {
+          "path": "SECURITY.md",
+          "size": 2656,
+          "expected_sha256": null
+        },
+        {
+          "path": "SUPPORT.md",
+          "size": 1244,
+          "expected_sha256": null
+        },
+        {
+          "path": "config.json",
+          "size": 2430,
+          "expected_sha256": null
+        },
+        {
+          "path": "model.safetensors",
+          "size": 463221266,
+          "expected_sha256": "58757d657ff44051314c8030b68e04cb1bb618ca9a4885418f111f6fb708185a"
+        },
+        {
+          "path": "preprocessor_config.json",
+          "size": 806,
+          "expected_sha256": null
+        },
+        {
+          "path": "tokenizer.json",
+          "size": 1355863,
+          "expected_sha256": null
+        },
+        {
+          "path": "tokenizer_config.json",
+          "size": 34,
+          "expected_sha256": null
+        },
+        {
+          "path": "vocab.json",
+          "size": 1099884,
+          "expected_sha256": null
+        },
+        {
+          "path": "configuration_florence2.py",
+          "size": 15125,
+          "expected_sha256": "653bafddc9651eaff1583a16db4a2bb27d33ec7d541dfab7201aaa4ecaa1cfbf"
+        },
+        {
+          "path": "modeling_florence2.py",
+          "size": 127415,
+          "expected_sha256": "5bb7aa72c6ba62e96e1bbae6bc1aaf7b4e8e28cdfc62e670de3d5b67eeab1fdf"
+        },
+        {
+          "path": "processing_florence2.py",
+          "size": 46372,
+          "expected_sha256": "4bd7158536cbf1c7891fc8efd94437d79fd09f07f539c7398fab8a885d7d8bca"
+        }
+      ]
+    },
+    {
+      "id": "qwen3_vl_2b",
+      "repo_id": "Qwen/Qwen3-VL-2B-Instruct",
+      "revision": "89644892e4d85e24eaac8bacfd4f463576704203",
+      "license": "apache-2.0",
+      "source": "https://huggingface.co/Qwen/Qwen3-VL-2B-Instruct",
+      "downloads_last_month": 2650056,
+      "files": [
+        {
+          "path": ".gitattributes",
+          "size": 1519,
+          "expected_sha256": null
+        },
+        {
+          "path": "README.md",
+          "size": 7136,
+          "expected_sha256": null
+        },
+        {
+          "path": "chat_template.json",
+          "size": 5502,
+          "expected_sha256": null
+        },
+        {
+          "path": "config.json",
+          "size": 1505,
+          "expected_sha256": null
+        },
+        {
+          "path": "generation_config.json",
+          "size": 269,
+          "expected_sha256": null
+        },
+        {
+          "path": "merges.txt",
+          "size": 1671839,
+          "expected_sha256": null
+        },
+        {
+          "path": "model.safetensors",
+          "size": 4255140312,
+          "expected_sha256": "7de1838c87a5349b016c26a1c3f7d2bc400a3d485f95ef39a7059ffd734977a0"
+        },
+        {
+          "path": "preprocessor_config.json",
+          "size": 390,
+          "expected_sha256": null
+        },
+        {
+          "path": "tokenizer.json",
+          "size": 7032403,
+          "expected_sha256": null
+        },
+        {
+          "path": "tokenizer_config.json",
+          "size": 10868,
+          "expected_sha256": null
+        },
+        {
+          "path": "video_preprocessor_config.json",
+          "size": 385,
+          "expected_sha256": null
+        },
+        {
+          "path": "vocab.json",
+          "size": 2776833,
+          "expected_sha256": null
+        }
+      ]
+    },
+    {
+      "id": "smolvlm2_500m",
+      "repo_id": "HuggingFaceTB/SmolVLM2-500M-Video-Instruct",
+      "revision": "7b375e1b73b11138ff12fe22c8f2822d8fe03467",
+      "license": "apache-2.0",
+      "source": "https://huggingface.co/HuggingFaceTB/SmolVLM2-500M-Video-Instruct",
+      "downloads_last_month": 1289993,
+      "files": [
+        {
+          "path": ".gitattributes",
+          "size": 1519,
+          "expected_sha256": null
+        },
+        {
+          "path": "README.md",
+          "size": 10865,
+          "expected_sha256": null
+        },
+        {
+          "path": "added_tokens.json",
+          "size": 4739,
+          "expected_sha256": null
+        },
+        {
+          "path": "chat_template.json",
+          "size": 430,
+          "expected_sha256": null
+        },
+        {
+          "path": "config.json",
+          "size": 3767,
+          "expected_sha256": null
+        },
+        {
+          "path": "generation_config.json",
+          "size": 136,
+          "expected_sha256": null
+        },
+        {
+          "path": "merges.txt",
+          "size": 466391,
+          "expected_sha256": null
+        },
+        {
+          "path": "model.safetensors",
+          "size": 2029990624,
+          "expected_sha256": "b9bfd456c9472c0acd5719d6e514c4b859891af205ee1a736552fd3497b8b0c3"
+        },
+        {
+          "path": "preprocessor_config.json",
+          "size": 599,
+          "expected_sha256": null
+        },
+        {
+          "path": "processor_config.json",
+          "size": 67,
+          "expected_sha256": null
+        },
+        {
+          "path": "special_tokens_map.json",
+          "size": 868,
+          "expected_sha256": null
+        },
+        {
+          "path": "tokenizer.json",
+          "size": 3548256,
+          "expected_sha256": null
+        },
+        {
+          "path": "tokenizer_config.json",
+          "size": 28626,
+          "expected_sha256": null
+        },
+        {
+          "path": "vocab.json",
+          "size": 800662,
+          "expected_sha256": null
+        }
+      ]
+    }
+  ]
+}

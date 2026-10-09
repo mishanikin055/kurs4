@@ -4,7 +4,9 @@
 
 Рабочая копия `/home/mikhail/kurs4`, WSL2 Ubuntu 26.04, Linux/Bash; Windows — хост, не целевая ОС приложения. При переносе сверить dirty/untracked: clone не переносит локальные материалы. Упоминавшийся в прежних инструкциях WSL_SETUP.md в текущей копии отсутствует; не считать его доступной инструкцией.
 
-Существуют ML-окружения сравнения: `compose.detection.yaml`, `compose.detection.wsl.yaml`, `compose.classification.yaml`, `compose.classification.wsl.yaml`, `compose.classification.crops.yaml`, `detection/Dockerfile`, `classification/Dockerfile`, файлы requirements.in/requirements.lock.txt этих модулей и shell wrappers в scripts/. Корневой compose.yaml для приложения пока отсутствует; db/api/worker/ui — будущие сервисы. Реальные команды — README соответствующего модуля. Плановые команды не считать доступными.
+Существуют ML-окружения сравнения: `compose.detection.yaml`, `compose.detection.wsl.yaml`, `compose.classification.yaml`, `compose.classification.wsl.yaml`, `compose.classification.crops.yaml`, `detection/Dockerfile`, `classification/Dockerfile`, файлы requirements.in/requirements.lock.txt этих модулей и shell wrappers в scripts/. Для аннотаторов добавлены `compose.annotation.yaml`, `compose.annotation.wsl.yaml`,
+`annotation/Dockerfile`, закреплённые requirements и `scripts/annotation.sh`;
+контейнер 7 GiB, runtime офлайн. Корневой compose.yaml для приложения пока отсутствует; db/api/worker/ui — будущие сервисы. Реальные команды — README соответствующего модуля. Плановые команды не считать доступными.
 
 ## Оборудование и модельные процессы
 
@@ -27,7 +29,7 @@
 
 ## Артефакты и проверки
 
-Детекторы — detection/models/, классификаторы — classification/models/; каталог аннотаторов задать отдельно. Правила загрузки/хешей — [experiments.md](experiments.md). Источник benchmark связать с commit/dirty snapshot и ID/digest контейнера.
+Детекторы — detection/models/, классификаторы — classification/models/; аннотаторы — `annotation/models/`, отдельно закреплённый игнорируемый каталог. Правила загрузки/хешей — [experiments.md](experiments.md). Источник benchmark связать с commit/dirty snapshot и ID/digest контейнера.
 
 CPU CI на Linux: релевантные pytest/Ruff, сборки и Compose, после появления backend — PostgreSQL integration. Реальные GPU-smoke выполнять локально, обычный CI runner не эквивалент RTX 4050. Проверить cgroup RAM, GPU из нужного контейнера, read-only mounts, сохранность volumes, одновременные запуски/lock и остановку дочернего процесса после сбоя. Записать точное окружение в manifest, не смешивать память хоста/WSL/контейнера.
 

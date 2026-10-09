@@ -1,0 +1,1 @@
+"""Independent captioning model comparison."""

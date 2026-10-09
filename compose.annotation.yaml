@@ -1,0 +1,63 @@
+x-runtime: &runtime
+  image: kurs4-annotation:v1
+  build:
+    context: .
+    dockerfile: annotation/Dockerfile
+  init: true
+  working_dir: /workspace
+  user: "${LOCAL_UID:-1000}:${LOCAL_GID:-1000}"
+  environment:
+    HOME: /tmp
+    CONTAINER_IMAGE_ID: "${ANNOTATION_IMAGE_ID:-unrecorded}"
+    PROJECT_GIT_COMMIT: "${PROJECT_GIT_COMMIT:-}"
+    PROJECT_GIT_STATUS: "${PROJECT_GIT_STATUS:-}"
+  volumes:
+    - ./annotation:/workspace/annotation:ro
+    - ./detection:/workspace/detection:ro
+    - ./scripts/annotation.sh:/workspace/scripts/annotation.sh:ro
+    - ./compose.annotation.yaml:/workspace/compose.annotation.yaml:ro
+    - ./compose.annotation.wsl.yaml:/workspace/compose.annotation.wsl.yaml:ro
+    - ./data:/workspace/data:ro
+    - ./reports:/workspace/reports
+    - ./storage/locks:/workspace/storage/locks
+    - ./.git:/workspace/.git:ro
+  mem_limit: 7g
+  shm_size: 256m
+  network_mode: none
+services:
+  benchmark:
+    <<: *runtime
+    gpus: all
+  cpu:
+    <<: *runtime
+  tools:
+    <<: *runtime
+    network_mode: bridge
+    environment:
+      HOME: /tmp
+      HF_HUB_OFFLINE: "0"
+      TRANSFORMERS_OFFLINE: "0"
+      CONTAINER_IMAGE_ID: "${ANNOTATION_IMAGE_ID:-unrecorded}"
+    volumes:
+      - ./annotation:/workspace/annotation
+      - ./detection:/workspace/detection:ro
+      - ./data:/workspace/data
+      - ./reports:/workspace/reports
+      - ./storage/locks:/workspace/storage/locks
+      - ./.secrets:/run/project-secrets:ro
+  checks:
+    image: kurs4-annotation:v1
+    working_dir: /workspace
+    init: true
+    user: "${LOCAL_UID:-1000}:${LOCAL_GID:-1000}"
+    entrypoint: ["python"]
+    environment:
+      HOME: /tmp
+      RUFF_CACHE_DIR: /tmp/ruff
+    volumes:
+      - ./:/workspace
+      - ./annotation/models:/workspace/annotation/models:ro
+      - ./detection/models:/workspace/detection/models:ro
+      - ./data:/workspace/data:ro
+    network_mode: none
+    mem_limit: 7g

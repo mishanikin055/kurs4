@@ -19,3 +19,9 @@ classification/models/*.part
 classification/models/.download.lock
 reports/classification/
 .secrets/
+
+# Аннотаторы: отдельно закреплённые веса и сырые прогоны.
+annotation/models/*/
+annotation/models/*.part
+annotation/models/.download.lock
+reports/annotation/

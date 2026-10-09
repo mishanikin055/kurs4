@@ -1,0 +1,1 @@
+"""Checked caption evaluation tools."""

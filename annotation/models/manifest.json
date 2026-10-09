@@ -1,0 +1,282 @@
+{
+  "models": {
+    "qwen3_vl_2b": {
+      "status": "verified",
+      "spec_hash": "7b98e6c22266ff6bee4b688660cc612cd93630fadc59c310e02404e278d37ac6",
+      "revision": "89644892e4d85e24eaac8bacfd4f463576704203",
+      "files": [
+        {
+          "path": ".gitattributes",
+          "size": 1519,
+          "sha256": "11ad7efa24975ee4b0c3c3a38ed18737f0658a5f75a0a96787b576a78a023361"
+        },
+        {
+          "path": "README.md",
+          "size": 7136,
+          "sha256": "5fc5be1ca9a3910399bd6239ee5086ab5d82a2a59c5d2b00e887a8835cc110e4"
+        },
+        {
+          "path": "chat_template.json",
+          "size": 5502,
+          "sha256": "6f8a6a55027e3da5160105556cda5dd69f6423f1c32645f6730d32de7773d0c4"
+        },
+        {
+          "path": "config.json",
+          "size": 1505,
+          "sha256": "bec4b3d446efa05807365c9e1cec03ac590836879d02f3a6da879971154bdd3b"
+        },
+        {
+          "path": "generation_config.json",
+          "size": 269,
+          "sha256": "1e241830b48b397cb0900101421df5450baddc7adf01e5fc86b5615865f3bae4"
+        },
+        {
+          "path": "merges.txt",
+          "size": 1671839,
+          "sha256": "599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3"
+        },
+        {
+          "path": "model.safetensors",
+          "size": 4255140312,
+          "sha256": "7de1838c87a5349b016c26a1c3f7d2bc400a3d485f95ef39a7059ffd734977a0"
+        },
+        {
+          "path": "preprocessor_config.json",
+          "size": 390,
+          "sha256": "27225450ac9c6529872ee1924fcb0962ff5634834f817040f444118116f4e516"
+        },
+        {
+          "path": "tokenizer.json",
+          "size": 7032403,
+          "sha256": "a5d85b6dcc535e6b93115a9ef287e6132fdbf30270da6218194ba742261173c7"
+        },
+        {
+          "path": "tokenizer_config.json",
+          "size": 10868,
+          "sha256": "c2da771801886ad9ae98181793ffd3dfb7f1af30f6f7c6a4e15d7dbba52e2399"
+        },
+        {
+          "path": "video_preprocessor_config.json",
+          "size": 385,
+          "sha256": "7768af27c1fafa9cc9011c1dc20067e03f8915e03b63504550e11d5066986d13"
+        },
+        {
+          "path": "vocab.json",
+          "size": 2776833,
+          "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+        }
+      ]
+    },
+    "blip_base": {
+      "status": "verified",
+      "spec_hash": "3cad72f003bf80a9cf4b352baf21ceb17b74519cc81e7eedf9ba4254bd853a6a",
+      "revision": "82a37760796d32b1411fe092ab5d4e227313294b",
+      "files": [
+        {
+          "path": ".gitattributes",
+          "size": 1477,
+          "sha256": "db7c0371f46f0840b8f25794c1e3321c9b5820a8cb6ba9694a46fc64b8fae5a6"
+        },
+        {
+          "path": "README.md",
+          "size": 6359,
+          "sha256": "eae8c14a066e611a51a803cccb35c892bbd78d1ca7db45fbb06f5fb79bff7ad1"
+        },
+        {
+          "path": "config.json",
+          "size": 4563,
+          "sha256": "f7846f82f4e2c4a2ccbab9ae8b0e44873540a271a76a1288effd078180c13a82"
+        },
+        {
+          "path": "preprocessor_config.json",
+          "size": 287,
+          "sha256": "065c10ec97edc5081fbd9655b3d9d25e2647ea6d5dab873325e88eed12d80a7d"
+        },
+        {
+          "path": "special_tokens_map.json",
+          "size": 125,
+          "sha256": "b6d346be366a7d1d48332dbc9fdf3bf8960b5d879522b7799ddba59e76237ee3"
+        },
+        {
+          "path": "tokenizer.json",
+          "size": 711396,
+          "sha256": "d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66"
+        },
+        {
+          "path": "tokenizer_config.json",
+          "size": 506,
+          "sha256": "5c7f96096284c55e539eff95f4451c19efc34258ddb975a4400d052b77301e5e"
+        },
+        {
+          "path": "vocab.txt",
+          "size": 231508,
+          "sha256": "07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3"
+        },
+        {
+          "path": "pytorch_model.bin",
+          "size": 989820849,
+          "sha256": "d6638651a5526cc2ede56f2b5104d6851b0755816d220e5e046870430180c767"
+        }
+      ]
+    },
+    "florence2_base_ft": {
+      "status": "verified",
+      "spec_hash": "46637baca45bca48bd4a4aa88a98fa518683dcefaf781d6022457906b2cf58ea",
+      "revision": "f6c1a25888ffc1d945ee8a1a77ac833c7303d46e",
+      "files": [
+        {
+          "path": ".gitattributes",
+          "size": 1560,
+          "sha256": "28aac17b0f70983ef58c18a7ee355503e454ce3178fce77a7b50503906df0635"
+        },
+        {
+          "path": "CODE_OF_CONDUCT.md",
+          "size": 444,
+          "sha256": "9daeae709a0bd71bcfd1c96dc5822ecec5210327eff929da64b0ae7f8faf1444"
+        },
+        {
+          "path": "LICENSE",
+          "size": 1141,
+          "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383"
+        },
+        {
+          "path": "README.md",
+          "size": 14820,
+          "sha256": "092b90e814cd6c15f734b15a81e294b4d12c92d12bff3c674a9474ca935ecd1c"
+        },
+        {
+          "path": "SECURITY.md",
+          "size": 2656,
+          "sha256": "7b6976eec43edfa68b79a459dd089c56b7a395916dbf1a01bd11e6d86e12128f"
+        },
+        {
+          "path": "SUPPORT.md",
+          "size": 1244,
+          "sha256": "149773411caf2c59cb1a6bfb2c6f070d1d054f1f018e7a80be319a8c384eeaf5"
+        },
+        {
+          "path": "config.json",
+          "size": 2430,
+          "sha256": "c666d0fe0172d46e115e8fba6cd93cd83714575b33a73005cab8d24ce2a3aa8f"
+        },
+        {
+          "path": "model.safetensors",
+          "size": 463221266,
+          "sha256": "58757d657ff44051314c8030b68e04cb1bb618ca9a4885418f111f6fb708185a"
+        },
+        {
+          "path": "preprocessor_config.json",
+          "size": 806,
+          "sha256": "2f5921bbc53c7cc04251e1027b45b1cec726276be6db23d1bb40641bfbe2cf29"
+        },
+        {
+          "path": "tokenizer.json",
+          "size": 1355863,
+          "sha256": "847bbeab6174d66a88898f729d52fa8d355fafe1bea101cf960dd404581df70e"
+        },
+        {
+          "path": "tokenizer_config.json",
+          "size": 34,
+          "sha256": "79ffcf43af8ebda99d165f61d243180da2e2639952e41e71e11611c18770489c"
+        },
+        {
+          "path": "vocab.json",
+          "size": 1099884,
+          "sha256": "394fdc63c71aabe0a9b97117f5d62fb5fcc4d59b2b3ea929a3929e6a53217b3c"
+        },
+        {
+          "path": "configuration_florence2.py",
+          "size": 15125,
+          "sha256": "653bafddc9651eaff1583a16db4a2bb27d33ec7d541dfab7201aaa4ecaa1cfbf"
+        },
+        {
+          "path": "modeling_florence2.py",
+          "size": 127415,
+          "sha256": "5bb7aa72c6ba62e96e1bbae6bc1aaf7b4e8e28cdfc62e670de3d5b67eeab1fdf"
+        },
+        {
+          "path": "processing_florence2.py",
+          "size": 46372,
+          "sha256": "4bd7158536cbf1c7891fc8efd94437d79fd09f07f539c7398fab8a885d7d8bca"
+        }
+      ]
+    },
+    "smolvlm2_500m": {
+      "status": "verified",
+      "spec_hash": "a7cb839b0c8aa0f68d00602c13e85810579a360d1945217eb2d1b09d1072f542",
+      "revision": "7b375e1b73b11138ff12fe22c8f2822d8fe03467",
+      "files": [
+        {
+          "path": ".gitattributes",
+          "size": 1519,
+          "sha256": "11ad7efa24975ee4b0c3c3a38ed18737f0658a5f75a0a96787b576a78a023361"
+        },
+        {
+          "path": "README.md",
+          "size": 10865,
+          "sha256": "afc4bf5f519438b221a84292979a9eac3de4b9726e5baaa82033c55f59f9f7a5"
+        },
+        {
+          "path": "added_tokens.json",
+          "size": 4739,
+          "sha256": "74135b8664b56088c0006f1c8e848d79a8eba003411f72ebf1dc2ee96227be3a"
+        },
+        {
+          "path": "chat_template.json",
+          "size": 430,
+          "sha256": "b585e3598909a5687f9f9d738d35223724dedef256b9b274e1cbfb32b13c74bf"
+        },
+        {
+          "path": "config.json",
+          "size": 3767,
+          "sha256": "ea6bc1237e96247f6258de3e202e2e62b93d6f386dc47e7b36b5588bf3a15e17"
+        },
+        {
+          "path": "generation_config.json",
+          "size": 136,
+          "sha256": "34835060c9f0f74d1acb456cc72ca32746d3843d9eb5f578f9cbffac1d2eb840"
+        },
+        {
+          "path": "merges.txt",
+          "size": 466391,
+          "sha256": "0b54e8aa4e53d5383e2e4bc635a56b43f9647f7b13832d5d9ecd8f82dac4f510"
+        },
+        {
+          "path": "model.safetensors",
+          "size": 2029990624,
+          "sha256": "b9bfd456c9472c0acd5719d6e514c4b859891af205ee1a736552fd3497b8b0c3"
+        },
+        {
+          "path": "preprocessor_config.json",
+          "size": 599,
+          "sha256": "149e315d9410368e5491455bb06e0f763426e9e56cca731c13b24404a29b6374"
+        },
+        {
+          "path": "processor_config.json",
+          "size": 67,
+          "sha256": "f3ad45028447b3562b4752be0d5916d6806c1ef589091a469608dcf0faa1737c"
+        },
+        {
+          "path": "special_tokens_map.json",
+          "size": 868,
+          "sha256": "2dfea2a426162316ff1567c82bc6d36d9690cd9f90455f075c77daca78b45c60"
+        },
+        {
+          "path": "tokenizer.json",
+          "size": 3548256,
+          "sha256": "5ece781dc8d2b2f3e2f289ca0ae50b17cfc27dd27bfe7971bb8241e0b964331a"
+        },
+        {
+          "path": "tokenizer_config.json",
+          "size": 28626,
+          "sha256": "dd9ce2ab89a3dd881bd9378f1a79b943a064b9275a7e1706d5b7b47b68977913"
+        },
+        {
+          "path": "vocab.json",
+          "size": 800662,
+          "sha256": "82b84012e3add4d01d12ba14442026e49b8cbbaead1f79ecf3d919784f82dc79"
+        }
+      ]
+    }
+  }
+}

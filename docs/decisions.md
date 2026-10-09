@@ -213,3 +213,22 @@ ConvNeXt/ViT. Время измерялось последовательно, а
 контекстом; после анализа следующий субагент получает сравнение аннотаторов
 с одним полным проходом на модель. Автоматическая проверка раз в 10 минут
 удалена по прямому указанию пользователя.
+
+## 09.10.2026: независимый протокол аннотаторов
+
+Веса отдельно в annotation/models/, официальные revisions/лицензии закреплены
+до test. Протокол test500 + disjoint dev100 из существующих detector partitions;
+один полный проход каждой из четырёх моделей, новых CI/bootstraps нет.
+Одинаковые greedy max_new_tokens96/warmup1/batch1, FP16. Ограничение Qwen
+65536–262144 pixels проверено smoke без квантования/offload.
+BLIP не поддерживает SDPA, поэтому eager; Florence также eager.
+Старый официальный Florence не совместим с native processor 4.57.6:
+проверенные три Python-файла Microsoft закреплены revision/SHA, local-only
+trust_remote_code разрешён только Florence; tokenizer fast и legacy tuple-cache
+без изменения весов. Переходы checkpoint после полного завершения потомка
+защищены общим inference.lock. Сбои до test сохранены отдельно.
+
+CHAIR использует словарь/правила авторов и Pattern singularization с SHA
+исходников; GT val2017 instances+captions. Внешние эталоны и человеческие оценки
+не выдумываются: формы готовятся, оценки остаются pending. Known COCO training
+BLIP/SmolVLM2 не позволяет заявить полностью независимое обобщение.

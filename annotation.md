@@ -2,9 +2,9 @@
 
 ## Назначение и состояние
 
-Третье обязательное сравнение: четыре отдельные image-captioning/VLM-модели создают **общее описание исходного изображения**. Список меток детектора не заменяет аннотацию. На 09.10.2026 модуль аннотирования, загрузка его весов и локальные измерения ещё не реализованы; числовые результаты отсутствуют.
+Третье обязательное сравнение: четыре отдельные image-captioning/VLM-модели создают **общее описание исходного изображения**. Список меток детектора не заменяет аннотацию. На 09.10.2026 реализован независимый экспериментальный модуль `annotation/`, веса загружены и проверены; четыре checkpoint прошли реальные офлайн GPU-smoke. Основной test500-проход ещё не выполнен. Приложение и конвейер не реализованы.
 
-Предварительные кандидаты из плана: **BLIP base** (`Salesforce/blip-image-captioning-base`), **Florence-2 base-ft** (`microsoft/Florence-2-base-ft`), **Qwen3-VL 2B Instruct** (`Qwen/Qwen3-VL-2B-Instruct`), **SmolVLM2 500M Video Instruct** (`HuggingFaceTB/SmolVLM2-500M-Video-Instruct`). Это не доказанный топ-4; до финальной фиксации проверить официальные источники, критерий отбора, версии, лицензии и ресурсную пригодность. Суффикс ft означает готовое дообучение авторами, собственного обучения нет. Video в названии SmolVLM2 не требует поддержки видео.
+Предварительные кандидаты из плана: **BLIP base** (`Salesforce/blip-image-captioning-base`), **Florence-2 base-ft** (`microsoft/Florence-2-base-ft`), **Qwen3-VL 2B Instruct** (`Qwen/Qwen3-VL-2B-Instruct`), **SmolVLM2 500M Video Instruct** (`HuggingFaceTB/SmolVLM2-500M-Video-Instruct`). Это не доказанный топ-4. Официальные revisions, лицензии и критерий фиксации — [docs/annotation_model_selection.md](docs/annotation_model_selection.md) и `annotation/configs/models.json`. Суффикс ft означает готовое дообучение авторами, собственного обучения нет. Video в названии SmolVLM2 не требует поддержки видео.
 
 ## С чего начать
 
@@ -42,3 +42,25 @@ Smoke и dev-проверки до фиксации test-протокола — 
 ## Проверки
 
 Проверить JSON-контракт, сохранение raw_caption, отсутствие входных ответов детектора в базовом caption, офлайн smoke каждого checkpoint, последовательное освобождение процессов, OOM и неполный отчёт. Mock-тесты и реальные model smoke описывать отдельно.
+
+## Реализация от 09.10.2026
+
+Команды — [annotation/README.md](annotation/README.md). Веса отдельно в
+**annotation/models/**, SHA-256 — `annotation/models/manifest.json`.
+Заранее зафиксированы dev100 из detector dev500 и test500 из detector test4500:
+`annotation/configs/dev100.json`, `annotation/configs/test500.json`.
+COCO captions — официальные val2017, split project-local, не официальный test COCO.
+
+FP16 без offload/quantization, batch1, один прогрев на dev, максимум96 completion
+токенов, greedy, repeats1. Qwen ограничен 65536–262144 pixels; BLIP/Florence
+eager, Qwen/Smol SDPA. Florence использует проверенный закреплённый авторский
+код local-only и legacy-cache; остальные trust_remote_code=False.
+Нативный Florence smoke и первые проверки совместимости failed сохранены;
+успешный smoke не заменяет основной test.
+
+[Метрики и проверенная CHAIR-методика](annotation/evaluation/README.md):
+CIDEr, BLEU-4, ROUGE-L, CHAIRs/CHAIRi, дополнительная объектная полнота,
+тайминги и ресурсы. Слепые экспертные формы будут подготовлены из результатов;
+человеческие оценки пока отсутствуют. Внешний разрешённый набор не предоставлен,
+SPICE evaluator не валидирован. BLIP и SmolVLM2 имеют известное использование
+COCO в обучающих источниках; полной независимости test500 не заявлять.

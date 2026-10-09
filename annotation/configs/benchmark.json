@@ -1,0 +1,29 @@
+{
+  "version": "annotation-test500-v1",
+  "models": [
+    "blip_base",
+    "florence2_base_ft",
+    "qwen3_vl_2b",
+    "smolvlm2_500m"
+  ],
+  "batch_size": 1,
+  "repeats": 1,
+  "warmup": 1,
+  "seed": 42,
+  "cpu_threads": 4,
+  "device": "cuda:0",
+  "precision": "fp16",
+  "attn_implementation": {
+    "blip_base": "eager",
+    "florence2_base_ft": "eager",
+    "qwen3_vl_2b": "sdpa",
+    "smolvlm2_500m": "sdpa"
+  },
+  "max_new_tokens": 96,
+  "do_sample": false,
+  "num_beams": 1,
+  "prompt": "Describe the visible objects, actions, and setting in this image briefly in English. Do not speculate.",
+  "florence_task": "<CAPTION>",
+  "qwen_min_pixels": 65536,
+  "qwen_max_pixels": 262144
+}

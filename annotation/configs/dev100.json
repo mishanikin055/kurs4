@@ -1,0 +1,1413 @@
+{
+  "name": "dev100",
+  "source": "COCO val2017; project-local detector partition",
+  "source_url": "https://cocodataset.org/#download",
+  "parent_partition": "dev",
+  "seed": 42,
+  "captions_sha256": "afe3b30e403dd7f228e2373023abbd60042a6e10ec6874d3652df034d289ebb9",
+  "instances_sha256": "e8c7f7908f1d7278341fae127d0da654f102f11bd7b21d8aeefa635b8c810b6f",
+  "detector_split_sha256": "af520a5beb083c6af8de3b7e28ee5372df93ea08f89721012c3dc572c944106b",
+  "images": [
+    {
+      "image_id": 380711,
+      "path": "data/coco/val2017/000000380711.jpg",
+      "sha256": "66d2aecfd634e951147d9472e05db168b72515b8cd06ddf8f2bb60206c0adac5",
+      "width": 612,
+      "height": 612,
+      "references": [
+        "There is a blurry photo of a surfer walking out of the water",
+        "Blurry photograph of a surfer emerging from the ocean with his board",
+        "On a gray day a surfer carrying a white board walks on a beach.",
+        "A male walking out of the water holding a surf board.",
+        "A man walking near a shoreline with a surf board under his arm."
+      ]
+    },
+    {
+      "image_id": 189213,
+      "path": "data/coco/val2017/000000189213.jpg",
+      "sha256": "7c2e5f491b5135098b40bd7b9c545ea8f06f738d863435d984882314adbd4c9e",
+      "width": 500,
+      "height": 375,
+      "references": [
+        "A pile of junk sitting next to a curb on green grass.",
+        "A pile of garbage sitting on the curb in front of a wall.",
+        "A pile of old furnishings on the curb for trash pickup.",
+        "Garbage and old chairs are thrown onto a curb.",
+        "A pile of discarded household appliances and furniture sit on a street corner. "
+      ]
+    },
+    {
+      "image_id": 81594,
+      "path": "data/coco/val2017/000000081594.jpg",
+      "sha256": "da1be542992e54d39a236f475fe1593529df2b07cc2135a73bf16221f224eaa7",
+      "width": 478,
+      "height": 640,
+      "references": [
+        "A woman holding an umbrella while standing on top of a wooden deck.",
+        "A woman with an umbrella standing on a deck. ",
+        "a woman is holding a black umbrella and smiling",
+        "A woman holding an umbrella near a sculpture.",
+        "a woman holding an umbrella next to a wall "
+      ]
+    },
+    {
+      "image_id": 157046,
+      "path": "data/coco/val2017/000000157046.jpg",
+      "sha256": "cadd4ed7b812dd75964015ba1879c6c94c5de1c32e077b9fe4498bc16aa007f4",
+      "width": 500,
+      "height": 375,
+      "references": [
+        "A Nintendo Wii remote is being used to control a projector",
+        "A person holding a remote facing several large screens.",
+        "A wall that has a wavy light patterns on it.",
+        "A hand is holding a tag with a cross on it.",
+        "The hand is pointing a remote at a screen."
+      ]
+    },
+    {
+      "image_id": 15746,
+      "path": "data/coco/val2017/000000015746.jpg",
+      "sha256": "ba79e69d4272bc31ea4fb9f3731e020a9c8acf1fbf3b6ffb78528d70e2e183f7",
+      "width": 427,
+      "height": 640,
+      "references": [
+        "A fire hydrant is standing amid some grass.",
+        "A red and black fire hydrant is positioned in front of a dwelling.",
+        "A fire hydrant in front of a house with overgrown grass",
+        "A picture of a fire hydrant in the grass.",
+        "The fire hydrant in the green grass is red."
+      ]
+    },
+    {
+      "image_id": 545407,
+      "path": "data/coco/val2017/000000545407.jpg",
+      "sha256": "c0a40fd533950c0065e59d79dec077a445a1fddcdb8af0f0535f83a092acd02b",
+      "width": 640,
+      "height": 424,
+      "references": [
+        "A side view of a plane flying in the clear blue sky",
+        "A passenger jet that is flying in the sky.",
+        "An airplane is flying through clear blue sky.",
+        "A gray and blue plane flies in the blue sky.",
+        " A jet airliner flying in the air carrying some passengers. "
+      ]
+    },
+    {
+      "image_id": 98497,
+      "path": "data/coco/val2017/000000098497.jpg",
+      "sha256": "2314fd57bbc82c8b78f04594f2e61d7dda3e1d18f4e9d2946bc2329ee33f9ea1",
+      "width": 640,
+      "height": 480,
+      "references": [
+        "A traffic sign that has a picture of a man holding a surfboard on it.",
+        "A yellow sign that is at the top of a pole.",
+        "a yellow sign of a person carrying a surf board",
+        "A sign with a person with a surfboard is near a building and palm trees.",
+        "A ROAD SIGN INDICATING SURFERS OUTSIDE A TEMPLE"
+      ]
+    },
+    {
+      "image_id": 553669,
+      "path": "data/coco/val2017/000000553669.jpg",
+      "sha256": "aa69a44b016d4a7f1b765f9af8af6bff98595da70d73bd83eeaae083c54a096f",
+      "width": 640,
+      "height": 480,
+      "references": [
+        "People sitting on benches in the park, and traffic in the street",
+        "A man is sitting on a park bench using a computer.",
+        "a male in a brown shirt sitting on a bench with a laptop",
+        "A person on a bench with a laptop in a park",
+        "People sitting on a park bench watching cars go by."
+      ]
+    },
+    {
+      "image_id": 168593,
+      "path": "data/coco/val2017/000000168593.jpg",
+      "sha256": "4cde21e74bd39dc0fedff67ee01242c84574e08b6739bf3188180b5c35b250ca",
+      "width": 640,
+      "height": 480,
+      "references": [
+        "There are two refrigerators in this dirty, rundown kitchen. ",
+        "Two refrigerators standing side by side in a room.",
+        "An olive green refrigerator next to a white refrigerator in an old kitchen. ",
+        "A small refrigerator in a small kitchen with a window.",
+        "A kitcken that has two different refigeratator in it."
+      ]
+    },
+    {
+      "image_id": 5992,
+      "path": "data/coco/val2017/000000005992.jpg",
+      "sha256": "c33842fbbd9626843b93ede50dd4908221cb0c9bf9837f58861354eec2a4ec56",
+      "width": 640,
+      "height": 428,
+      "references": [
+        "A small group of sheep standing together next to a building.",
+        "Group of sheep standing next to a brick building. ",
+        "sheep standing around next to a brick wall ",
+        "A herd of sheep standing on top of a green grass covered yard.",
+        "A group of shaggy haired sheep standing beside a building."
+      ]
+    },
+    {
+      "image_id": 128748,
+      "path": "data/coco/val2017/000000128748.jpg",
+      "sha256": "83be757b190c08eb1fb37799d4d52ef0c0fdc2ab2afed2598b6b0d76388e6663",
+      "width": 491,
+      "height": 640,
+      "references": [
+        "a baseball player talks with an umpire ",
+        "A batter and catcher talking to the umpire at home plate.",
+        "Three baseball players stand communicating on a field.",
+        "A group of three men standing around a baseball field.",
+        "An umpire is talking with two players on different teams."
+      ]
+    },
+    {
+      "image_id": 517832,
+      "path": "data/coco/val2017/000000517832.jpg",
+      "sha256": "5abcfe8813a27b9b33b596579f768ef225ddff2f6cfd7be6edf2c46399e94282",
+      "width": 640,
+      "height": 640,
+      "references": [
+        "A small black dog sitting in an orange checkered chair.",
+        "A cute black dog with a white spot sitting on a chair",
+        "A plaid couch with a black dog sitting on it.",
+        "The black dog sits alertly on the vintage chair.",
+        "a dog sitting in an orange chair looking at someone"
+      ]
+    },
+    {
+      "image_id": 327617,
+      "path": "data/coco/val2017/000000327617.jpg",
+      "sha256": "ee9b8e35b94f07d4afeb109342e3f8c7cb11e46c540efc9f6b0daf84ce105b0d",
+      "width": 379,
+      "height": 640,
+      "references": [
+        "an old black and white photo of a tennis player",
+        "A woman holds a racket in front of a net.",
+        "A pretty young lady standing on a tennis court holding a racquet.",
+        "An older photo of a woman on a tennis court posing with her raquet.",
+        "a vintage photo of a woman with a tennis racket "
+      ]
+    },
+    {
+      "image_id": 349678,
+      "path": "data/coco/val2017/000000349678.jpg",
+      "sha256": "ae5d97a6b5f41a9821e50bb853b4c6d5f1c2c833c7231cc2c04768929f7dce0f",
+      "width": 427,
+      "height": 640,
+      "references": [
+        "A large tower with a clock on it advertising transportation via train.",
+        "two flags flying in the wind while atop a train station clock.",
+        "An old town clock with the U.S. flag and a state flag on top.",
+        "The clock tower that has a sign saying \"Go By Train\" is surrounded by greenery.",
+        "A train station clock tower with flags flying above it."
+      ]
+    },
+    {
+      "image_id": 512776,
+      "path": "data/coco/val2017/000000512776.jpg",
+      "sha256": "4f8ed5cbc44b8315f3c70f6baa00ab46e35ea09b6e41e53ee42f63fe54be70ae",
+      "width": 500,
+      "height": 356,
+      "references": [
+        "a person standing next to a person getting ready to catch a ball",
+        "A catcher with a catcher's mitt on squatting behind a baseball player.",
+        "The home plate with the back catcher and someone ready to bat.",
+        "A catcher crouched behind a baseball player at bat.",
+        "A man standing next to a base on a baseball field."
+      ]
+    },
+    {
+      "image_id": 140556,
+      "path": "data/coco/val2017/000000140556.jpg",
+      "sha256": "132750613623f8796699dc0e4c6f70aea6c9e0fa09dadd37d72b9df729a01a1f",
+      "width": 640,
+      "height": 457,
+      "references": [
+        "these man are standing near a fire hydrant",
+        "A orange fire hydrant with a couple of men standing around it.",
+        "A group of men standing near a fire hydrant.",
+        "A group of men standing around a yellow fire hydrant.",
+        "some guys in green jackets standing around a fire hydrant "
+      ]
+    },
+    {
+      "image_id": 400161,
+      "path": "data/coco/val2017/000000400161.jpg",
+      "sha256": "105a473f8cbcca2ce058cba66f8319442e83707f07b291bb472992e5b58d6d1b",
+      "width": 640,
+      "height": 480,
+      "references": [
+        "A bunch of remotes that are in cloth holders.",
+        "four different controllers in a couches controller case and a person",
+        "The four remotes are inside of pockets on the arm of a couch.",
+        "A remote control storage pouch attached to a couch. ",
+        "a remote control holder attached to living room furniture that is full of controllers"
+      ]
+    },
+    {
+      "image_id": 239857,
+      "path": "data/coco/val2017/000000239857.jpg",
+      "sha256": "320ed8332ef28f2b53f85d01e509ec684da2765d6b79685a774509f3ca088f48",
+      "width": 500,
+      "height": 333,
+      "references": [
+        "A woman is about to throw a frisbee in the dirt.",
+        "A woman is playing frisbee at a camp site.",
+        "A woman playing Frisbee on a tent city road",
+        "There is a green Frisbee in the air with red chairs in the background.",
+        "A man holding a neon frisbee in his right hand."
+      ]
+    },
+    {
+      "image_id": 445658,
+      "path": "data/coco/val2017/000000445658.jpg",
+      "sha256": "f6b10f771a3d40d6d273013bb9ea58fb3a285d0b6ef14b94b9f2fc058d91fefe",
+      "width": 640,
+      "height": 427,
+      "references": [
+        "A family kitchen cluttered with items on the counters",
+        "A kitchen filled with a stove top oven and a dishwasher.",
+        "A kitchen area features a white refrigerator a stove and other appliances and brown cabinets.",
+        "A kitchen counter is cluttered with cooking supplies. ",
+        "A kitchen has a lot of brown cabinets."
+      ]
+    },
+    {
+      "image_id": 581482,
+      "path": "data/coco/val2017/000000581482.jpg",
+      "sha256": "746f096af1cde539f2eba4e4c16dc46e84f424dc0ba1159d9455c4ba913ef098",
+      "width": 640,
+      "height": 427,
+      "references": [
+        "A fancy metal cloth is seen against huge barred windows at a stone train station.",
+        "a black and white photo of a clock",
+        "A shot of a clock in the train station.",
+        "A clock in a brightly lit room with windows.",
+        "A clock in a building in front of windows."
+      ]
+    },
+    {
+      "image_id": 576052,
+      "path": "data/coco/val2017/000000576052.jpg",
+      "sha256": "bcd2855bf9a530b8b0ab52345abb01acaeffa69c3516aed8722c84b7769f61bc",
+      "width": 640,
+      "height": 427,
+      "references": [
+        "A female horse rider mounted near a body of water and mountains.",
+        "A man with a hat is on a horse by a dry lake.",
+        "a person on a horse and some snow on some mountains",
+        "A person is riding a horse by the water",
+        "A person on a horse with large snow capped mountains in the background."
+      ]
+    },
+    {
+      "image_id": 156076,
+      "path": "data/coco/val2017/000000156076.jpg",
+      "sha256": "49a087bb469f223f392b8f0b62fdf38a8022067f52e22de9f21f49cf546e56cc",
+      "width": 640,
+      "height": 478,
+      "references": [
+        "A couple of men and one young man eating pizza.",
+        "Guys sitting at a table eating pizza and talking ",
+        "three guys sitting at a table with two pizzas",
+        "Some people are seen eating several large pizzas.",
+        "The men are enjoying the very large pizzas."
+      ]
+    },
+    {
+      "image_id": 423229,
+      "path": "data/coco/val2017/000000423229.jpg",
+      "sha256": "99509da727baae5b895c19430f06db4b0fed8aee999cfd9a21f177cff57085e2",
+      "width": 640,
+      "height": 423,
+      "references": [
+        "An old fashioned steam engine train traveling down railroad tracks.",
+        "A train engine that is letting out smoke travelling down a railroad track with multiple passenger cars attached.",
+        "An old fashioned train riding on train tracks in a wooded area.",
+        "A train passing through wooded areas on a train track.",
+        "A locomotive on train tracks in a wooded countryside."
+      ]
+    },
+    {
+      "image_id": 130599,
+      "path": "data/coco/val2017/000000130599.jpg",
+      "sha256": "669aa9b450c1d423c450da6a9e25cab88a9fcbc61b447028248fb748a0925e4d",
+      "width": 640,
+      "height": 480,
+      "references": [
+        "A man punching an innocent giraffe in the side of it's head.",
+        "A young man is playing with a giraffe",
+        "A man pretending to punch a giraffe sculpture.",
+        "A man is miming punching a giraffe statue.",
+        "A man is pretending to hit a statue of a giraffe."
+      ]
+    },
+    {
+      "image_id": 42070,
+      "path": "data/coco/val2017/000000042070.jpg",
+      "sha256": "818c02b337b36d985a332535bd5526fa8f958823b1c910e86579fe4294dcbcb1",
+      "width": 640,
+      "height": 512,
+      "references": [
+        "A very big city bus on a big street.",
+        "A large bus on the side of a street.",
+        "Blue, white, and green passenger bus parked at a stop. ",
+        "a city bus parked on the side of the road",
+        "A white bus driving down a street next to a building."
+      ]
+    },
+    {
+      "image_id": 542089,
+      "path": "data/coco/val2017/000000542089.jpg",
+      "sha256": "31bd81ef3f4e995d12b7fdaeef111e99b1fae43b54a4686f9f94a9379ed8cdcf",
+      "width": 375,
+      "height": 500,
+      "references": [
+        "a bathroom with a bath tub a sink and a mirror",
+        "A bathroom with a tub on the side and a large bowl sink under a large bathroom mirror.",
+        "A bathroom with a sink that is elevated.",
+        "A tile bathroom contains a tub and large sink. ",
+        "A bathroom is outfitted with brown and white."
+      ]
+    },
+    {
+      "image_id": 36678,
+      "path": "data/coco/val2017/000000036678.jpg",
+      "sha256": "b1a453d5b19059f02e49f9056c31e1b4c09e58b8bd3093b0bd3266149d8dd1a4",
+      "width": 640,
+      "height": 361,
+      "references": [
+        "The Big Ben clock tower towering over the city of London.",
+        "Old English castle sitting on side of river.",
+        "The Thames river near Westminster on a cloudy evening.",
+        "A large cathedral and clocktower building sits in front of an ocean with ferry and sailboats riding past.",
+        "A scenic river view with the a palace in the background."
+      ]
+    },
+    {
+      "image_id": 351530,
+      "path": "data/coco/val2017/000000351530.jpg",
+      "sha256": "c0dd4c7912f49996c6db70407078f13642da6239661294dc27bf190b2e1669f7",
+      "width": 640,
+      "height": 378,
+      "references": [
+        "People seated on wooden chairs and a bicycle parked nearby.",
+        "two people sitting on benches with trees in the background",
+        "There is a long line of wooden chairs and two women sit. ",
+        "The two women sit on a bench together.",
+        "There are people sitting on chairs lined up"
+      ]
+    },
+    {
+      "image_id": 4134,
+      "path": "data/coco/val2017/000000004134.jpg",
+      "sha256": "2c922f6ec30f9c4eca2b373c8808f63979c26f4d89242754b3576bf78db1108b",
+      "width": 640,
+      "height": 425,
+      "references": [
+        "A man is shaking hands with another man.",
+        "Two men shake hands at a formal dinner gathering.",
+        "Two men standing next to each other holding hands.",
+        "Two men are shaking hands at a social gathering.",
+        "Two men shaking hands after a dinner speech."
+      ]
+    },
+    {
+      "image_id": 312278,
+      "path": "data/coco/val2017/000000312278.jpg",
+      "sha256": "60d58df335eb6b124044f7bce1cd7cc583a47cff1a60e2ce773b16c1106ff6e9",
+      "width": 640,
+      "height": 293,
+      "references": [
+        "Suitcases on top of a carrier onto of a vehicle.",
+        "A crate on top of a car holding various luggage.",
+        "A luggage rack that has various pieces of luggage and containers on it.",
+        "A collection of luggage that has been placed on a wooden carrier.",
+        "A rack filled with lots of different bags of luggage."
+      ]
+    },
+    {
+      "image_id": 529568,
+      "path": "data/coco/val2017/000000529568.jpg",
+      "sha256": "2c97efcc385141e55c77afcf239cf59639637e9155cacf5ac870c87d2a6de42e",
+      "width": 480,
+      "height": 640,
+      "references": [
+        "A big fancy glass chandelier hanging in a small kitchen.",
+        "A kitchen area with a counter, shelves and a television.",
+        "a country kitchen has a blue, wooden table, open shelves and white counters and a white sink.",
+        "A nice kitchen has a large crystal chandelier.",
+        "The old kitchen and the table in it are furnished from wood."
+      ]
+    },
+    {
+      "image_id": 316404,
+      "path": "data/coco/val2017/000000316404.jpg",
+      "sha256": "55d845f4048d0009698986cfa88ec1b27948f3deaf57adf30ca603ab343c58c5",
+      "width": 640,
+      "height": 445,
+      "references": [
+        "A pair of men with small mustaches dress as tennis players.",
+        "a couple of men that are standing around with rackets",
+        "Two men with tennis rackets and tennis balls.",
+        "Two men wearing polos, headbands and shorts, holding tennis balls and rackets.",
+        "Two men posing for a picture in a tennis game in a funny way."
+      ]
+    },
+    {
+      "image_id": 173057,
+      "path": "data/coco/val2017/000000173057.jpg",
+      "sha256": "7fede90a53bf0dbf3224c93f00bb84cd669ba68838b59731bb0482d7821f9d42",
+      "width": 480,
+      "height": 640,
+      "references": [
+        "A large clock tower in front of a building next to a fountain.",
+        "A clock tower in a central public area.",
+        "People sit around a pool and a clock tower.",
+        "A large clock tower sitting over a fountain of water",
+        "A large clock standing in front a building with lots of windows."
+      ]
+    },
+    {
+      "image_id": 321214,
+      "path": "data/coco/val2017/000000321214.jpg",
+      "sha256": "5b4d5e12a578b4407a3724c83a8950c5f00b36763bdefdc535363818d057ae9e",
+      "width": 640,
+      "height": 480,
+      "references": [
+        "A baby in plaid shirt eating a frosted cake.",
+        "The young is enjoying his cake so much its all over him. ",
+        "A toddler eats cake with his hands in his high chair.",
+        "A toddler is getting messy while eating his cake. ",
+        "Baby boy at the table eating cake frosting off his hand."
+      ]
+    },
+    {
+      "image_id": 158945,
+      "path": "data/coco/val2017/000000158945.jpg",
+      "sha256": "d86467a75ad39f01f62aa5335f77430f3f769e40da2f76d2dee08544470ade53",
+      "width": 478,
+      "height": 640,
+      "references": [
+        "A PICTURE OF A ELEPHANT WITH A CART ON ITS BACK ",
+        "A gray elephant walking past a person standing on a wooden structure.",
+        "Seats placed on top of an elephant that is standing outside. ",
+        "An elephant walking with a harness on it's back where people are able to sit.",
+        "An elephant with a chair on top of it and a man standing on a balcony. "
+      ]
+    },
+    {
+      "image_id": 568814,
+      "path": "data/coco/val2017/000000568814.jpg",
+      "sha256": "018b450a9f537a3aabeff85e2b1f966c6b0ce512323a0fbfdd6e1264f6c4b7f9",
+      "width": 640,
+      "height": 359,
+      "references": [
+        "A man with a bear sitting with his arms crossed and his tie over his left shoulder.",
+        "A man with a beard in a tie sits with his arms crossed.",
+        "a man with a beard and a gray shirt and tie",
+        "A man with a tie is staring at something.",
+        "Man with beard folding arms with tie over shoulder."
+      ]
+    },
+    {
+      "image_id": 328683,
+      "path": "data/coco/val2017/000000328683.jpg",
+      "sha256": "1254508368e11e097ca02053eb48077ac59c6f0fa2996ac64d272c6893bd956b",
+      "width": 480,
+      "height": 640,
+      "references": [
+        "A parking meter decorated with different colors of paper. ",
+        "A couple of parking meters on a street.",
+        "A parking meter with a set of different colored papers wrapped around it.",
+        "The parking meter is decorated in different colors.",
+        "A parking meter sitting on the sidewalk in front of a building."
+      ]
+    },
+    {
+      "image_id": 1675,
+      "path": "data/coco/val2017/000000001675.jpg",
+      "sha256": "6ba641627c08ef424b7dc3e6cee069aa0dd49615a31c54ae0de1ecd1fabd9dea",
+      "width": 640,
+      "height": 480,
+      "references": [
+        "A cat resting on an open laptop computer.",
+        "A black fluffy cat sitting on top of a computer keyboard.",
+        "A black cat is sitting on a metal platform. ",
+        "The large cat is resting comfortably behind the laptop screen. ",
+        "A black and white cat relaxing inside a laptop."
+      ]
+    },
+    {
+      "image_id": 12062,
+      "path": "data/coco/val2017/000000012062.jpg",
+      "sha256": "319d58f0fa008d076b766671a5b607f94614f6005f773adced54a57567aa28fb",
+      "width": 640,
+      "height": 427,
+      "references": [
+        "A large white sheep standing next to other sheep.",
+        "A sheep in a cage looking at sheep fur. ",
+        "A lamb standing up in a couch full of wool. ",
+        "A sheep inspects a big pile of shaved sheep wool.",
+        "A freshly shorn sheep standing near a pile of wool."
+      ]
+    },
+    {
+      "image_id": 226408,
+      "path": "data/coco/val2017/000000226408.jpg",
+      "sha256": "b1ec6312140b21f1ba9e6de00f1aae76ce065d263d331f101033a5597c18ece1",
+      "width": 640,
+      "height": 469,
+      "references": [
+        "Child laying down with arms extended in the air.",
+        "Black and white photograph of a girl on a bed.",
+        "an image of a girl playing with a doll",
+        "A blurry black an white image of a girl laying down.",
+        "A girl lying down and smiling and feeling happy."
+      ]
+    },
+    {
+      "image_id": 241668,
+      "path": "data/coco/val2017/000000241668.jpg",
+      "sha256": "bda77cd5d1369d0d1275045f2f74dc25d19cec2fe4b7665b8b838dc8081f5e4a",
+      "width": 460,
+      "height": 640,
+      "references": [
+        "There are two people enjoying a wedding reception",
+        "A woman in a wedding dress with another woman in a suit behind",
+        "A woman in a wedding dress with another lady holding a piece of cake.",
+        "A red head girl holding a piece of cake",
+        "A bride is with a long red haired person with cake."
+      ]
+    },
+    {
+      "image_id": 233825,
+      "path": "data/coco/val2017/000000233825.jpg",
+      "sha256": "5706c6d49efd3a03346964ce2ca877d217c40b54e710272dbfabf32ea250af41",
+      "width": 640,
+      "height": 480,
+      "references": [
+        "A den with a couch, table, book shelf and a television.",
+        "A glass table that is next to a window.",
+        "A basic living with a TV, couch, and rack, ",
+        "some windows a fireplace books tables and a couch",
+        "A view of a living room with large windows."
+      ]
+    },
+    {
+      "image_id": 44260,
+      "path": "data/coco/val2017/000000044260.jpg",
+      "sha256": "6dbe2bfaba661155f667db007740c249774a7d0ca0f5e9d384f6bc095492d39f",
+      "width": 640,
+      "height": 425,
+      "references": [
+        "A collection of apples growing on a tree. ",
+        "Crisp, delicious apples hang on the dying branches of the tree.",
+        "An apple tree is shown in the middle of an orchard.",
+        "A tree containing apples with more trees in the background.",
+        "A tree has dying leaves and apples in a forest."
+      ]
+    },
+    {
+      "image_id": 357978,
+      "path": "data/coco/val2017/000000357978.jpg",
+      "sha256": "c391980744da1a5364eae79358f00c68be4b0429dca5980162d1adbd5d440d34",
+      "width": 500,
+      "height": 375,
+      "references": [
+        "The blonde woman in the red checked shirt is learning to use Wii Fit.",
+        "A woman attending an exposition about the future.",
+        "A woman standing next to another woman in a building.",
+        "Woman with checkered shirt trying Wii Fit at Expo.",
+        "a couple of women stand in a video game booth "
+      ]
+    },
+    {
+      "image_id": 449996,
+      "path": "data/coco/val2017/000000449996.jpg",
+      "sha256": "61f778bc3020d79b1356fa5d482737a8a5c029577924b29cd0db9dc7af37ca51",
+      "width": 640,
+      "height": 428,
+      "references": [
+        "Two planes in runway and another plane in the sky.",
+        "A plane is in the sky as several are parked on a runway.",
+        "Two jumbo jets are driving on the runway of an airport.",
+        "Planes flying and landing on a runway at an airport.",
+        "Some parked airplanes and one airplane in the sky"
+      ]
+    },
+    {
+      "image_id": 426297,
+      "path": "data/coco/val2017/000000426297.jpg",
+      "sha256": "a7d85feeae39119db1e7a0ee64a9872aed61f41c59573c39e0b0399b90545bdd",
+      "width": 640,
+      "height": 425,
+      "references": [
+        "The zebra is wondering about the shadow that he sees.",
+        "A zebra facing away from the camera and staring down.",
+        "A zebra that is standing up in the dirt.",
+        "A zebra looking down at a grass and dirt filled ground.",
+        "A zebra has its neck turned and is looking to its side"
+      ]
+    },
+    {
+      "image_id": 352491,
+      "path": "data/coco/val2017/000000352491.jpg",
+      "sha256": "35ec472ae0a3525fec079ef5c8877bfffec8f48c2366b3ee1737626e2ca65791",
+      "width": 640,
+      "height": 480,
+      "references": [
+        "A train sitting idle in an empty train station",
+        "A very long train parked in front of a train station.",
+        "A long white train has a blue pin stripe.",
+        "A passenger train on the outer track at a railway station.",
+        "The train is traveling down  the railroad tracks."
+      ]
+    },
+    {
+      "image_id": 464476,
+      "path": "data/coco/val2017/000000464476.jpg",
+      "sha256": "deff20ffbf74ff69dfd3b399b29b666e9bfff4281d5d3afa08608da9dc08a12a",
+      "width": 500,
+      "height": 375,
+      "references": [
+        "A laptop computer sitting on top of a table.",
+        "A man is seen walking out of a building.",
+        "A dark room with an open laptop and a computer monitor behind it.",
+        "A person is near a glass door in a room with a computer.",
+        "A building has two macintosh computers at the workstations."
+      ]
+    },
+    {
+      "image_id": 83172,
+      "path": "data/coco/val2017/000000083172.jpg",
+      "sha256": "1dd4184fea36118ad4cfae383fe057efa4c76acae104e18f9018b9a533351dad",
+      "width": 640,
+      "height": 427,
+      "references": [
+        "A woman holding a racquet on top of a tennis court.",
+        "A woman tennis player serving a tennis ball.",
+        "A tennis match with one of the players serving the ball.",
+        "A woman playing tennis throwing the ball in the air ready to serve it.",
+        "A woman with a tennis racquet that is on a tennis court."
+      ]
+    },
+    {
+      "image_id": 290843,
+      "path": "data/coco/val2017/000000290843.jpg",
+      "sha256": "6994d38a2582525f0c33f0cb28ee7e149ffcc950fa4c02cbd9ad9a3261955cc9",
+      "width": 428,
+      "height": 640,
+      "references": [
+        "A woman sitting on a laptop computer next to a cat.",
+        "A cat watches as its owner uses the laptop.",
+        "A cat is sitting on the bed near a person using a laptop.",
+        "A person sitting on bed behind an open laptop computer and a cat sitting beside and looking at the laptop screen area.",
+        "Cat staring at laptop screen as owner is online."
+      ]
+    },
+    {
+      "image_id": 555012,
+      "path": "data/coco/val2017/000000555012.jpg",
+      "sha256": "4e8438ac9aeb7c832c09c0518bf27a0bd3db3985dbf5978fef051c51447dc987",
+      "width": 640,
+      "height": 426,
+      "references": [
+        "The roll of toilet paper beside the toilet is empty. ",
+        "A white toilet sitting next to a white bath tub.",
+        "A white toilet sits next to a bath tub.",
+        "a white toilet and tub in a bathroom",
+        "a bathroom done in almost total white "
+      ]
+    },
+    {
+      "image_id": 323895,
+      "path": "data/coco/val2017/000000323895.jpg",
+      "sha256": "cef175a9dedfc31ad0e53519cfe601d1413658ecf738e5a31e0c43ab3ee1095c",
+      "width": 640,
+      "height": 480,
+      "references": [
+        "A man in yellow shirt and black shorts playing a game of tennis.",
+        "a tennis player running to swing ata ball",
+        "A man in a tennis tournament getting ready to hit the ball",
+        "a person swinging a tennis racket on a tennis court.",
+        "A man is in action on a green tennis court."
+      ]
+    },
+    {
+      "image_id": 422706,
+      "path": "data/coco/val2017/000000422706.jpg",
+      "sha256": "a5731f891fc02d36c1bfbbc369b3a99f0622458be29f762ee87684c990266bcc",
+      "width": 640,
+      "height": 427,
+      "references": [
+        "People watching off the side of a cruise ship as a life boat is lowered.",
+        "A emergency boat being lowered into the water by a cruise ship.",
+        "People watch from a large boat as a smaller boat is lowered into the ocean.",
+        "People watching a small boat being raised up.",
+        "some people are leaning over a railing on a boat "
+      ]
+    },
+    {
+      "image_id": 399462,
+      "path": "data/coco/val2017/000000399462.jpg",
+      "sha256": "1f6880864c82aa166366f3687cf86d918871c110dc3c931acd3fc1d5adcacf49",
+      "width": 300,
+      "height": 451,
+      "references": [
+        "A girl with a kite running in the grass.",
+        "A LITTLE GIRL IS RUNNING WITH HER KITE IN A OPEN FIELD",
+        "a little girl is running on the grass with a kite",
+        "A young girl running with a kite in a field.",
+        "A little girl laughs and runs with a kite in a grassy park."
+      ]
+    },
+    {
+      "image_id": 73326,
+      "path": "data/coco/val2017/000000073326.jpg",
+      "sha256": "1b86fe2c81d8c089b47f5b2cc763275e6caffdbc516801d5eff711841a39efc6",
+      "width": 640,
+      "height": 480,
+      "references": [
+        "An open refrigerator including bottles of various food.",
+        "This refrigerator is packed with many foods and drinks",
+        "An open refrigerator filled up with food and condiments. ",
+        "The contents of a refrigerator filled to over flowing",
+        "an open refrigerator in a kitchen next to a counter"
+      ]
+    },
+    {
+      "image_id": 45229,
+      "path": "data/coco/val2017/000000045229.jpg",
+      "sha256": "998d76a1367d02919e07a672c028b5f41ed2713000357cf3a8b6832ad7ca2368",
+      "width": 640,
+      "height": 480,
+      "references": [
+        "A kitchen filled with a wooden cabinet and a large window.",
+        "Picture of a kitchen with some plants and a window.",
+        "The top window in a kitchen is open.",
+        "An apartment room with a stove, spices, and bookcase.",
+        "A small kitchen area features a foggy glass window. "
+      ]
+    },
+    {
+      "image_id": 406417,
+      "path": "data/coco/val2017/000000406417.jpg",
+      "sha256": "911c2974494383f79e2ccfa67594894541a90329ca7e2bddbd8d6634600067b9",
+      "width": 568,
+      "height": 640,
+      "references": [
+        "three little kids that have different ties on",
+        "A jumping boy wearing three different neck ties",
+        "Three boys jumping in the air while wearing ties.",
+        "Three boys dressed in jeans and ties pose.",
+        "The three boys are creating their own dance moves."
+      ]
+    },
+    {
+      "image_id": 125952,
+      "path": "data/coco/val2017/000000125952.jpg",
+      "sha256": "5fe3817d2e10d0cfa7d6a03fb4bc14b91ad5b080869e171b58346decebe46258",
+      "width": 358,
+      "height": 640,
+      "references": [
+        "A piece of luggage is ready to go with cold wear on top for quick usage.",
+        "A luggage for travel is stuffed with a down jacket.",
+        "A piece of luggage sitting on the outside of a white building.",
+        "A carry on rolling luggage with stuff bursting out the top.",
+        "A wheel along back pack with a jacket strapped to the top"
+      ]
+    },
+    {
+      "image_id": 457559,
+      "path": "data/coco/val2017/000000457559.jpg",
+      "sha256": "cd359d7297084093f5bae1d00c0f5a1be5104e3ab016765a472326bb13aadc72",
+      "width": 640,
+      "height": 427,
+      "references": [
+        "A group of young men playing a game of soccer.",
+        "THERE ARE PEOPLE RUNNING IN THE GRASS PLAYING SOCCER ",
+        "Young men avidly playing soccer on a green field",
+        "A soccer game with players from both teams going after the ball and other players close behind.",
+        "A soccer player preparing to kick a soccer ball as an opposing player runs along side."
+      ]
+    },
+    {
+      "image_id": 530457,
+      "path": "data/coco/val2017/000000530457.jpg",
+      "sha256": "aa58c984b17e3a99a06cba95745642566bcb07358b3acc36095604123f5eef06",
+      "width": 482,
+      "height": 640,
+      "references": [
+        "A vase filled with red and orange flowers.",
+        "A clear vase holding drooping orange and red flowers.",
+        "PIcked peach flowers sit in a vase with water.",
+        "Some pretty flowers sitting on a hearth next to a fireplace. ",
+        "The flowers in the clear glass vase are starting to wilt."
+      ]
+    },
+    {
+      "image_id": 376322,
+      "path": "data/coco/val2017/000000376322.jpg",
+      "sha256": "a793439d7b18f3d7925ae17b2e455e24e8abe19085c81a3f289662a5780ad45e",
+      "width": 478,
+      "height": 640,
+      "references": [
+        "A group of people are reading a menu at the table",
+        "A group of people sit at a large table while talking.",
+        "People sitting on the long table with plates of food. ",
+        "A long table full of people on both sides.",
+        "A long table accommodating many people while eating"
+      ]
+    },
+    {
+      "image_id": 139883,
+      "path": "data/coco/val2017/000000139883.jpg",
+      "sha256": "9fad971b935bef0756c704a577e70cc456baf4f8065fad32cfd4caa7807bfbd7",
+      "width": 640,
+      "height": 427,
+      "references": [
+        "The animal food tray and cage is empty.",
+        "some kind of cage that is next to a tree",
+        "a couple of frisbees are stuck in a small tower",
+        "A view of a piece of art near a tree.",
+        "A Frisbee golf net in a park with several Frisbee in it."
+      ]
+    },
+    {
+      "image_id": 41633,
+      "path": "data/coco/val2017/000000041633.jpg",
+      "sha256": "9aaff8c1163dbc4d38c44079f1dbccc64221d4c93fa45404249595951a70ce16",
+      "width": 640,
+      "height": 429,
+      "references": [
+        "A burgundy low-rider show-quality, hot rod Chevy truck.",
+        "An old model red Chevrolet truck is on the pavement.",
+        "A classic red truck is parked in the lot.",
+        "A very bright and shinny refurbished red truck.",
+        "A vintage red truck parked in a parking lot under a blue sky."
+      ]
+    },
+    {
+      "image_id": 281693,
+      "path": "data/coco/val2017/000000281693.jpg",
+      "sha256": "e26a646c09883c33aa0708148e1cb7b9eea596702087f5bb62a31787eae5763c",
+      "width": 640,
+      "height": 481,
+      "references": [
+        "A large jet airplane being loaded with cargo at an airport.",
+        "A 747 jumbo passenger jet airplane parked at an airport terminal.",
+        "a large air plane on a run way ",
+        "White plane with red and blue detailing sits on tarmac.",
+        "an airline with airplanes from one world parked on the air field"
+      ]
+    },
+    {
+      "image_id": 541291,
+      "path": "data/coco/val2017/000000541291.jpg",
+      "sha256": "3a994cffa3c30e9066f3083a507fb80bf863ea55075c8707bb8ddbe2dc69d834",
+      "width": 640,
+      "height": 426,
+      "references": [
+        "The old, dilapidated  bathroom has fallen into disrepair.",
+        "A dirty public restroom with sinks and mirrors.",
+        "There are several sinks and soap dispensers in the bathroom.",
+        "An old very dirty bathroom with soap dispensers mounted to a tiled wall.",
+        "A couple of sinks and soap dispensers hang from a wall."
+      ]
+    },
+    {
+      "image_id": 92416,
+      "path": "data/coco/val2017/000000092416.jpg",
+      "sha256": "41ef9ec2c7904241063d9a2b1bf579e36c3fdf7165387e41c54b7ec9c3eb232d",
+      "width": 480,
+      "height": 640,
+      "references": [
+        "A young man holding a bottle of beer while wearing a suit.",
+        "A male with a bottled beverage wearing a flower in his lapel.",
+        "A man holding a bottle of something to drink",
+        "A man in a suit having a beer by the water.",
+        "A young man in a suit and tie with a beer in his hand."
+      ]
+    },
+    {
+      "image_id": 231508,
+      "path": "data/coco/val2017/000000231508.jpg",
+      "sha256": "e0af7f51a9a89f1c5d80a1d53a8196dc2e7bfdcde170947f4830822d533f9bb6",
+      "width": 335,
+      "height": 500,
+      "references": [
+        "A baseball player pitching a baseball on a field.",
+        "A baseball pitcher who is in mid pitch.",
+        "The pitcher  on the mound has just let go of a baseball directed to the batter. ",
+        "A uniformed baseball player being watched by people.",
+        "A man in black jersey pitching in baseball game."
+      ]
+    },
+    {
+      "image_id": 378515,
+      "path": "data/coco/val2017/000000378515.jpg",
+      "sha256": "edf5f635541bcc6558db28535ed8acfed4439cfca1fdef1dae8ce09a237ec25f",
+      "width": 425,
+      "height": 640,
+      "references": [
+        "A man kneeling down over piles of bananas.",
+        "People are crouched around in an open market.",
+        "a farmer's market filled with green bananas and people",
+        "An outdoor market place with a person shopping for bananas.",
+        "Vendors selling produce at an outside market. "
+      ]
+    },
+    {
+      "image_id": 565012,
+      "path": "data/coco/val2017/000000565012.jpg",
+      "sha256": "9e758c0fd349209914833503940369d901e95c71bc644e50b9d14524467ed915",
+      "width": 640,
+      "height": 425,
+      "references": [
+        "a digitally manipulated image of cars on a highway at night in the city",
+        "Car lights being capture in high speed at night.",
+        "Traffic lights captured at sunset with slow shutter speed.",
+        "A city street at night filled with blurry traffic.",
+        "A time lapse image of a city street."
+      ]
+    },
+    {
+      "image_id": 110884,
+      "path": "data/coco/val2017/000000110884.jpg",
+      "sha256": "faf9801b8df916f8229df6f1e9ee1a5e67b70f9de6c1c1f217c2204d0048146c",
+      "width": 640,
+      "height": 640,
+      "references": [
+        "A white sink sitting next to a toilet.",
+        "a room with a sink and a toilet in it",
+        "a bathroom with a sink and a bath tub",
+        "A small cramped bathroom slightly cluttered with dingy walls.",
+        "A green tinted bathroom consisting of a toilet and sink"
+      ]
+    },
+    {
+      "image_id": 129062,
+      "path": "data/coco/val2017/000000129062.jpg",
+      "sha256": "a5aa8bf64678f4da55e3f55c4a4802b48ee8ca9c4be69bb985702f746e88bf7c",
+      "width": 640,
+      "height": 480,
+      "references": [
+        "A hotdog stand with outside seating and bright lights.",
+        "Outdoor patio and front of a bar that serves hot dogs",
+        "Parking meters are in front of an eating establishment. ",
+        "A picture of a store by a street.",
+        "A city street scene of a restaurant with tables outside."
+      ]
+    },
+    {
+      "image_id": 348216,
+      "path": "data/coco/val2017/000000348216.jpg",
+      "sha256": "a81933a38a7709f85d78e5634e706c0ceddc2097105fbbfac9753e705e917a68",
+      "width": 480,
+      "height": 640,
+      "references": [
+        "Your guess is as good as mine as to what these objects are.",
+        "A dim room with toilet bowls lined along the wall",
+        "a bunch of tubs are lined up next to each other",
+        "A picture of old urinals all lined up.",
+        "There were six toilet all lined up along the wall."
+      ]
+    },
+    {
+      "image_id": 265108,
+      "path": "data/coco/val2017/000000265108.jpg",
+      "sha256": "adc54e4a1f34dd0772e0dac893d597496f5a74399f6521dc7dd0b1cb41aa9537",
+      "width": 427,
+      "height": 640,
+      "references": [
+        "A blue piece of luggage sitting up against the side of a building.",
+        "a suitcase, umbrella, flowers and balloon sitting next to a fence ",
+        "A red balloon tied to a purse with an umbrella and luggage.",
+        "A balloon is tried to a bag right next to a luggage bag. ",
+        "A brick wall with a balloon, luggage and umbrella next to it."
+      ]
+    },
+    {
+      "image_id": 290768,
+      "path": "data/coco/val2017/000000290768.jpg",
+      "sha256": "8c28cd521121b74ba348ae30e1c624b07344ca128bdf2b27ede9bdce40c74486",
+      "width": 612,
+      "height": 612,
+      "references": [
+        "A kitchen with a counter, window, stove and cutlery. ",
+        "Kitchen counter with mugs, coffee, and a knife block on it.",
+        "A small kitchen has a checkered floor and a window.",
+        "Three mugs are on the kitchen counter of a stove.",
+        "A kitchen with sunshine shining off of black and white tiles"
+      ]
+    },
+    {
+      "image_id": 450075,
+      "path": "data/coco/val2017/000000450075.jpg",
+      "sha256": "b94efb5e3bb2fa96be8a5e20008716fe2000e15b063cd39c515143ec829f8eee",
+      "width": 640,
+      "height": 480,
+      "references": [
+        "A person helping a woman put on a tie. ",
+        "A woman helping another woman with her tie.",
+        "A person is tying a tie around a girls .neck.",
+        "A woman that is tying a tie onto another woman.",
+        "A woman is getting her tie adjusted in the city."
+      ]
+    },
+    {
+      "image_id": 203095,
+      "path": "data/coco/val2017/000000203095.jpg",
+      "sha256": "810ea8d91636e2a1c185f9ca17afd2583fe4548596e15e751303ad9c5c4780e1",
+      "width": 640,
+      "height": 480,
+      "references": [
+        "a bunch of food is layed out next to an oven",
+        "A wooden cutting board topped with different cuts of meat.",
+        "a table that has all kinds of food on it",
+        "Pork and vegetables prepared on a cutting board and counter.",
+        "A bunch of cut meat sitting on a cutting board."
+      ]
+    },
+    {
+      "image_id": 492968,
+      "path": "data/coco/val2017/000000492968.jpg",
+      "sha256": "d42bab612d9126b59a8fca904c81ec3e48246c55360c871862859cae7a48d0de",
+      "width": 640,
+      "height": 425,
+      "references": [
+        "A snowboarder with black and white clothes finishing a run.",
+        "A man riding a snowboard down a snow covered slope.",
+        "A man on a snow board going down a snow covered hill.",
+        "This image is of a man snowboarding down a hill.",
+        "a ski boarder skiing down the side of a mountain."
+      ]
+    },
+    {
+      "image_id": 519338,
+      "path": "data/coco/val2017/000000519338.jpg",
+      "sha256": "6fed1680e1019621b6e13e81cb517a0ded2e3db49ae79225d484d46c934dda9e",
+      "width": 640,
+      "height": 426,
+      "references": [
+        "A blue rusted train engine sitting on top of rail tracks.",
+        "a rusted broken down train sits between vegetation areas ",
+        "An old rusted train sitting on abandoned train tracks.",
+        "a train sitting on the tracks next to a mountain side",
+        "Rusty train sitting on train tracks in high grass. "
+      ]
+    },
+    {
+      "image_id": 145591,
+      "path": "data/coco/val2017/000000145591.jpg",
+      "sha256": "6a24f1f6f25101321ee48209a2e1a554f3a8e220f27e06a757db14ab29854ea3",
+      "width": 640,
+      "height": 480,
+      "references": [
+        "THERE IS A CLOCK THAT IS ON DISPLAY IN THE CITY",
+        "A clock is next to palm trees and a high rise.",
+        "The clock behind glass has roman numeral for numbers.",
+        "There is a large clock in the foreground and a large building in the background.",
+        "A clock that is on the top of a pole."
+      ]
+    },
+    {
+      "image_id": 102644,
+      "path": "data/coco/val2017/000000102644.jpg",
+      "sha256": "90c88dcef8f0c6af6a20dbefa8d1039ed80f64fe319e954de0b15398f610e6c3",
+      "width": 375,
+      "height": 500,
+      "references": [
+        "A white toilet sitting in a bathroom next to a shower.",
+        "There is a bathroom with tile floors and tile walls.",
+        "A bathroom with a glass shower door, a toilet and a towel handle. ",
+        "a bathroom with a walk in shower and toilet",
+        "A small bathroom with a shower and a toilet."
+      ]
+    },
+    {
+      "image_id": 156924,
+      "path": "data/coco/val2017/000000156924.jpg",
+      "sha256": "082a70c2f73301eb02c31170e638a0b4610f299b242c0af232954b7e2766a55e",
+      "width": 500,
+      "height": 333,
+      "references": [
+        "a man and a woman are holding video game controllers",
+        "The man and woman are playing a video game. ",
+        "A man in a black shirt and a woman in a white shirt playing a videogame. ",
+        "A man and woman playing games on the Nintendo Wii.",
+        "Two people are playing on a Wii in a house."
+      ]
+    },
+    {
+      "image_id": 49091,
+      "path": "data/coco/val2017/000000049091.jpg",
+      "sha256": "dfbab4608aea75760036a4e366130ef5bfb49d5f8699c77ec14f36154924bb74",
+      "width": 640,
+      "height": 428,
+      "references": [
+        "A city lined with tall buildings covered in hanging letters.",
+        "Signs displayed in a crowded urban alleyway ",
+        "dozens of signs with Chinese characters hung over the streets of a city",
+        "a black and white photo of a street signs and buildings",
+        "a bunch of buildings in a city having signs strung across"
+      ]
+    },
+    {
+      "image_id": 187236,
+      "path": "data/coco/val2017/000000187236.jpg",
+      "sha256": "543862a94b3b567ad38d1ee56271634e07849bb42609d7d5adfd4b3d23c9acb2",
+      "width": 640,
+      "height": 480,
+      "references": [
+        "Couple of cats sleeping on opposite ends of the couch",
+        "Two cats laying on the floor and sleeping.",
+        "Cats curled up and lazing on a couch",
+        "Two cats sleeping on a sofa inside a house.",
+        "Three cats are napping on the carpeted floor."
+      ]
+    },
+    {
+      "image_id": 332901,
+      "path": "data/coco/val2017/000000332901.jpg",
+      "sha256": "20798084ed26a2825f90b00095e4d9f1ddded35ad1000d2330548fc0adad9ea1",
+      "width": 640,
+      "height": 395,
+      "references": [
+        "a few animals that are in side a fence",
+        "Two sheep that are inside of a gate.",
+        "Tagged, black faced sheep in a pen in a livestock yard",
+        "A herd of sheep standing inside of a wooden pen.",
+        "a couple of sheep are in a corral together"
+      ]
+    },
+    {
+      "image_id": 367082,
+      "path": "data/coco/val2017/000000367082.jpg",
+      "sha256": "702c8e331093d9d391420d2cd60dfe167b176aec182f3b743dcd9aee7fe75ab3",
+      "width": 488,
+      "height": 500,
+      "references": [
+        "A black and tan dog sits in an easy chair near a window with a polka dot shade.",
+        "large dog in a brown chair by a window",
+        "a dogs tongue is sticking out and smiling while sitting on a chair",
+        "The dog is sitting on a brown easy chair beside a window. ",
+        "Brown and black dog sitting on the brown couch by itself. "
+      ]
+    },
+    {
+      "image_id": 289222,
+      "path": "data/coco/val2017/000000289222.jpg",
+      "sha256": "3a184bfd08f6a64fbaeeae674ecdd25ca524604f48640586d8831a33d6db3210",
+      "width": 640,
+      "height": 480,
+      "references": [
+        "A street light that shows, horse crossing on it.",
+        "A traffic signal at an intersection depicting \"horse crossing\".",
+        "A pole with stop lights and a horse walking sign.",
+        "Street sign in the shape of a person riding a horse with a person under. ",
+        "The light shows safe for animal crossing on the street."
+      ]
+    },
+    {
+      "image_id": 84650,
+      "path": "data/coco/val2017/000000084650.jpg",
+      "sha256": "092090a17e6fd41a065552fad73d54dd02a8791d28c8aaf22aba7772663f4b2a",
+      "width": 640,
+      "height": 480,
+      "references": [
+        "a cat laying on a luggage bag on the ground",
+        "A brown cat lying on a black suitcase.",
+        "The cat is laying on a luggage bag",
+        "A cat lying on a suit case and looking alertly.",
+        "THERE IS A CAT THAT IS SITTION ON TOP OF THE SUITCASE"
+      ]
+    },
+    {
+      "image_id": 96960,
+      "path": "data/coco/val2017/000000096960.jpg",
+      "sha256": "462fa51f7fb6fd5582896d04d8d58fde80e83b8f65420ca3c3d21c13fe1bca62",
+      "width": 640,
+      "height": 478,
+      "references": [
+        "A large white polar bear swimming in a pool of blue water.",
+        "a polar bear swimming in the water by a wall ",
+        "A polar bear is under water next to a rock wall.",
+        "A polar bear swimming in water near a rock wall.",
+        "A polar bear swimming underwater, approaching some rocks."
+      ]
+    },
+    {
+      "image_id": 566923,
+      "path": "data/coco/val2017/000000566923.jpg",
+      "sha256": "e51432e0639abe0ab3e226d98babe8b6275729e8c2def6cdfe498f86d9d29bb3",
+      "width": 640,
+      "height": 426,
+      "references": [
+        "a person trying to open a fire hydrant ",
+        "A man covered in blood trying to destroy a fire hydrant.",
+        "A man that is covered in liquid near a hydrant.",
+        "a fire hydrgon that a man is grabing",
+        "A bleeding man leaning against a fire hydrant."
+      ]
+    },
+    {
+      "image_id": 527427,
+      "path": "data/coco/val2017/000000527427.jpg",
+      "sha256": "c5e3f3f5bbd1990de2cae0d0a81e50a09db5963eb79c609b925959eb84a183ab",
+      "width": 640,
+      "height": 480,
+      "references": [
+        "a female is talking on the phone and a laptop on a table",
+        "A picture of a woman sitting outside with a laptop and ciggorets while talking on phone.",
+        "A woman sits in a chair talking on the phone. ",
+        "a person sitting at a table talking on a phone",
+        "a woman sitting at a talbe with a laptop while talking on her phone"
+      ]
+    },
+    {
+      "image_id": 554595,
+      "path": "data/coco/val2017/000000554595.jpg",
+      "sha256": "f87552f48714dda9163196051781716d6ae1e26824f214237f604f9f829f9fa5",
+      "width": 500,
+      "height": 376,
+      "references": [
+        "A man laying on top of a sandy beach laying next to a surfboard.",
+        "A man laying on the beach next to a surfboard.",
+        "A man sits on a shore with his surfboard. ",
+        "A man in a blue shirt laying next to a yellow surfboard.",
+        "a close up of a person sitting on a beach next to a surf board"
+      ]
+    },
+    {
+      "image_id": 483667,
+      "path": "data/coco/val2017/000000483667.jpg",
+      "sha256": "b616500911130fcd278f76b0ec968778c9ac790489d852f972c14f5ac1b0ba0c",
+      "width": 426,
+      "height": 640,
+      "references": [
+        "a man wearing a top hat and a red tie ",
+        "A very sharp dressed man with a black top hat.",
+        "A man with black hair and a top hat",
+        "A man with a top hat and a red tie.",
+        "A man wearing a top hate with a red tie and black shirt."
+      ]
+    },
+    {
+      "image_id": 22969,
+      "path": "data/coco/val2017/000000022969.jpg",
+      "sha256": "a4cd0db37176242a6911559074b58a67306c6a774df9dd07f1c9a30112ecbc30",
+      "width": 500,
+      "height": 375,
+      "references": [
+        "Giraffes in their wood and grass zoo enclosure",
+        "A large giraffe looks at a smaller giraffe looking over a fence.",
+        "Two giraffe stand in an enclosure, on giraffe leans over the wall.",
+        "Pair of giraffes exploring a large, airy zoo enclosure.",
+        "Two giraffes in a zoo enjoy a walk and a snack"
+      ]
+    },
+    {
+      "image_id": 340894,
+      "path": "data/coco/val2017/000000340894.jpg",
+      "sha256": "3e3b877390b6f0cf1873444eae7912dea498ea6515ee60bd0a2fa6b7d5fc52fa",
+      "width": 640,
+      "height": 480,
+      "references": [
+        "Two computers are sitting on top of the desk.",
+        "Two computers on a large wooden computer desk.",
+        "A desk with a keyboard, laptop and monitor.",
+        "A computer monitor next to a keyboard, laptop and a mouse.",
+        "A laptop with external keyboard, mouse, phone and photo on a desk."
+      ]
+    },
+    {
+      "image_id": 189775,
+      "path": "data/coco/val2017/000000189775.jpg",
+      "sha256": "931ab2db3edab06d9790a9a9b947550b005aa7dc42759e4188c6b5fa810d701b",
+      "width": 640,
+      "height": 480,
+      "references": [
+        "Competior preparing to return volley during tennis match.",
+        "The tennis player is ready to return the ball.",
+        "A man playing a tennis game in front of a crowd.",
+        "A man swinging a tennis racket during a tennis match.",
+        "A man playing in a tennis match with a large crowd"
+      ]
+    },
+    {
+      "image_id": 289960,
+      "path": "data/coco/val2017/000000289960.jpg",
+      "sha256": "d15915ba13037711c683ffb79f6f1da0414a49820cba70ee2f1b0cdc5c40bba3",
+      "width": 640,
+      "height": 480,
+      "references": [
+        "A person standing on top of a beach flying a kite.",
+        "person running along the beach flying a kite ",
+        "A man is flying a kite along the shore.",
+        "a guy is running at the ocean and is pulling on string to keep his kite flying.",
+        "A man is flying a kite at the beach."
+      ]
+    },
+    {
+      "image_id": 133567,
+      "path": "data/coco/val2017/000000133567.jpg",
+      "sha256": "aba5ed0528d69067d47bfd8338a85f048f2e0c38ca327ba937c05782f9ead100",
+      "width": 640,
+      "height": 428,
+      "references": [
+        "A person looking at a train going by.",
+        "A train is passing by while an onlooker is standing next to track.",
+        "A man standing in front of the Amtrak train.",
+        "An Amtrack train is on the railroad tracks.",
+        "A train on train tracks with a person in the foreground."
+      ]
+    },
+    {
+      "image_id": 88485,
+      "path": "data/coco/val2017/000000088485.jpg",
+      "sha256": "07cab32f1eac576ec11720ba77b4c2756a5d3f6cdd0352043c4c3a98b1dc362f",
+      "width": 640,
+      "height": 427,
+      "references": [
+        "The young man is outside playing a game of Frisbee. ",
+        "A man is holding a yellow frisbee outside",
+        "A man outside playing frisbee in front of a building.",
+        "A young man in black clothes holding a yellow frisbee",
+        "A boy is throwing a frisbee outside a building."
+      ]
+    },
+    {
+      "image_id": 429011,
+      "path": "data/coco/val2017/000000429011.jpg",
+      "sha256": "ddec5080b0ed27883477153278effb807ee3f81b170690b5fa5e7c88a95e0880",
+      "width": 640,
+      "height": 343,
+      "references": [
+        "Model of two cars with a man near a blue phonebooth.",
+        "Two toy vehicles and a police box are set up in a street scene.",
+        "The model toys are positioned on the table. ",
+        "a green red and white truck a building and a black car",
+        "A car and a truck on a city street."
+      ]
+    },
+    {
+      "image_id": 128051,
+      "path": "data/coco/val2017/000000128051.jpg",
+      "sha256": "2497ae695583057b6adda26f862de2287d2052933c14b7f0a6027ecbb09a079c",
+      "width": 640,
+      "height": 360,
+      "references": [
+        "A green bus with a smaller bus sitting on top of it.",
+        "A van is on the roof of a bus of the same door.",
+        "A bus has the top part of a van attached to its roof.",
+        "this is a truck and a bus on a lawn",
+        "A bus that is sitting in the grass near a street."
+      ]
+    }
+  ],
+  "hash": "29d9397ac1481ff0a43f631e713cfd4185809319982b1c0080bd93ea0d65b16f"
+}

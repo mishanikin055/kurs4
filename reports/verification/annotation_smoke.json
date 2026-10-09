@@ -1,0 +1,105 @@
+{
+  "checked_at": "2026-10-09",
+  "cpu_tests": "54 passed, including 9 annotation tests; real model smoke separate",
+  "runs": {
+    "smoke-final-v1": {
+      "blip_base": {
+        "status": "complete",
+        "completed_images": 1,
+        "cold_load_ms": 2833.419684000546,
+        "parameters": 223971644,
+        "resources": {
+          "rss_peak_bytes": 1960914944,
+          "vram_allocated_peak_bytes": 590025728,
+          "vram_reserved_peak_bytes": 645922816
+        }
+      },
+      "florence2_base_ft": {
+        "status": "complete",
+        "completed_images": 1,
+        "cold_load_ms": 2440.9898279991467,
+        "parameters": 231414016,
+        "resources": {
+          "rss_peak_bytes": 1722187776,
+          "vram_allocated_peak_bytes": 668808192,
+          "vram_reserved_peak_bytes": 731906048
+        }
+      },
+      "qwen3_vl_2b": {
+        "status": "complete",
+        "completed_images": 1,
+        "cold_load_ms": 4791.370626000571,
+        "parameters": 2127532032,
+        "resources": {
+          "rss_peak_bytes": 5111926784,
+          "vram_allocated_peak_bytes": 4346023424,
+          "vram_reserved_peak_bytes": 4408213504
+        }
+      },
+      "smolvlm2_500m": {
+        "status": "complete",
+        "completed_images": 1,
+        "cold_load_ms": 2711.0153539997555,
+        "parameters": 507482304,
+        "resources": {
+          "rss_peak_bytes": 2879832064,
+          "vram_allocated_peak_bytes": 1540354048,
+          "vram_reserved_peak_bytes": 1749024768
+        }
+      }
+    },
+    "dev10-v1": {
+      "blip_base": {
+        "status": "complete",
+        "completed_images": 10,
+        "cold_load_ms": 2642.2550459992635,
+        "parameters": 223971644,
+        "resources": {
+          "rss_peak_bytes": 1835216896,
+          "vram_allocated_peak_bytes": 590025728,
+          "vram_reserved_peak_bytes": 645922816
+        }
+      },
+      "florence2_base_ft": {
+        "status": "complete",
+        "completed_images": 10,
+        "cold_load_ms": 2193.8349829997605,
+        "parameters": 231414016,
+        "resources": {
+          "rss_peak_bytes": 1726373888,
+          "vram_allocated_peak_bytes": 668808192,
+          "vram_reserved_peak_bytes": 731906048
+        }
+      },
+      "qwen3_vl_2b": {
+        "status": "complete",
+        "completed_images": 10,
+        "cold_load_ms": 6997.670622999067,
+        "parameters": 2127532032,
+        "resources": {
+          "rss_peak_bytes": 5039910912,
+          "vram_allocated_peak_bytes": 4346023424,
+          "vram_reserved_peak_bytes": 4427087872
+        }
+      },
+      "smolvlm2_500m": {
+        "status": "complete",
+        "completed_images": 10,
+        "cold_load_ms": 2586.368694999692,
+        "parameters": 507482304,
+        "resources": {
+          "rss_peak_bytes": 2888970240,
+          "vram_allocated_peak_bytes": 1540354048,
+          "vram_reserved_peak_bytes": 1749024768
+        }
+      }
+    }
+  },
+  "prior_smoke_failures": [
+    "smoke-blip-v1: unsupported SDPA",
+    "smoke-florence-v1: native processor mismatch",
+    "smoke-florence-v2: slow tokenizer needs absent merges.txt",
+    "smoke-florence-v3: DynamicCache mismatch"
+  ],
+  "test_status": "not yet run"
+}

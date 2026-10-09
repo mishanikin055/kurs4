@@ -1,0 +1,29 @@
+{
+  "chair": {
+    "source": "https://github.com/LisaAnne/Hallucination",
+    "revision": "6e4d33c4bedf6dfcd24c61bf527f40714717be47",
+    "license": "BSD-2-Clause; stated in authors README",
+    "files": {
+      "chair.py": "b05f701ce6ec0125dd700ffb80ed58bfcf2686df8c9bd62f70169cb928de4627",
+      "synonyms.txt": "b685537b36fe21b791c87151b96a991ceb582edff19f3da204dcc7a7905502f2"
+    },
+    "changes": "Python3 lexical methods only; GT val2017 captions+instances; same synonym/phrase rules"
+  },
+  "singularize": {
+    "source": "https://github.com/clips/pattern",
+    "revision": "af754685cca3713db0abc4f020f2e94467c19d85",
+    "license": "MIT; retained notice",
+    "original_sha256": "5c140129923617229220803d95a812db3734e99315fb9fc7d39136918ef2bb29",
+    "changes": "Extract singularization rules and function unchanged; omit unrelated verb/plural functions"
+  },
+  "nltk_punkt_tab": {
+    "package": "nltk==3.9.2",
+    "source": "https://github.com/nltk/nltk_data",
+    "files": {
+      "sent_starters.txt": "f3f8535483e1dba487241b764945168123bca3209a9645e59acd1225dc76edac",
+      "ortho_context.tab": "4bbcca25ed3d3f06c02402abf8419b9f033b8adc06e7b482eca4e45f81a5dc4c",
+      "collocations.tab": "8e2da1225e4dd2cc9dba261ee231ccb134859e21b46006e7f472c5ee269af0cf",
+      "abbrev_types.txt": "92a3e070f43d9b4c5534758ca40ad7343b04e7e29bfe0c2eb658a39445a4f779"
+    }
+  }
+}

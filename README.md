@@ -1,6 +1,7 @@
 # Курсовой проект: детекция, классификация и аннотирование
 
-Реализованы экспериментальные модули детекции и классификации: [detection/README.md](detection/README.md), [classification/README.md](classification/README.md). Все четыре классификатора прошли офлайн GPU-smoke и предварительное сравнение на 5000 ImageNet-изображениях, три повтора. [Таблица](reports/comparisons/classification-evaluation5000-v1/classification.md), [анализ](reports/comparisons/classification-evaluation5000-v1/analysis.md). [Прикладные crops](classification/crops/README.md) оцениваются отдельно. Приложение и аннотаторы пока не реализованы. Новые доверительные интервалы не рассчитываются ни в одном сравнении проекта.
+Реализованы экспериментальные модули детекции и классификации: [detection/README.md](detection/README.md), [classification/README.md](classification/README.md). Все четыре классификатора прошли офлайн GPU-smoke и предварительное сравнение на 5000 ImageNet-изображениях, три повтора. [Таблица](reports/comparisons/classification-evaluation5000-v1/classification.md), [анализ](reports/comparisons/classification-evaluation5000-v1/analysis.md). [Прикладные crops](classification/crops/README.md) оцениваются отдельно. Добавлен модуль сравнения аннотаторов: [annotation/README.md](annotation/README.md);
+четыре офлайн GPU-smoke пройдены, основной test500 ещё не выполнен. Приложение пока не реализовано. Новые доверительные интервалы не рассчитываются ни в одном сравнении проекта.
 
 Инструкция с командами: [detection/README.md](detection/README.md). Обоснование участников: [docs/model_selection.md](docs/model_selection.md). Решения по окружению и протоколу: [docs/decisions.md](docs/decisions.md).
 
