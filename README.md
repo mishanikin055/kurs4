@@ -62,3 +62,5 @@ python scripts/export_comparison_tables.py
 (не новая зависимость инференса). Источники, число строк таблиц и контрольная
 сумма DOCX — `reports/exports/tables_manifest.json`. После сохранения генератор
 проверяет каждую ячейку документа, включая 1000 классов ImageNet.
+
+Для презентации подготовлен отдельный [краткий DOCX](reports/exports/%D0%A2%D0%B0%D0%B1%D0%BB%D0%B8%D1%86%D1%8B%20%D0%B4%D0%BB%D1%8F%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D0%B8%D0%B8.docx): две таблицы на каждое сравнение, лучшие значения выделены цветом, под таблицами — выводы и пояснения. Пересборка: `python scripts/export_presentation_tables.py`; источники и проверка — `reports/exports/presentation_tables_manifest.json`.

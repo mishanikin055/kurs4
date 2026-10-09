@@ -1,0 +1,233 @@
+{
+  "script_sha256": "736b9d9ec8e8aa028e14f846a2f096f25834be3a42c11bd219faca40c113d97f",
+  "formatting_helper_sha256": "b5bd6ecd1bf1840cdf4a544ad5f02ee029dca79f20e5c6f87566cc6cc3d15898",
+  "sources": {
+    "reports/comparisons/detection.csv": "22d3d6e341efa9d475cd01de3d483fdca84156b9afed883dac8a7d6320590a03",
+    "reports/comparisons/classification-validation50000-v1/classification.csv": "99f1c7ba02525921f65c512caada08ea65b4d2f7839ae6832f06a435041f3b4b",
+    "reports/comparisons/classification-gt-crops-v1/classification_crops.csv": "2f2aed394f5be23d51559fd627fbd5dd733d410e9e30e27568e2e429899d0306",
+    "reports/comparisons/classification-detector-crops-v1/classification_crops.csv": "d13478eaa03095a3b844dc9ff5d3b9c3c88e07e6bccd0c02480abfa59e0ddfd7",
+    "reports/comparisons/annotation-test500-v1/annotation.csv": "6a029c8d622f0ae9112f73de38217972dc33711fd3726cdc37d9090a5b40f05f"
+  },
+  "output": "reports/exports/Таблицы для презентации.docx",
+  "output_sha256": "d4fe1b7752da6a8f6fddf32ff0ab5b244435d0ab674fedf59f20a48b5be0298b",
+  "tables": [
+    {
+      "title": "Качество обнаружения объектов",
+      "headers": [
+        "Модель",
+        "mAP, 0–1 ↑",
+        "AP50, 0–1 ↑",
+        "F1, 0–1 ↑"
+      ],
+      "rows": [
+        [
+          "YOLO26s",
+          "0,4753",
+          "0,6409",
+          "0,6217"
+        ],
+        [
+          "RT-DETRv2 R18",
+          "0,4808",
+          "0,6511",
+          "0,6690"
+        ],
+        [
+          "RF-DETR Small",
+          "0,5284",
+          "0,7201",
+          "0,6942"
+        ],
+        [
+          "Faster R-CNN ResNet50 FPN V2",
+          "0,4704",
+          "0,6814",
+          "0,6607"
+        ]
+      ]
+    },
+    {
+      "title": "Скорость и память",
+      "headers": [
+        "Модель",
+        "Время p50, мс ↓",
+        "Время p95, мс ↓",
+        "Занятая VRAM, MiB ↓"
+      ],
+      "rows": [
+        [
+          "YOLO26s",
+          "17,47",
+          "23,90",
+          "123"
+        ],
+        [
+          "RT-DETRv2 R18",
+          "27,77",
+          "41,91",
+          "184"
+        ],
+        [
+          "RF-DETR Small",
+          "26,14",
+          "38,27",
+          "173"
+        ],
+        [
+          "Faster R-CNN ResNet50 FPN V2",
+          "172,98",
+          "190,70",
+          "1131"
+        ]
+      ]
+    },
+    {
+      "title": "Классификация целого изображения: ImageNet",
+      "headers": [
+        "Модель",
+        "Top-1, % ↑",
+        "Top-5, % ↑",
+        "Время p50, мс ↓"
+      ],
+      "rows": [
+        [
+          "ResNet-50",
+          "80,85",
+          "95,44",
+          "10,22"
+        ],
+        [
+          "EfficientNetV2-S",
+          "84,24",
+          "96,87",
+          "22,59"
+        ],
+        [
+          "ConvNeXt-Tiny",
+          "82,51",
+          "96,15",
+          "10,82"
+        ],
+        [
+          "ViT-B/16",
+          "81,07",
+          "95,32",
+          "12,71"
+        ]
+      ]
+    },
+    {
+      "title": "Прикладная проверка: вырезки объектов",
+      "headers": [
+        "Модель",
+        "Top-1: эталонные рамки, % ↑",
+        "Top-1: найденные рамки, % ↑",
+        "Macro-F1: найденные рамки ↑",
+        "p50: найденные рамки, мс ↓"
+      ],
+      "rows": [
+        [
+          "ResNet-50",
+          "21,67",
+          "32,16",
+          "0,4270",
+          "8,63"
+        ],
+        [
+          "EfficientNetV2-S",
+          "24,06",
+          "34,25",
+          "0,4592",
+          "22,16"
+        ],
+        [
+          "ConvNeXt-Tiny",
+          "22,57",
+          "33,40",
+          "0,4411",
+          "10,11"
+        ],
+        [
+          "ViT-B/16",
+          "25,39",
+          "35,96",
+          "0,4561",
+          "12,32"
+        ]
+      ]
+    },
+    {
+      "title": "Качество текстовых описаний",
+      "headers": [
+        "Модель",
+        "CIDEr ↑",
+        "CHAIRs, % ↓",
+        "Объектная полнота, % ↑"
+      ],
+      "rows": [
+        [
+          "BLIP base",
+          "1,0840",
+          "3,60",
+          "36,69"
+        ],
+        [
+          "Florence-2 base-ft",
+          "1,4954",
+          "2,00",
+          "46,70"
+        ],
+        [
+          "Qwen3-VL 2B Instruct",
+          "0,0002",
+          "22,00",
+          "63,56"
+        ],
+        [
+          "SmolVLM2 500M",
+          "0,0159",
+          "23,80",
+          "61,19"
+        ]
+      ]
+    },
+    {
+      "title": "Скорость, память и длина текста",
+      "headers": [
+        "Модель",
+        "Время p50, с ↓",
+        "Занятая VRAM, MiB ↓",
+        "Средняя длина, слов"
+      ],
+      "rows": [
+        [
+          "BLIP base",
+          "0,210",
+          "563",
+          "7,6"
+        ],
+        [
+          "Florence-2 base-ft",
+          "0,181",
+          "638",
+          "9,9"
+        ],
+        [
+          "Qwen3-VL 2B Instruct",
+          "4,629",
+          "4145",
+          "71,3"
+        ],
+        [
+          "SmolVLM2 500M",
+          "4,610",
+          "1469",
+          "69,3"
+        ]
+      ]
+    }
+  ],
+  "verification": "All six saved tables match the selected CSV values; best values use unrounded numbers",
+  "new_inference": false,
+  "new_confidence_intervals": false
+}
