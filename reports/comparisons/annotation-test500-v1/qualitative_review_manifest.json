@@ -1,0 +1,49 @@
+{
+  "schema_version": "1.0",
+  "reviewed_at_utc": "2026-10-09T19:25:27.364047+00:00",
+  "reviewer": "Codex AI assistant; visual inspection",
+  "human_evaluation": false,
+  "blind": false,
+  "sampling": "random.Random(42).sample(test500 images, 6)",
+  "images": [
+    {
+      "image_id": 135890,
+      "path": "data/coco/val2017/000000135890.jpg",
+      "sha256": "7c3b5e6755b58d55585200d2cf15fd46d0119dcb4b507d35df34f4da914f8d03"
+    },
+    {
+      "image_id": 85665,
+      "path": "data/coco/val2017/000000085665.jpg",
+      "sha256": "fe1c7322f2441156bd7f77974f0c0ab9c78fdaf7fbab624e42ca82f567d628c1"
+    },
+    {
+      "image_id": 292082,
+      "path": "data/coco/val2017/000000292082.jpg",
+      "sha256": "c819976fc2e5cf477bbf8e647896646607c5f332ccd22862c909678fe75e8ed7"
+    },
+    {
+      "image_id": 133000,
+      "path": "data/coco/val2017/000000133000.jpg",
+      "sha256": "1c2d685223f268f113adee78f6b1bcc25f4e4fc5f6f3bf0aded75189edbe0c53"
+    },
+    {
+      "image_id": 534601,
+      "path": "data/coco/val2017/000000534601.jpg",
+      "sha256": "a61dcd41da39c0c794937470219d9955d51046aa492ab780450cd984df259c30"
+    },
+    {
+      "image_id": 504580,
+      "path": "data/coco/val2017/000000504580.jpg",
+      "sha256": "9039c4e3f2b6ad32f9bb327e66e5992c7225f0be2507672ecec56ab1c9661ee2"
+    }
+  ],
+  "samples_sha256": {
+    "blip_base": "4db63be2c42f606316a39c886540a6f65e5c49f483e14b5a52902a523cbec11e",
+    "florence2_base_ft": "2320cc8934d84f4d97b208556bd6be4efa6ed1bd6823f1c07de5e96145bee916",
+    "qwen3_vl_2b": "448db8c3831404c6d95821047a541d2e9f33aab0eb10a966d05f7cf3fbb3bfe8",
+    "smolvlm2_500m": "3fd3d318626cdacac9cb56dd00c7ba145a15ff74fea2170f7c47643c1a273a34"
+  },
+  "review_sha256": "f42349f869958a869d90f6a722ffedcaab48e37b5ca54741a37ab49cc949880b",
+  "scope": "24 captions on 6 images; not a full visual review of 500",
+  "confidence_intervals": "not calculated"
+}
