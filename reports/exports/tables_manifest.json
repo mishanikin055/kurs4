@@ -1,0 +1,200 @@
+{
+  "script_sha256": "b5bd6ecd1bf1840cdf4a544ad5f02ee029dca79f20e5c6f87566cc6cc3d15898",
+  "sources": {
+    "reports/comparisons/detection_full.csv": "cb846b31361524e4a3863d2ae65fa5d10f9c6350b895db3fcb9e5e2b69660ce7",
+    "reports/comparisons/classification-validation50000-v1/classification.csv": "99f1c7ba02525921f65c512caada08ea65b4d2f7839ae6832f06a435041f3b4b",
+    "reports/comparisons/classification-gt-crops-v1/classification_crops.csv": "2f2aed394f5be23d51559fd627fbd5dd733d410e9e30e27568e2e429899d0306",
+    "reports/comparisons/classification-detector-crops-v1/classification_crops.csv": "d13478eaa03095a3b844dc9ff5d3b9c3c88e07e6bccd0c02480abfa59e0ddfd7",
+    "reports/comparisons/annotation-test500-v1/annotation.csv": "6a029c8d622f0ae9112f73de38217972dc33711fd3726cdc37d9090a5b40f05f",
+    "reports/comparisons/classification-evaluation5000-v1/classification.csv": "4e84dd226b9c10fc5d915ba9b68a7792344861e058d831f41141639f433bde3b",
+    "reports/comparisons/detection_per_class.csv": "f355e9055996c43d618d7d4b24631421de1fb316fd78c3ebf1281fa4605a0234",
+    "classification/configs/imagenet_labels.json": "01d0c3435bbecbcee1daa9359ace5b529a78d0fca944890c4d975809b9f23add",
+    "reports/comparisons/classification-validation50000-v1/classification_per_class.csv": "86d98009a08ad56b0da5b014f7813fd35c61b859c378ecd9bb3f89e16809e004",
+    "reports/comparisons/classification-gt-crops-v1/per_class.csv": "79967c502d0378606a2ccc20375e9149f040e62c5391e7ad874f6242d5cc3efa",
+    "reports/comparisons/classification-detector-crops-v1/per_class.csv": "0fd90ccc12fd4d7e115f502249d7e61855c872a713ad29de2daf72aef021fc77",
+    "reports/comparisons/annotation-test500-v1/dataset_category_coverage.csv": "3a4f4fcf6655fb1ec20039f54adff7790569338c1e778087a41bea71e11fd058"
+  },
+  "document": "reports/exports/Итоговые таблицы сравнительного анализа.docx",
+  "document_sha256": "854480916cb22300f5e9a8301a9516ba975010530a3e5ec4255b61d2b5b594c9",
+  "tables": [
+    {
+      "number": 1,
+      "title": "Объём сравнений",
+      "source": "Итоги сравнительного анализа моделей.md и перечисленные ниже CSV",
+      "data_rows": 5,
+      "columns": 4
+    },
+    {
+      "number": 2,
+      "title": "Качество детекции",
+      "source": "reports/comparisons/detection_full.csv",
+      "data_rows": 12,
+      "columns": 5
+    },
+    {
+      "number": 3,
+      "title": "Детекция при пороге уверенности 0,5 и совпадении рамок IoU 0,5",
+      "source": "reports/comparisons/detection_full.csv",
+      "data_rows": 6,
+      "columns": 5
+    },
+    {
+      "number": 4,
+      "title": "Скорость и ресурсы детекторов",
+      "source": "reports/comparisons/detection_full.csv",
+      "data_rows": 14,
+      "columns": 5
+    },
+    {
+      "number": 5,
+      "title": "Качество классификации ImageNet",
+      "source": "reports/comparisons/classification-validation50000-v1/classification.csv",
+      "data_rows": 3,
+      "columns": 5
+    },
+    {
+      "number": 6,
+      "title": "Скорость и ресурсы классификации ImageNet",
+      "source": "reports/comparisons/classification-validation50000-v1/classification.csv",
+      "data_rows": 14,
+      "columns": 5
+    },
+    {
+      "number": 7,
+      "title": "Качество ответов на вырезках",
+      "source": "reports/comparisons/classification-gt-crops-v1/classification_crops.csv",
+      "data_rows": 7,
+      "columns": 5
+    },
+    {
+      "number": 8,
+      "title": "Скорость и ресурсы на вырезках",
+      "source": "reports/comparisons/classification-gt-crops-v1/classification_crops.csv",
+      "data_rows": 13,
+      "columns": 5
+    },
+    {
+      "number": 9,
+      "title": "Качество ответов на вырезках",
+      "source": "reports/comparisons/classification-detector-crops-v1/classification_crops.csv",
+      "data_rows": 7,
+      "columns": 5
+    },
+    {
+      "number": 10,
+      "title": "Скорость и ресурсы на вырезках",
+      "source": "reports/comparisons/classification-detector-crops-v1/classification_crops.csv",
+      "data_rows": 13,
+      "columns": 5
+    },
+    {
+      "number": 11,
+      "title": "Проверка замены категории детектора",
+      "source": "reports/comparisons/classification-detector-crops-v1/classification_crops.csv",
+      "data_rows": 10,
+      "columns": 5
+    },
+    {
+      "number": 12,
+      "title": "Качество и длина аннотаций",
+      "source": "reports/comparisons/annotation-test500-v1/annotation.csv",
+      "data_rows": 9,
+      "columns": 5
+    },
+    {
+      "number": 13,
+      "title": "Время создания аннотаций",
+      "source": "reports/comparisons/annotation-test500-v1/annotation.csv",
+      "data_rows": 15,
+      "columns": 5
+    },
+    {
+      "number": 14,
+      "title": "Ресурсы и скорость генерации аннотаторов",
+      "source": "reports/comparisons/annotation-test500-v1/annotation.csv",
+      "data_rows": 7,
+      "columns": 5
+    },
+    {
+      "number": 15,
+      "title": "Предварительное качество на 5000 снимках",
+      "source": "reports/comparisons/classification-evaluation5000-v1/classification.csv",
+      "data_rows": 3,
+      "columns": 5
+    },
+    {
+      "number": 16,
+      "title": "Предварительные скорость и ресурсы",
+      "source": "reports/comparisons/classification-evaluation5000-v1/classification.csv",
+      "data_rows": 14,
+      "columns": 5
+    },
+    {
+      "number": 17,
+      "title": "YOLO26s: все 80 категорий COCO",
+      "source": "reports/comparisons/detection_per_class.csv",
+      "data_rows": 80,
+      "columns": 8
+    },
+    {
+      "number": 18,
+      "title": "RT-DETRv2 R18: все 80 категорий COCO",
+      "source": "reports/comparisons/detection_per_class.csv",
+      "data_rows": 80,
+      "columns": 8
+    },
+    {
+      "number": 19,
+      "title": "RF-DETR Small: все 80 категорий COCO",
+      "source": "reports/comparisons/detection_per_class.csv",
+      "data_rows": 80,
+      "columns": 8
+    },
+    {
+      "number": 20,
+      "title": "Faster R-CNN ResNet50 FPN V2: все 80 категорий COCO",
+      "source": "reports/comparisons/detection_per_class.csv",
+      "data_rows": 80,
+      "columns": 8
+    },
+    {
+      "number": 21,
+      "title": "Качество всех классификаторов по классам",
+      "source": "reports/comparisons/classification-validation50000-v1/classification_per_class.csv",
+      "data_rows": 1000,
+      "columns": 5
+    },
+    {
+      "number": 22,
+      "title": "Эталонные рамки",
+      "source": "reports/comparisons/classification-gt-crops-v1/per_class.csv",
+      "data_rows": 56,
+      "columns": 5
+    },
+    {
+      "number": 23,
+      "title": "Найденные рамки",
+      "source": "reports/comparisons/classification-detector-crops-v1/per_class.csv",
+      "data_rows": 56,
+      "columns": 5
+    },
+    {
+      "number": 24,
+      "title": "Все 80 категорий COCO",
+      "source": "reports/comparisons/annotation-test500-v1/dataset_category_coverage.csv",
+      "data_rows": 80,
+      "columns": 4
+    },
+    {
+      "number": 25,
+      "title": "Ранее сохранённые границы 95%-интервала mAP",
+      "source": "reports/comparisons/detection_full.csv",
+      "data_rows": 2,
+      "columns": 5
+    }
+  ],
+  "verification": "All saved table cells match export values from existing CSV",
+  "new_inference": false,
+  "new_confidence_intervals": false,
+  "human_evaluation": "excluded_by_user"
+}
