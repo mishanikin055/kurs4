@@ -42,3 +42,7 @@ tuple-cache: `_supports_default_dynamic_cache` отключён на language_mo
 Это адаптация интерфейса GenerationMixin без изменения checkpoint/forward.
 Tokenizer использует полный официальный tokenizer.json (fast), image processor
 остаётся CLIPImageProcessor из закреплённого preprocessor_config.
+
+Лицензия checkpoint Florence по model card/отдельному LICENSE — MIT;
+в исходных Python-файлах также сохранены уведомления Apache-2.0 Microsoft/HF.
+Веса и код проверяются и фиксируются отдельно.

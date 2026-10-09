@@ -42,7 +42,9 @@ COCO captions предварительно извлекаются из офиц�
 конечные специальные токены, исключая начальный decoder token/входной prompt),
 prompt и rendered_prompt, синхронизированные CUDA preprocess/generate/postprocess,
 read time. Сохраняются cold load, peak RSS, CUDA allocated/reserved peaks и
-source snapshot/container ID. Downloads/hash verification не входят в cold load.
+source snapshot/container ID. Cold load — загрузка Adapter в новом процессе после проверки SHA и чтения
+среды (CUDA-контекст уже инициализирован); состояние файлового кэша ОС
+не сбрасывается. Downloads/hash verification не входят в cold load.
 Словари tokenizer различаются, tokens/s не равнозначен скорости слов.
 
 [Методика метрик](evaluation/README.md): CIDEr, BLEU-4, ROUGE-L, CHAIRs/CHAIRi
@@ -60,3 +62,33 @@ docker compose -f compose.annotation.yaml run --rm checks -m ruff check .
 docker compose -f compose.annotation.yaml run --rm checks -m ruff format --check .
 ```
 Реальные GPU-smoke считаются отдельными проверками; приложение здесь не реализуется.
+
+[Методика слепой оценки](../docs/annotation_expert_protocol.md). Формы с captions
+и закрытый ключ остаются локальными игнорируемыми файлами; экспертные баллы
+пока не получены.
+
+
+## Итог основного test500
+
+Все четыре модели завершили единственный проход по 500 изображениям без ошибок.
+[CSV](../reports/comparisons/annotation-test500-v1/annotation.csv),
+[таблица](../reports/comparisons/annotation-test500-v1/annotation.md),
+[анализ](../Описание%20результатов%20аннотирования.md),
+[верификация](../reports/verification/annotation-test500-v1.json).
+Независимый verifier заново считает метрики из captions, агрегацию времени/ресурсов
+и проверяет точную decode parity 2000 текстов, source snapshot и веса без модели.
+Генераторы report и анализа имеют отдельные SHA; правка отчёта после inference
+не переписывает snapshot эксперимента. Исходный commit — `8619dc8`.
+
+Команды пересборки **без нового инференса**, выполнять последовательно:
+
+```bash
+scripts/annotation.sh report --experiment reports/annotation/test500-v1 --output reports/comparisons/annotation-test500-v1
+docker compose -f compose.annotation.yaml run --rm checks scripts/verify_annotation.py --experiment reports/annotation/test500-v1 --report reports/comparisons/annotation-test500-v1 --output reports/verification/annotation-test500-v1.json
+docker compose -f compose.annotation.yaml run --rm checks reports/comparisons/build_annotation_analysis.py --experiment reports/annotation/test500-v1 --output reports/comparisons/annotation-test500-v1 --document 'Описание результатов аннотирования.md' --verification reports/verification/annotation-test500-v1.json
+```
+
+Florence-2 лидирует по измеренным lexical metrics, CHAIR и p50; кандидат для
+коротких английских captions. Окончательный выбор по фактической корректности
+требует человеческих оценок: формы пусты, внешний набор отсутствует, SPICE не
+вычислялся. Продолжение — [handoff](../docs/annotation_handoff.md).

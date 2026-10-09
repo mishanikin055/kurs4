@@ -31,7 +31,7 @@ def read_samples(run: Path) -> tuple[dict[str, Any], dict[str, Any], list[dict[s
 
 def write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
     with Path(path).open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
+        writer = csv.DictWriter(handle, fieldnames=list(rows[0]), lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
 
@@ -105,6 +105,11 @@ def report(experiment: Path, output: Path) -> None:
         output / "report_manifest.json",
         {
             "experiment": str(experiment),
+            "script_sha256": sha256(Path(__file__)),
+            "metrics_sha256": sha256(ROOT / "annotation/metrics.py"),
+            "evaluator_sources_sha256": sha256(ROOT / "annotation/evaluation/sources.json"),
+            "experiment_sha256": sha256(experiment / "experiment.json"),
+            "source_snapshot_sha256": sha256(experiment / "source_snapshot.tar.gz"),
             "inputs": hashes,
             "confidence_intervals": "not computed by user instruction",
             "human_scores": "pending",
@@ -130,7 +135,7 @@ def report(experiment: Path, output: Path) -> None:
             )
     markdown += [
         "",
-        "CIDEr — исходная шкала evaluator (для шкалы 0–100 умножить на 100). CHAIR — GT captions+instances и словарь авторов; метрика учитывает только объекты COCO и не оценивает действия/свойства.",
+        "CIDEr — исходная шкала evaluator (для представления ×100 умножить на 100). CHAIR — GT captions+instances и словарь авторов; метрика учитывает только объекты COCO и не оценивает действия/свойства.",
         "",
         "FP16, batch 1, greedy decoding, максимум 96 новых токенов, один прогрев на dev-изображении. p50/p95 относятся к одному проходу; межпрогонная устойчивость не измерена. Доверительные интервалы не рассчитывались.",
         "",

@@ -25,3 +25,6 @@ annotation/models/*/
 annotation/models/*.part
 annotation/models/.download.lock
 reports/annotation/
+
+# Производные формы оценки содержат исходные captions и закрытый ключ.
+reports/comparisons/annotation-*/expert_*.csv

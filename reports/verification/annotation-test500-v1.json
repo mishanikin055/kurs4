@@ -1,0 +1,92 @@
+{
+  "verifier_sha256": "054be3f1d3a71d382223243f4cb5675228f0707850a6ce85eb0a4e29a594f215",
+  "numeric_report_recomputed": true,
+  "report_manifest_sha256": "ba3584be8e0ef0ef450c18bb0778ffb034929c06ea7ecc1fdcd6313f25e218ff",
+  "report_outputs": {
+    "annotation.csv": "6a029c8d622f0ae9112f73de38217972dc33711fd3726cdc37d9090a5b40f05f",
+    "annotation.md": "9fc8d5b778848001b592a4da7b52fecd2438529083b8985e8766c2ff9bea3ad6",
+    "blip_base_chair.json": "2c28d5832c6f8d96bf63a30af59bc50bc79490712bf993c3d17501dc19a0981f",
+    "blip_base_per_image.csv": "e7646d9368fad9ff3f9fc9816dacc354dfc688a718acfea284b7fbddb87f77fd",
+    "florence2_base_ft_chair.json": "d9688851ba431f041f11b3240f4f3fdd74cfaa1ccc4923313f86f5a1b23f3a74",
+    "florence2_base_ft_per_image.csv": "322cac1100baf37175735338e3a0ed769643d15fdcedbe1a58ee08a01cca590e",
+    "qwen3_vl_2b_chair.json": "f2aa6b0370c51079ecd922ce2df6a28996ca534d69ecc662bca4bbf4b06a7a2a",
+    "qwen3_vl_2b_per_image.csv": "48b4868a85c084789732cc373412b3739a20b6a3c2b164e3f92ad46aef77c8d6",
+    "report_manifest.json": "ba3584be8e0ef0ef450c18bb0778ffb034929c06ea7ecc1fdcd6313f25e218ff",
+    "smolvlm2_500m_chair.json": "ebefa7cea1cfed3e840e2c8e038dc0a6f1d2a6b77a67eaa34e98600cc744ab46",
+    "smolvlm2_500m_per_image.csv": "78a3a37fc1df2e1bc48ad081ccc921950a521fae79a2a1569666c530518b690a"
+  },
+  "checked_at_utc": "2026-10-09T19:21:51.058174+00:00",
+  "os": "Linux-6.6.114.1-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+  "python": "3.11.13",
+  "cpu": "12th Gen Intel(R) Core(TM) i5-12450H",
+  "evaluator": {
+    "pycocoevalcap": "1.2",
+    "nltk": "3.9.2",
+    "ptb_jar_sha256": "2fcb91bb7a111f93d71e264f4ee0e3afd19ba0dde6d21b38605088df9e940399",
+    "java": "openjdk version \"11.0.32.1\" 2026-08-18\nOpenJDK Runtime Environment (build 11.0.32.1+1-post-1ubuntu1-22.04-Ubuntu)\nOpenJDK 64-Bit Server VM (build 11.0.32.1+1-post-1ubuntu1-22.04-Ubuntu, mixed mode, sharing)",
+    "sources_manifest_sha256": "1f73c5e9ea591ce8af6cc12a1b04a9462a23187266c236c00332e8ebf8dadceb"
+  },
+  "status": "verified",
+  "experiment": "reports/annotation/test500-v1",
+  "images_per_model": 500,
+  "repeats": 1,
+  "confidence_intervals": "not calculated",
+  "participants": {
+    "blip_base": {
+      "status": "verified",
+      "images": 500,
+      "samples_sha256": "4db63be2c42f606316a39c886540a6f65e5c49f483e14b5a52902a523cbec11e",
+      "dataset_hash": "a819a8ee4ecc8a225c1435699c9f9fd4efbcc538f1f4a5f11773e6e261f8aea1",
+      "environment_sha256": "c6aa7c6ce0d8338e12ee1a8b824c9546213320553c4c290664b18434c5d7a0d1",
+      "resources": {
+        "rss_peak_bytes": 1823948800,
+        "vram_allocated_peak_bytes": 590025728,
+        "vram_reserved_peak_bytes": 645922816
+      },
+      "errors": 0
+    },
+    "florence2_base_ft": {
+      "status": "verified",
+      "images": 500,
+      "samples_sha256": "2320cc8934d84f4d97b208556bd6be4efa6ed1bd6823f1c07de5e96145bee916",
+      "dataset_hash": "a819a8ee4ecc8a225c1435699c9f9fd4efbcc538f1f4a5f11773e6e261f8aea1",
+      "environment_sha256": "6ef6db0901e92aba9bef8ca5d54950b0bfea45d3ca420ba6a149a00c26b65a8c",
+      "resources": {
+        "rss_peak_bytes": 1762930688,
+        "vram_allocated_peak_bytes": 668808192,
+        "vram_reserved_peak_bytes": 731906048
+      },
+      "errors": 0
+    },
+    "qwen3_vl_2b": {
+      "status": "verified",
+      "images": 500,
+      "samples_sha256": "448db8c3831404c6d95821047a541d2e9f33aab0eb10a966d05f7cf3fbb3bfe8",
+      "dataset_hash": "a819a8ee4ecc8a225c1435699c9f9fd4efbcc538f1f4a5f11773e6e261f8aea1",
+      "environment_sha256": "3a70d2e668cec7b7b532c44829e84af4cba17e51b1d8cbedbcae14e14be55275",
+      "resources": {
+        "rss_peak_bytes": 5134495744,
+        "vram_allocated_peak_bytes": 4346023424,
+        "vram_reserved_peak_bytes": 4427087872
+      },
+      "errors": 0
+    },
+    "smolvlm2_500m": {
+      "status": "verified",
+      "images": 500,
+      "samples_sha256": "3fd3d318626cdacac9cb56dd00c7ba145a15ff74fea2170f7c47643c1a273a34",
+      "dataset_hash": "a819a8ee4ecc8a225c1435699c9f9fd4efbcc538f1f4a5f11773e6e261f8aea1",
+      "environment_sha256": "154aedd1847ebcf06ee02b9fbbc8acfb8fd95972606aacf18165924224eb8ce4",
+      "resources": {
+        "rss_peak_bytes": 2889121792,
+        "vram_allocated_peak_bytes": 1540354048,
+        "vram_reserved_peak_bytes": 1749024768
+      },
+      "errors": 0
+    }
+  },
+  "source_hash": "81dfdf7f4127bd48dafbb3037643d39e894a8bd3804c537948fa718e96c4436d",
+  "source_snapshot_sha256": "06fe56922cae28627a0c5d412860753be8ebf96dbbd86fa3fe4df6a0b0705eba",
+  "inference_git_commit": "8619dc8c2ffad0148734392f4663c888b1c43d30",
+  "container_image_id": "sha256:983da4714772be4d76a20e183d529072b4fb438f70bd39013dbedc5d48aaec61"
+}

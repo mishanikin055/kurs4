@@ -1,0 +1,6210 @@
+[
+  {
+    "image_id": 222094,
+    "objects": [
+      "stop sign"
+    ],
+    "gt_objects": [
+      "car",
+      "stop sign",
+      "truck"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 230983,
+    "objects": [
+      "person",
+      "skateboard"
+    ],
+    "gt_objects": [
+      "car",
+      "person",
+      "skateboard"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 524108,
+    "objects": [
+      "motorcycle"
+    ],
+    "gt_objects": [
+      "motorcycle"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 451084,
+    "objects": [
+      "person",
+      "skateboard"
+    ],
+    "gt_objects": [
+      "person",
+      "skateboard"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 159458,
+    "objects": [
+      "person",
+      "couch"
+    ],
+    "gt_objects": [
+      "bed",
+      "chair",
+      "dog",
+      "person"
+    ],
+    "hallucinated": [
+      "couch"
+    ]
+  },
+  {
+    "image_id": 446117,
+    "objects": [
+      "bench"
+    ],
+    "gt_objects": [
+      "bench",
+      "dining table",
+      "orange"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 210032,
+    "objects": [],
+    "gt_objects": [
+      "bird",
+      "chair",
+      "cup",
+      "dining table",
+      "fork",
+      "knife",
+      "person",
+      "sandwich"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 270705,
+    "objects": [
+      "bird"
+    ],
+    "gt_objects": [
+      "bird",
+      "orange"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 22192,
+    "objects": [
+      "dog"
+    ],
+    "gt_objects": [
+      "bed",
+      "cow",
+      "dog",
+      "handbag"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 322610,
+    "objects": [
+      "person",
+      "umbrella"
+    ],
+    "gt_objects": [
+      "bench",
+      "handbag",
+      "person",
+      "umbrella"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 347456,
+    "objects": [],
+    "gt_objects": [
+      "elephant",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 361506,
+    "objects": [
+      "person",
+      "skateboard"
+    ],
+    "gt_objects": [
+      "car",
+      "person",
+      "skateboard",
+      "stop sign"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 292082,
+    "objects": [
+      "person",
+      "person",
+      "couch"
+    ],
+    "gt_objects": [
+      "chair",
+      "person",
+      "tie"
+    ],
+    "hallucinated": [
+      "couch"
+    ]
+  },
+  {
+    "image_id": 215114,
+    "objects": [
+      "person",
+      "refrigerator"
+    ],
+    "gt_objects": [
+      "bottle",
+      "carrot",
+      "person",
+      "refrigerator"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 507797,
+    "objects": [],
+    "gt_objects": [
+      "bus",
+      "car",
+      "handbag",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 33638,
+    "objects": [
+      "person",
+      "oven"
+    ],
+    "gt_objects": [
+      "bowl",
+      "oven",
+      "person",
+      "spoon"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 319100,
+    "objects": [
+      "person",
+      "person",
+      "couch"
+    ],
+    "gt_objects": [
+      "bottle",
+      "couch",
+      "person",
+      "remote",
+      "tv"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 149375,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "person",
+      "skateboard"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 455448,
+    "objects": [
+      "cake"
+    ],
+    "gt_objects": [
+      "cake",
+      "cup",
+      "person",
+      "sports ball"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 118515,
+    "objects": [
+      "cat",
+      "bench"
+    ],
+    "gt_objects": [
+      "bench",
+      "cat",
+      "dining table"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 400922,
+    "objects": [],
+    "gt_objects": [
+      "airplane",
+      "clock"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 451043,
+    "objects": [
+      "person",
+      "snowboard"
+    ],
+    "gt_objects": [
+      "person",
+      "skis",
+      "snowboard"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 235057,
+    "objects": [],
+    "gt_objects": [
+      "giraffe"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 417632,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "bottle",
+      "bowl",
+      "cup",
+      "handbag",
+      "person",
+      "tie",
+      "wine glass"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 91500,
+    "objects": [
+      "person",
+      "chair"
+    ],
+    "gt_objects": [
+      "bottle",
+      "bowl",
+      "chair",
+      "cup",
+      "dining table",
+      "person",
+      "pizza",
+      "remote",
+      "sink"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 477227,
+    "objects": [
+      "boat"
+    ],
+    "gt_objects": [
+      "boat",
+      "car",
+      "person",
+      "truck"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 400367,
+    "objects": [
+      "car"
+    ],
+    "gt_objects": [
+      "car",
+      "traffic light"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 8277,
+    "objects": [],
+    "gt_objects": [
+      "bowl",
+      "broccoli",
+      "cup",
+      "fork"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 480842,
+    "objects": [],
+    "gt_objects": [
+      "giraffe"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 306733,
+    "objects": [
+      "sink",
+      "toilet"
+    ],
+    "gt_objects": [
+      "bottle",
+      "potted plant",
+      "sink",
+      "toilet"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 378605,
+    "objects": [
+      "cup"
+    ],
+    "gt_objects": [
+      "cup",
+      "dining table",
+      "donut"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 113051,
+    "objects": [
+      "boat"
+    ],
+    "gt_objects": [
+      "boat"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 15597,
+    "objects": [
+      "person",
+      "skateboard"
+    ],
+    "gt_objects": [
+      "bicycle",
+      "person",
+      "skateboard"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 46048,
+    "objects": [
+      "person",
+      "bed"
+    ],
+    "gt_objects": [
+      "bed",
+      "book",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 219440,
+    "objects": [
+      "cow"
+    ],
+    "gt_objects": [
+      "cow"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 458755,
+    "objects": [
+      "person",
+      "sheep"
+    ],
+    "gt_objects": [
+      "person",
+      "sheep"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 48396,
+    "objects": [
+      "person",
+      "person"
+    ],
+    "gt_objects": [
+      "cake",
+      "chair",
+      "cup",
+      "dining table",
+      "knife",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 76547,
+    "objects": [
+      "person",
+      "dining table",
+      "train"
+    ],
+    "gt_objects": [
+      "backpack",
+      "bench",
+      "bicycle",
+      "chair",
+      "dining table",
+      "laptop",
+      "orange",
+      "person",
+      "tie",
+      "traffic light",
+      "train"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 124659,
+    "objects": [
+      "couch",
+      "tv"
+    ],
+    "gt_objects": [
+      "book",
+      "chair",
+      "clock",
+      "couch",
+      "dining table",
+      "laptop",
+      "person"
+    ],
+    "hallucinated": [
+      "tv"
+    ]
+  },
+  {
+    "image_id": 565877,
+    "objects": [
+      "person",
+      "couch",
+      "laptop"
+    ],
+    "gt_objects": [
+      "book",
+      "clock",
+      "couch",
+      "laptop",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 134689,
+    "objects": [],
+    "gt_objects": [
+      "giraffe"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 405249,
+    "objects": [
+      "person",
+      "dining table",
+      "cake"
+    ],
+    "gt_objects": [
+      "apple",
+      "cake",
+      "dining table",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 518770,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "chair",
+      "handbag",
+      "person",
+      "remote"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 382111,
+    "objects": [
+      "person",
+      "horse"
+    ],
+    "gt_objects": [
+      "car",
+      "horse",
+      "person",
+      "truck"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 472623,
+    "objects": [
+      "person",
+      "bicycle"
+    ],
+    "gt_objects": [
+      "bicycle",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 82812,
+    "objects": [
+      "train",
+      "person",
+      "train"
+    ],
+    "gt_objects": [
+      "backpack",
+      "handbag",
+      "person",
+      "suitcase",
+      "train"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 205289,
+    "objects": [
+      "truck"
+    ],
+    "gt_objects": [
+      "person",
+      "truck"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 455352,
+    "objects": [
+      "clock",
+      "clock"
+    ],
+    "gt_objects": [
+      "clock"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 298994,
+    "objects": [],
+    "gt_objects": [
+      "broccoli",
+      "carrot",
+      "dining table"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 533816,
+    "objects": [],
+    "gt_objects": [
+      "person",
+      "tennis racket"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 255664,
+    "objects": [
+      "dog"
+    ],
+    "gt_objects": [
+      "dog",
+      "frisbee"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 69795,
+    "objects": [],
+    "gt_objects": [
+      "potted plant",
+      "vase"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 577976,
+    "objects": [],
+    "gt_objects": [
+      "car",
+      "orange",
+      "truck"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 382088,
+    "objects": [
+      "horse"
+    ],
+    "gt_objects": [
+      "horse"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 468925,
+    "objects": [],
+    "gt_objects": [
+      "banana",
+      "cup",
+      "knife",
+      "sandwich",
+      "spoon"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 211825,
+    "objects": [
+      "person",
+      "cake"
+    ],
+    "gt_objects": [
+      "book",
+      "cake",
+      "oven",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 84664,
+    "objects": [],
+    "gt_objects": [
+      "bowl",
+      "dining table",
+      "fork",
+      "spoon"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 85665,
+    "objects": [
+      "kite"
+    ],
+    "gt_objects": [
+      "kite"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 187362,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "person",
+      "surfboard"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 166509,
+    "objects": [],
+    "gt_objects": [
+      "traffic light"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 556765,
+    "objects": [
+      "elephant"
+    ],
+    "gt_objects": [
+      "elephant"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 205401,
+    "objects": [
+      "airplane"
+    ],
+    "gt_objects": [
+      "airplane",
+      "boat",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 356387,
+    "objects": [],
+    "gt_objects": [
+      "backpack",
+      "bicycle",
+      "motorcycle",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 578871,
+    "objects": [
+      "person",
+      "dining table"
+    ],
+    "gt_objects": [
+      "bowl",
+      "chair",
+      "cup",
+      "dining table",
+      "motorcycle",
+      "person",
+      "spoon"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 213224,
+    "objects": [
+      "dining table"
+    ],
+    "gt_objects": [
+      "chair",
+      "dining table",
+      "vase"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 541952,
+    "objects": [
+      "clock"
+    ],
+    "gt_objects": [
+      "clock"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 12748,
+    "objects": [
+      "person",
+      "person"
+    ],
+    "gt_objects": [
+      "horse",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 140270,
+    "objects": [
+      "person",
+      "horse"
+    ],
+    "gt_objects": [
+      "horse",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 138115,
+    "objects": [
+      "person",
+      "orange"
+    ],
+    "gt_objects": [
+      "bird",
+      "handbag",
+      "orange",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 195918,
+    "objects": [
+      "dining table",
+      "laptop",
+      "laptop"
+    ],
+    "gt_objects": [
+      "chair",
+      "dining table",
+      "keyboard",
+      "laptop",
+      "mouse",
+      "tv"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 540414,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "bottle",
+      "bowl",
+      "bus",
+      "handbag",
+      "person",
+      "umbrella"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 434204,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "backpack",
+      "bench",
+      "person",
+      "skateboard"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 270402,
+    "objects": [
+      "elephant",
+      "elephant"
+    ],
+    "gt_objects": [
+      "elephant"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 439525,
+    "objects": [
+      "person",
+      "cake"
+    ],
+    "gt_objects": [
+      "bottle",
+      "cake",
+      "dining table",
+      "knife",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 232088,
+    "objects": [
+      "couch",
+      "tv"
+    ],
+    "gt_objects": [
+      "chair",
+      "couch",
+      "keyboard",
+      "laptop",
+      "mouse",
+      "remote",
+      "tv"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 365655,
+    "objects": [],
+    "gt_objects": [
+      "bus",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 369037,
+    "objects": [
+      "person",
+      "elephant"
+    ],
+    "gt_objects": [
+      "bottle",
+      "elephant",
+      "handbag",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 340451,
+    "objects": [
+      "person",
+      "bench"
+    ],
+    "gt_objects": [
+      "bench",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 139871,
+    "objects": [
+      "airplane"
+    ],
+    "gt_objects": [
+      "airplane"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 580757,
+    "objects": [],
+    "gt_objects": [
+      "fire hydrant"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 294350,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "banana",
+      "bottle",
+      "bowl",
+      "oven",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 371042,
+    "objects": [],
+    "gt_objects": [
+      "backpack",
+      "bottle",
+      "person",
+      "sports ball",
+      "tennis racket"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 159791,
+    "objects": [
+      "refrigerator"
+    ],
+    "gt_objects": [
+      "bird",
+      "bowl",
+      "chair",
+      "microwave",
+      "oven",
+      "person",
+      "refrigerator"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 422836,
+    "objects": [
+      "person",
+      "person"
+    ],
+    "gt_objects": [
+      "chair",
+      "dining table",
+      "person",
+      "potted plant",
+      "suitcase"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 230008,
+    "objects": [
+      "person",
+      "motorcycle"
+    ],
+    "gt_objects": [
+      "bicycle",
+      "car",
+      "motorcycle",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 560266,
+    "objects": [
+      "bear"
+    ],
+    "gt_objects": [
+      "bear"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 423123,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "backpack",
+      "cell phone",
+      "person",
+      "refrigerator"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 290248,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "backpack",
+      "handbag",
+      "person",
+      "suitcase",
+      "truck"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 456662,
+    "objects": [
+      "person",
+      "refrigerator"
+    ],
+    "gt_objects": [
+      "person",
+      "refrigerator"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 384616,
+    "objects": [
+      "fire hydrant"
+    ],
+    "gt_objects": [
+      "fire hydrant"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 350607,
+    "objects": [
+      "bench"
+    ],
+    "gt_objects": [
+      "bench"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 135872,
+    "objects": [
+      "dining table",
+      "laptop",
+      "tv"
+    ],
+    "gt_objects": [
+      "book",
+      "chair",
+      "cup",
+      "dining table",
+      "keyboard",
+      "laptop",
+      "mouse",
+      "tv"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 493799,
+    "objects": [],
+    "gt_objects": [
+      "carrot",
+      "dining table",
+      "fork"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 90003,
+    "objects": [
+      "dog"
+    ],
+    "gt_objects": [
+      "dog",
+      "frisbee",
+      "orange"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 200152,
+    "objects": [
+      "cat"
+    ],
+    "gt_objects": [],
+    "hallucinated": [
+      "cat"
+    ]
+  },
+  {
+    "image_id": 65074,
+    "objects": [
+      "bed"
+    ],
+    "gt_objects": [
+      "bed",
+      "book"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 439854,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "backpack",
+      "bicycle",
+      "person",
+      "skateboard"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 209747,
+    "objects": [
+      "cat",
+      "sink",
+      "toothbrush"
+    ],
+    "gt_objects": [
+      "cat",
+      "sink"
+    ],
+    "hallucinated": [
+      "toothbrush"
+    ]
+  },
+  {
+    "image_id": 33854,
+    "objects": [],
+    "gt_objects": [
+      "bus",
+      "car",
+      "motorcycle",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 11760,
+    "objects": [
+      "zebra"
+    ],
+    "gt_objects": [
+      "zebra"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 491757,
+    "objects": [
+      "cat",
+      "bed"
+    ],
+    "gt_objects": [
+      "bed",
+      "cat"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 520832,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "handbag",
+      "person",
+      "umbrella"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 433243,
+    "objects": [
+      "zebra"
+    ],
+    "gt_objects": [
+      "giraffe",
+      "zebra"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 214753,
+    "objects": [
+      "horse"
+    ],
+    "gt_objects": [
+      "horse",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 27932,
+    "objects": [
+      "baseball glove"
+    ],
+    "gt_objects": [
+      "baseball glove",
+      "sports ball"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 395903,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "person",
+      "surfboard"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 89045,
+    "objects": [],
+    "gt_objects": [
+      "book",
+      "chair",
+      "clock",
+      "couch",
+      "dining table",
+      "person",
+      "potted plant",
+      "vase"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 90631,
+    "objects": [
+      "airplane"
+    ],
+    "gt_objects": [
+      "airplane"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 331799,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "apple",
+      "banana",
+      "dining table",
+      "orange",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 293390,
+    "objects": [
+      "sink"
+    ],
+    "gt_objects": [
+      "bottle",
+      "sink",
+      "toothbrush"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 511599,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "backpack",
+      "boat",
+      "handbag",
+      "person",
+      "suitcase",
+      "truck"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 301867,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "handbag",
+      "person",
+      "umbrella"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 554579,
+    "objects": [
+      "dog",
+      "person"
+    ],
+    "gt_objects": [
+      "dog",
+      "handbag",
+      "person",
+      "teddy bear"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 210230,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "carrot",
+      "hot dog",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 552883,
+    "objects": [],
+    "gt_objects": [
+      "sink"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 137576,
+    "objects": [
+      "cow"
+    ],
+    "gt_objects": [
+      "cow"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 474164,
+    "objects": [
+      "dog",
+      "truck"
+    ],
+    "gt_objects": [
+      "car",
+      "dog",
+      "truck"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 47819,
+    "objects": [
+      "horse"
+    ],
+    "gt_objects": [
+      "horse",
+      "person",
+      "suitcase"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 473821,
+    "objects": [
+      "couch",
+      "chair",
+      "tv"
+    ],
+    "gt_objects": [
+      "bowl",
+      "chair",
+      "couch"
+    ],
+    "hallucinated": [
+      "tv"
+    ]
+  },
+  {
+    "image_id": 161875,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "person",
+      "tie"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 377946,
+    "objects": [
+      "truck"
+    ],
+    "gt_objects": [
+      "bus",
+      "car",
+      "fork",
+      "knife",
+      "person",
+      "traffic light",
+      "truck"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 519611,
+    "objects": [
+      "bear"
+    ],
+    "gt_objects": [
+      "bear"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 87875,
+    "objects": [
+      "fire hydrant"
+    ],
+    "gt_objects": [
+      "fire hydrant"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 527695,
+    "objects": [],
+    "gt_objects": [
+      "bowl",
+      "broccoli",
+      "dining table"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 545219,
+    "objects": [],
+    "gt_objects": [
+      "backpack",
+      "bus",
+      "handbag",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 504580,
+    "objects": [],
+    "gt_objects": [
+      "giraffe"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 17959,
+    "objects": [
+      "kite"
+    ],
+    "gt_objects": [
+      "backpack",
+      "kite",
+      "orange",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 21167,
+    "objects": [
+      "person",
+      "person"
+    ],
+    "gt_objects": [
+      "person",
+      "tie",
+      "wine glass"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 24144,
+    "objects": [
+      "pizza"
+    ],
+    "gt_objects": [
+      "pizza"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 193162,
+    "objects": [
+      "person",
+      "cow"
+    ],
+    "gt_objects": [
+      "cow",
+      "dog",
+      "person",
+      "sheep"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 259625,
+    "objects": [
+      "elephant"
+    ],
+    "gt_objects": [
+      "elephant"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 356612,
+    "objects": [
+      "cow"
+    ],
+    "gt_objects": [
+      "bicycle",
+      "bus",
+      "car",
+      "cow",
+      "person",
+      "truck"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 308531,
+    "objects": [
+      "clock"
+    ],
+    "gt_objects": [
+      "bench",
+      "car",
+      "clock"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 27186,
+    "objects": [
+      "person",
+      "couch"
+    ],
+    "gt_objects": [
+      "couch",
+      "person",
+      "remote"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 462031,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "baseball bat",
+      "person",
+      "sports ball"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 366141,
+    "objects": [
+      "couch",
+      "tv"
+    ],
+    "gt_objects": [
+      "cat",
+      "chair",
+      "couch",
+      "dining table",
+      "tv"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 287714,
+    "objects": [
+      "sink"
+    ],
+    "gt_objects": [
+      "bottle",
+      "cup",
+      "sink"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 489924,
+    "objects": [
+      "person",
+      "skateboard"
+    ],
+    "gt_objects": [
+      "person",
+      "skateboard"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 273232,
+    "objects": [
+      "person",
+      "dog"
+    ],
+    "gt_objects": [
+      "dog",
+      "kite",
+      "person",
+      "surfboard"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 319184,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "frisbee",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 534601,
+    "objects": [
+      "teddy bear",
+      "bed"
+    ],
+    "gt_objects": [
+      "bear",
+      "bed",
+      "person",
+      "teddy bear"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 89296,
+    "objects": [
+      "person",
+      "baseball bat"
+    ],
+    "gt_objects": [
+      "baseball bat",
+      "person",
+      "sports ball"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 303499,
+    "objects": [
+      "horse"
+    ],
+    "gt_objects": [
+      "horse",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 475779,
+    "objects": [
+      "elephant"
+    ],
+    "gt_objects": [
+      "elephant"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 64084,
+    "objects": [],
+    "gt_objects": [
+      "bottle",
+      "bowl",
+      "dining table",
+      "knife",
+      "person",
+      "sandwich",
+      "spoon"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 263594,
+    "objects": [
+      "car"
+    ],
+    "gt_objects": [
+      "bird",
+      "car",
+      "truck"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 217219,
+    "objects": [
+      "bed"
+    ],
+    "gt_objects": [
+      "bed",
+      "orange"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 486112,
+    "objects": [
+      "person",
+      "elephant"
+    ],
+    "gt_objects": [
+      "elephant",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 383384,
+    "objects": [],
+    "gt_objects": [
+      "baseball bat",
+      "baseball glove",
+      "person",
+      "sports ball"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 416269,
+    "objects": [
+      "train"
+    ],
+    "gt_objects": [
+      "person",
+      "train"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 356428,
+    "objects": [],
+    "gt_objects": [
+      "backpack",
+      "banana",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 438876,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "person",
+      "sports ball",
+      "tennis racket"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 82821,
+    "objects": [],
+    "gt_objects": [
+      "bench",
+      "bicycle",
+      "boat",
+      "car",
+      "person",
+      "truck"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 250619,
+    "objects": [
+      "person",
+      "umbrella"
+    ],
+    "gt_objects": [
+      "backpack",
+      "handbag",
+      "person",
+      "umbrella"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 51738,
+    "objects": [
+      "bed",
+      "chair"
+    ],
+    "gt_objects": [
+      "bed",
+      "chair",
+      "dining table",
+      "suitcase"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 80413,
+    "objects": [
+      "car"
+    ],
+    "gt_objects": [
+      "bear",
+      "car",
+      "teddy bear"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 502732,
+    "objects": [
+      "refrigerator"
+    ],
+    "gt_objects": [
+      "refrigerator"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 32941,
+    "objects": [],
+    "gt_objects": [
+      "bus",
+      "car",
+      "person",
+      "traffic light",
+      "truck"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 511321,
+    "objects": [
+      "boat"
+    ],
+    "gt_objects": [
+      "boat"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 46031,
+    "objects": [
+      "laptop"
+    ],
+    "gt_objects": [
+      "cell phone",
+      "dining table",
+      "keyboard",
+      "laptop",
+      "mouse",
+      "tv"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 562443,
+    "objects": [
+      "zebra"
+    ],
+    "gt_objects": [
+      "person",
+      "zebra"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 370677,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "donut",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 361621,
+    "objects": [
+      "cat",
+      "sink",
+      "sink"
+    ],
+    "gt_objects": [
+      "cat",
+      "sink"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 511076,
+    "objects": [
+      "person",
+      "bench"
+    ],
+    "gt_objects": [
+      "bench",
+      "bird",
+      "car",
+      "handbag",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 550939,
+    "objects": [],
+    "gt_objects": [],
+    "hallucinated": []
+  },
+  {
+    "image_id": 455981,
+    "objects": [
+      "toilet"
+    ],
+    "gt_objects": [
+      "bowl",
+      "toilet"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 565597,
+    "objects": [
+      "pizza"
+    ],
+    "gt_objects": [
+      "dining table",
+      "pizza"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 136633,
+    "objects": [
+      "umbrella"
+    ],
+    "gt_objects": [
+      "bowl",
+      "dining table",
+      "person",
+      "umbrella"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 475365,
+    "objects": [
+      "train",
+      "car"
+    ],
+    "gt_objects": [
+      "train"
+    ],
+    "hallucinated": [
+      "car"
+    ]
+  },
+  {
+    "image_id": 122745,
+    "objects": [
+      "stop sign"
+    ],
+    "gt_objects": [
+      "stop sign"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 572900,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "frisbee",
+      "person",
+      "potted plant",
+      "sandwich"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 477805,
+    "objects": [
+      "person",
+      "laptop"
+    ],
+    "gt_objects": [
+      "laptop",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 264335,
+    "objects": [
+      "bird"
+    ],
+    "gt_objects": [
+      "bird"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 350019,
+    "objects": [
+      "person",
+      "suitcase"
+    ],
+    "gt_objects": [
+      "person",
+      "suitcase"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 338625,
+    "objects": [],
+    "gt_objects": [
+      "bicycle",
+      "bus",
+      "car",
+      "handbag",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 151051,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "person",
+      "skis"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 414510,
+    "objects": [
+      "person",
+      "bicycle"
+    ],
+    "gt_objects": [
+      "backpack",
+      "bicycle",
+      "car",
+      "cell phone",
+      "handbag",
+      "person",
+      "truck"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 223182,
+    "objects": [
+      "person",
+      "bench"
+    ],
+    "gt_objects": [
+      "bench",
+      "bottle",
+      "chair",
+      "person",
+      "tennis racket"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 334530,
+    "objects": [
+      "person",
+      "surfboard"
+    ],
+    "gt_objects": [
+      "person",
+      "surfboard"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 362682,
+    "objects": [],
+    "gt_objects": [
+      "bus",
+      "dog",
+      "person",
+      "truck"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 256775,
+    "objects": [
+      "person",
+      "kite"
+    ],
+    "gt_objects": [
+      "kite",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 52591,
+    "objects": [
+      "person",
+      "skis"
+    ],
+    "gt_objects": [
+      "person",
+      "skis"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 359677,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "kite",
+      "person",
+      "surfboard"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 367095,
+    "objects": [
+      "person",
+      "dining table",
+      "laptop"
+    ],
+    "gt_objects": [
+      "chair",
+      "cup",
+      "dining table",
+      "keyboard",
+      "laptop",
+      "mouse",
+      "person",
+      "potted plant",
+      "scissors",
+      "tv"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 532761,
+    "objects": [
+      "couch",
+      "chair",
+      "tv",
+      "dining table"
+    ],
+    "gt_objects": [
+      "chair",
+      "couch",
+      "dining table",
+      "mouse",
+      "potted plant",
+      "remote",
+      "tv"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 185890,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "dining table",
+      "person",
+      "remote",
+      "wine glass"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 530162,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "person",
+      "umbrella"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 180383,
+    "objects": [
+      "cow",
+      "tv"
+    ],
+    "gt_objects": [
+      "clock",
+      "cow",
+      "person",
+      "tv"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 19786,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "couch",
+      "laptop",
+      "person",
+      "remote"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 190637,
+    "objects": [
+      "person",
+      "bed",
+      "remote"
+    ],
+    "gt_objects": [
+      "bed",
+      "person",
+      "remote"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 534041,
+    "objects": [
+      "person",
+      "person",
+      "dining table"
+    ],
+    "gt_objects": [
+      "backpack",
+      "bench",
+      "bottle",
+      "chair",
+      "dining table",
+      "handbag",
+      "hot dog",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 164885,
+    "objects": [
+      "person",
+      "skis"
+    ],
+    "gt_objects": [
+      "person",
+      "skis"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 68387,
+    "objects": [],
+    "gt_objects": [
+      "baseball bat",
+      "baseball glove",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 488251,
+    "objects": [
+      "person",
+      "person"
+    ],
+    "gt_objects": [
+      "bus",
+      "car",
+      "horse",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 499622,
+    "objects": [
+      "person",
+      "motorcycle"
+    ],
+    "gt_objects": [
+      "bicycle",
+      "motorcycle",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 250127,
+    "objects": [
+      "person",
+      "train"
+    ],
+    "gt_objects": [
+      "cell phone",
+      "handbag",
+      "person",
+      "train",
+      "umbrella"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 466567,
+    "objects": [
+      "donut"
+    ],
+    "gt_objects": [
+      "donut"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 542856,
+    "objects": [],
+    "gt_objects": [
+      "bus",
+      "person",
+      "traffic light"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 127517,
+    "objects": [
+      "surfboard"
+    ],
+    "gt_objects": [
+      "surfboard",
+      "umbrella"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 111086,
+    "objects": [
+      "boat"
+    ],
+    "gt_objects": [
+      "boat",
+      "car",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 467511,
+    "objects": [
+      "person",
+      "motorcycle"
+    ],
+    "gt_objects": [
+      "motorcycle",
+      "person",
+      "traffic light"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 29187,
+    "objects": [
+      "person",
+      "horse"
+    ],
+    "gt_objects": [
+      "horse",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 104603,
+    "objects": [
+      "bear"
+    ],
+    "gt_objects": [
+      "bear"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 290592,
+    "objects": [
+      "sheep"
+    ],
+    "gt_objects": [
+      "sheep"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 478420,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "cell phone",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 348481,
+    "objects": [
+      "laptop",
+      "cell phone",
+      "cell phone",
+      "cell phone",
+      "cell phone",
+      "laptop",
+      "cell phone"
+    ],
+    "gt_objects": [
+      "book",
+      "cell phone",
+      "dining table",
+      "laptop",
+      "mouse",
+      "person",
+      "remote"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 393282,
+    "objects": [],
+    "gt_objects": [
+      "giraffe"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 554328,
+    "objects": [
+      "person",
+      "person"
+    ],
+    "gt_objects": [
+      "baseball glove",
+      "person",
+      "sports ball"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 470779,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "backpack",
+      "person",
+      "skis",
+      "snowboard"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 396518,
+    "objects": [
+      "person",
+      "boat"
+    ],
+    "gt_objects": [
+      "boat",
+      "person",
+      "tie"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 481567,
+    "objects": [
+      "person",
+      "motorcycle"
+    ],
+    "gt_objects": [
+      "motorcycle",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 437898,
+    "objects": [
+      "oven",
+      "sink"
+    ],
+    "gt_objects": [
+      "cup",
+      "knife",
+      "oven",
+      "refrigerator",
+      "sink",
+      "spoon"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 123585,
+    "objects": [
+      "bird"
+    ],
+    "gt_objects": [
+      "bird",
+      "bowl",
+      "donut",
+      "fork"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 370375,
+    "objects": [
+      "person",
+      "baseball bat"
+    ],
+    "gt_objects": [
+      "baseball bat",
+      "person",
+      "sports ball"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 172946,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "person",
+      "remote",
+      "tv"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 233033,
+    "objects": [
+      "dining table",
+      "chair",
+      "umbrella"
+    ],
+    "gt_objects": [
+      "chair",
+      "dining table",
+      "potted plant",
+      "umbrella"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 221693,
+    "objects": [
+      "dog"
+    ],
+    "gt_objects": [
+      "dog",
+      "frisbee",
+      "orange"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 79565,
+    "objects": [],
+    "gt_objects": [
+      "giraffe",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 390902,
+    "objects": [
+      "person",
+      "tennis racket"
+    ],
+    "gt_objects": [
+      "person",
+      "tennis racket"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 414673,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "baseball bat",
+      "baseball glove",
+      "chair",
+      "person",
+      "sports ball"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 501368,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "bottle",
+      "hair drier",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 122927,
+    "objects": [
+      "bird"
+    ],
+    "gt_objects": [
+      "bird",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 309173,
+    "objects": [
+      "stop sign"
+    ],
+    "gt_objects": [
+      "person",
+      "stop sign"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 200252,
+    "objects": [
+      "bed"
+    ],
+    "gt_objects": [
+      "bed",
+      "book"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 567197,
+    "objects": [
+      "truck"
+    ],
+    "gt_objects": [
+      "car",
+      "person",
+      "truck"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 138492,
+    "objects": [
+      "dog"
+    ],
+    "gt_objects": [
+      "dog",
+      "frisbee"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 451155,
+    "objects": [
+      "person",
+      "bed",
+      "laptop"
+    ],
+    "gt_objects": [
+      "bed",
+      "laptop",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 405691,
+    "objects": [
+      "dining table",
+      "bottle"
+    ],
+    "gt_objects": [
+      "bottle",
+      "bowl",
+      "dining table",
+      "fork",
+      "potted plant",
+      "spoon",
+      "vase",
+      "wine glass"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 550426,
+    "objects": [
+      "vase"
+    ],
+    "gt_objects": [
+      "dining table",
+      "vase"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 120572,
+    "objects": [],
+    "gt_objects": [
+      "bench",
+      "clock"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 33109,
+    "objects": [
+      "truck"
+    ],
+    "gt_objects": [
+      "bus",
+      "car",
+      "truck"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 213830,
+    "objects": [
+      "person",
+      "person"
+    ],
+    "gt_objects": [
+      "chair",
+      "person",
+      "sports ball",
+      "tennis racket"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 479596,
+    "objects": [
+      "orange"
+    ],
+    "gt_objects": [
+      "apple",
+      "bowl",
+      "orange"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 382743,
+    "objects": [
+      "person",
+      "kite"
+    ],
+    "gt_objects": [
+      "kite",
+      "umbrella"
+    ],
+    "hallucinated": [
+      "person"
+    ]
+  },
+  {
+    "image_id": 358427,
+    "objects": [
+      "fork"
+    ],
+    "gt_objects": [
+      "broccoli",
+      "fork"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 301718,
+    "objects": [
+      "person",
+      "person",
+      "dining table"
+    ],
+    "gt_objects": [
+      "bottle",
+      "bowl",
+      "cup",
+      "dining table",
+      "fork",
+      "knife",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 294163,
+    "objects": [
+      "clock",
+      "clock"
+    ],
+    "gt_objects": [
+      "clock"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 439994,
+    "objects": [],
+    "gt_objects": [
+      "baseball glove",
+      "bench",
+      "chair",
+      "person",
+      "sports ball"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 206271,
+    "objects": [],
+    "gt_objects": [
+      "toilet"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 303305,
+    "objects": [],
+    "gt_objects": [
+      "bus",
+      "car",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 20553,
+    "objects": [
+      "teddy bear",
+      "chair"
+    ],
+    "gt_objects": [
+      "bed",
+      "bottle",
+      "chair",
+      "couch",
+      "cup",
+      "dining table",
+      "teddy bear",
+      "umbrella",
+      "vase"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 129113,
+    "objects": [
+      "spoon",
+      "dining table"
+    ],
+    "gt_objects": [
+      "dining table",
+      "spoon"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 459500,
+    "objects": [
+      "clock"
+    ],
+    "gt_objects": [
+      "bird",
+      "car",
+      "clock"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 513484,
+    "objects": [
+      "bear"
+    ],
+    "gt_objects": [
+      "bear"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 19042,
+    "objects": [],
+    "gt_objects": [
+      "bird",
+      "car"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 464872,
+    "objects": [
+      "zebra"
+    ],
+    "gt_objects": [
+      "zebra"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 232649,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "person",
+      "sink",
+      "toilet"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 198489,
+    "objects": [
+      "person",
+      "umbrella"
+    ],
+    "gt_objects": [
+      "car",
+      "person",
+      "potted plant",
+      "umbrella"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 409211,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "person",
+      "sports ball",
+      "tennis racket"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 409268,
+    "objects": [
+      "teddy bear"
+    ],
+    "gt_objects": [
+      "teddy bear"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 225405,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "person",
+      "sports ball"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 60090,
+    "objects": [
+      "train"
+    ],
+    "gt_objects": [
+      "person",
+      "train"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 91921,
+    "objects": [
+      "zebra"
+    ],
+    "gt_objects": [
+      "zebra"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 304984,
+    "objects": [],
+    "gt_objects": [
+      "bowl",
+      "cake",
+      "fork",
+      "orange",
+      "sandwich",
+      "wine glass"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 498747,
+    "objects": [
+      "person",
+      "cell phone"
+    ],
+    "gt_objects": [
+      "bird",
+      "bottle",
+      "cell phone",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 289586,
+    "objects": [],
+    "gt_objects": [
+      "giraffe"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 514540,
+    "objects": [],
+    "gt_objects": [],
+    "hallucinated": []
+  },
+  {
+    "image_id": 453722,
+    "objects": [
+      "couch"
+    ],
+    "gt_objects": [
+      "chair",
+      "couch",
+      "tv"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 273493,
+    "objects": [],
+    "gt_objects": [
+      "person",
+      "sports ball",
+      "tennis racket"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 354547,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "person",
+      "tie"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 383676,
+    "objects": [],
+    "gt_objects": [
+      "giraffe"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 148999,
+    "objects": [
+      "train"
+    ],
+    "gt_objects": [
+      "horse",
+      "person",
+      "traffic light",
+      "train"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 130386,
+    "objects": [],
+    "gt_objects": [
+      "bench",
+      "bicycle",
+      "car",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 94871,
+    "objects": [
+      "person",
+      "sheep"
+    ],
+    "gt_objects": [
+      "handbag",
+      "person",
+      "sheep"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 431876,
+    "objects": [
+      "person",
+      "horse"
+    ],
+    "gt_objects": [
+      "backpack",
+      "horse",
+      "person",
+      "traffic light"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 153343,
+    "objects": [
+      "bear"
+    ],
+    "gt_objects": [
+      "bear",
+      "mouse",
+      "teddy bear"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 38825,
+    "objects": [
+      "zebra"
+    ],
+    "gt_objects": [
+      "zebra"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 244379,
+    "objects": [
+      "traffic light"
+    ],
+    "gt_objects": [
+      "car",
+      "traffic light"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 488736,
+    "objects": [
+      "clock"
+    ],
+    "gt_objects": [
+      "clock"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 253835,
+    "objects": [
+      "person",
+      "train"
+    ],
+    "gt_objects": [
+      "backpack",
+      "bottle",
+      "clock",
+      "person",
+      "traffic light",
+      "train"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 465129,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "banana",
+      "bottle",
+      "bowl",
+      "clock",
+      "cup",
+      "microwave",
+      "oven",
+      "person",
+      "sink"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 109916,
+    "objects": [
+      "cake"
+    ],
+    "gt_objects": [
+      "bowl",
+      "cake",
+      "oven"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 500716,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "person",
+      "scissors"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 70158,
+    "objects": [
+      "zebra"
+    ],
+    "gt_objects": [
+      "zebra"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 299720,
+    "objects": [],
+    "gt_objects": [
+      "giraffe"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 569825,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "baseball glove",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 15254,
+    "objects": [
+      "bowl"
+    ],
+    "gt_objects": [
+      "bowl",
+      "carrot",
+      "dining table",
+      "spoon"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 21503,
+    "objects": [],
+    "gt_objects": [
+      "dining table",
+      "keyboard",
+      "mouse",
+      "remote",
+      "sandwich"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 345027,
+    "objects": [
+      "motorcycle"
+    ],
+    "gt_objects": [
+      "bench",
+      "boat",
+      "car",
+      "chair",
+      "kite",
+      "motorcycle",
+      "person",
+      "truck",
+      "umbrella"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 432468,
+    "objects": [
+      "cat",
+      "suitcase"
+    ],
+    "gt_objects": [
+      "cat",
+      "suitcase"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 87144,
+    "objects": [
+      "person",
+      "person",
+      "bench"
+    ],
+    "gt_objects": [
+      "bench",
+      "car",
+      "handbag",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 362520,
+    "objects": [
+      "person",
+      "skateboard"
+    ],
+    "gt_objects": [
+      "person",
+      "skateboard"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 32861,
+    "objects": [
+      "person",
+      "umbrella"
+    ],
+    "gt_objects": [
+      "person",
+      "umbrella"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 368900,
+    "objects": [
+      "tv"
+    ],
+    "gt_objects": [
+      "backpack",
+      "bird",
+      "chair",
+      "refrigerator",
+      "tv",
+      "umbrella"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 190140,
+    "objects": [
+      "boat"
+    ],
+    "gt_objects": [
+      "boat",
+      "dog",
+      "person",
+      "tie"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 38829,
+    "objects": [
+      "person",
+      "bicycle"
+    ],
+    "gt_objects": [
+      "backpack",
+      "bicycle",
+      "motorcycle",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 94336,
+    "objects": [
+      "cat",
+      "sink"
+    ],
+    "gt_objects": [
+      "cat",
+      "sink"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 162858,
+    "objects": [
+      "car",
+      "traffic light"
+    ],
+    "gt_objects": [
+      "bicycle",
+      "car",
+      "person",
+      "traffic light"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 572678,
+    "objects": [
+      "dining table"
+    ],
+    "gt_objects": [
+      "bowl",
+      "chair",
+      "couch",
+      "cup",
+      "dining table",
+      "fork",
+      "knife",
+      "potted plant",
+      "spoon",
+      "vase",
+      "wine glass"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 298904,
+    "objects": [],
+    "gt_objects": [
+      "bowl",
+      "vase"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 94185,
+    "objects": [
+      "bear"
+    ],
+    "gt_objects": [
+      "bear",
+      "person",
+      "teddy bear"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 311081,
+    "objects": [
+      "toilet"
+    ],
+    "gt_objects": [
+      "toilet"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 560011,
+    "objects": [
+      "laptop",
+      "keyboard"
+    ],
+    "gt_objects": [
+      "bowl",
+      "dining table",
+      "keyboard",
+      "laptop",
+      "mouse"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 216497,
+    "objects": [
+      "couch"
+    ],
+    "gt_objects": [
+      "chair",
+      "couch",
+      "dining table",
+      "microwave",
+      "oven",
+      "sink"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 488270,
+    "objects": [
+      "airplane"
+    ],
+    "gt_objects": [
+      "airplane"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 198928,
+    "objects": [
+      "person",
+      "traffic light"
+    ],
+    "gt_objects": [
+      "bus",
+      "car",
+      "person",
+      "traffic light"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 79014,
+    "objects": [
+      "person",
+      "sports ball"
+    ],
+    "gt_objects": [
+      "orange",
+      "person",
+      "sports ball"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 436883,
+    "objects": [],
+    "gt_objects": [
+      "bus",
+      "car",
+      "person",
+      "suitcase",
+      "truck"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 550349,
+    "objects": [],
+    "gt_objects": [
+      "bus",
+      "handbag",
+      "orange",
+      "person",
+      "traffic light",
+      "umbrella"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 504000,
+    "objects": [
+      "airplane"
+    ],
+    "gt_objects": [
+      "airplane",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 308391,
+    "objects": [],
+    "gt_objects": [],
+    "hallucinated": []
+  },
+  {
+    "image_id": 492937,
+    "objects": [
+      "bicycle",
+      "person"
+    ],
+    "gt_objects": [
+      "bicycle",
+      "person",
+      "train"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 343466,
+    "objects": [
+      "sink",
+      "oven"
+    ],
+    "gt_objects": [
+      "oven",
+      "sink"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 388846,
+    "objects": [
+      "umbrella",
+      "chair"
+    ],
+    "gt_objects": [
+      "backpack",
+      "chair",
+      "person",
+      "umbrella"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 235857,
+    "objects": [
+      "cow"
+    ],
+    "gt_objects": [
+      "cow"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 112110,
+    "objects": [
+      "person",
+      "skateboard"
+    ],
+    "gt_objects": [
+      "handbag",
+      "person",
+      "suitcase"
+    ],
+    "hallucinated": [
+      "skateboard"
+    ]
+  },
+  {
+    "image_id": 322574,
+    "objects": [
+      "hot dog"
+    ],
+    "gt_objects": [
+      "bowl",
+      "cup",
+      "dining table",
+      "hot dog",
+      "sandwich"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 39956,
+    "objects": [
+      "bed",
+      "chair"
+    ],
+    "gt_objects": [
+      "bed",
+      "chair"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 475064,
+    "objects": [],
+    "gt_objects": [
+      "donut",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 550471,
+    "objects": [
+      "fork",
+      "orange"
+    ],
+    "gt_objects": [
+      "fork",
+      "orange"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 323799,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "frisbee",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 229553,
+    "objects": [
+      "person",
+      "skateboard"
+    ],
+    "gt_objects": [
+      "person",
+      "skateboard"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 336356,
+    "objects": [
+      "person",
+      "dining table",
+      "pizza"
+    ],
+    "gt_objects": [
+      "bottle",
+      "chair",
+      "dining table",
+      "fork",
+      "knife",
+      "person",
+      "pizza",
+      "wine glass"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 284623,
+    "objects": [
+      "cat",
+      "sink"
+    ],
+    "gt_objects": [
+      "bottle",
+      "cat",
+      "sink",
+      "toothbrush"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 555005,
+    "objects": [
+      "dog",
+      "bed"
+    ],
+    "gt_objects": [
+      "bed",
+      "book",
+      "couch",
+      "dining table",
+      "dog"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 125062,
+    "objects": [
+      "book"
+    ],
+    "gt_objects": [
+      "book",
+      "teddy bear"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 376264,
+    "objects": [
+      "dining table",
+      "laptop",
+      "keyboard",
+      "cup",
+      "cup",
+      "bowl",
+      "bowl"
+    ],
+    "gt_objects": [
+      "book",
+      "bottle",
+      "cell phone",
+      "cup",
+      "dining table",
+      "knife",
+      "laptop"
+    ],
+    "hallucinated": [
+      "keyboard",
+      "bowl",
+      "bowl"
+    ]
+  },
+  {
+    "image_id": 243199,
+    "objects": [
+      "laptop",
+      "bed"
+    ],
+    "gt_objects": [
+      "bed",
+      "laptop"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 356498,
+    "objects": [],
+    "gt_objects": [
+      "broccoli",
+      "cake"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 440171,
+    "objects": [
+      "person",
+      "elephant"
+    ],
+    "gt_objects": [
+      "elephant",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 65455,
+    "objects": [],
+    "gt_objects": [
+      "giraffe",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 22589,
+    "objects": [
+      "sheep"
+    ],
+    "gt_objects": [
+      "sheep"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 437392,
+    "objects": [
+      "toilet",
+      "elephant"
+    ],
+    "gt_objects": [
+      "toilet"
+    ],
+    "hallucinated": [
+      "elephant"
+    ]
+  },
+  {
+    "image_id": 526103,
+    "objects": [
+      "elephant"
+    ],
+    "gt_objects": [
+      "elephant",
+      "umbrella"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 274411,
+    "objects": [
+      "person",
+      "tennis racket"
+    ],
+    "gt_objects": [
+      "car",
+      "person",
+      "sports ball",
+      "tennis racket"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 540928,
+    "objects": [
+      "cat"
+    ],
+    "gt_objects": [
+      "cat",
+      "chair"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 312237,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "backpack",
+      "boat",
+      "handbag",
+      "kite",
+      "person",
+      "surfboard",
+      "umbrella"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 135890,
+    "objects": [
+      "clock"
+    ],
+    "gt_objects": [
+      "clock",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 252216,
+    "objects": [
+      "horse"
+    ],
+    "gt_objects": [
+      "horse"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 309452,
+    "objects": [
+      "bird"
+    ],
+    "gt_objects": [
+      "bird"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 54592,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "backpack",
+      "person",
+      "skis"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 538067,
+    "objects": [
+      "person",
+      "kite"
+    ],
+    "gt_objects": [
+      "kite",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 115898,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "person",
+      "surfboard"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 579158,
+    "objects": [
+      "airplane"
+    ],
+    "gt_objects": [
+      "airplane",
+      "person",
+      "suitcase",
+      "truck"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 246454,
+    "objects": [
+      "person",
+      "dog"
+    ],
+    "gt_objects": [
+      "dog",
+      "handbag",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 452891,
+    "objects": [
+      "dog"
+    ],
+    "gt_objects": [
+      "bench",
+      "dog"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 243495,
+    "objects": [
+      "toilet"
+    ],
+    "gt_objects": [
+      "toilet"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 262895,
+    "objects": [
+      "person",
+      "tie"
+    ],
+    "gt_objects": [
+      "person",
+      "tie"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 11699,
+    "objects": [
+      "person",
+      "person"
+    ],
+    "gt_objects": [
+      "handbag",
+      "person",
+      "suitcase"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 509258,
+    "objects": [
+      "stop sign"
+    ],
+    "gt_objects": [
+      "bench"
+    ],
+    "hallucinated": [
+      "stop sign"
+    ]
+  },
+  {
+    "image_id": 378116,
+    "objects": [
+      "person",
+      "surfboard"
+    ],
+    "gt_objects": [
+      "person",
+      "surfboard"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 296634,
+    "objects": [],
+    "gt_objects": [
+      "bowl",
+      "broccoli",
+      "carrot"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 70774,
+    "objects": [
+      "motorcycle"
+    ],
+    "gt_objects": [
+      "bicycle",
+      "bird",
+      "motorcycle"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 153229,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "frisbee",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 352684,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "person",
+      "tie"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 91406,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "book",
+      "chair",
+      "dining table",
+      "knife",
+      "person",
+      "pizza",
+      "tv"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 148620,
+    "objects": [
+      "dining table",
+      "laptop",
+      "laptop",
+      "tv"
+    ],
+    "gt_objects": [
+      "dining table",
+      "keyboard",
+      "laptop",
+      "mouse",
+      "tv"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 333069,
+    "objects": [],
+    "gt_objects": [
+      "giraffe"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 232692,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "person",
+      "surfboard"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 188592,
+    "objects": [
+      "person",
+      "apple"
+    ],
+    "gt_objects": [
+      "apple",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 494634,
+    "objects": [
+      "cat",
+      "laptop"
+    ],
+    "gt_objects": [
+      "bottle",
+      "cat",
+      "dining table",
+      "laptop",
+      "oven",
+      "wine glass"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 458702,
+    "objects": [
+      "parking meter"
+    ],
+    "gt_objects": [
+      "car",
+      "parking meter"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 350023,
+    "objects": [
+      "car"
+    ],
+    "gt_objects": [
+      "bicycle",
+      "bus",
+      "car",
+      "motorcycle",
+      "person",
+      "traffic light"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 129492,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "book",
+      "chair",
+      "laptop",
+      "person",
+      "remote"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 152214,
+    "objects": [
+      "person",
+      "tie"
+    ],
+    "gt_objects": [
+      "person",
+      "tie"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 505573,
+    "objects": [
+      "dog",
+      "chair",
+      "tie"
+    ],
+    "gt_objects": [
+      "dog",
+      "tie"
+    ],
+    "hallucinated": [
+      "chair"
+    ]
+  },
+  {
+    "image_id": 288391,
+    "objects": [
+      "cell phone"
+    ],
+    "gt_objects": [
+      "cell phone"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 9400,
+    "objects": [
+      "person",
+      "dining table",
+      "laptop"
+    ],
+    "gt_objects": [
+      "cup",
+      "dining table",
+      "keyboard",
+      "laptop",
+      "mouse",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 351589,
+    "objects": [
+      "bench"
+    ],
+    "gt_objects": [
+      "bench",
+      "potted plant"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 466156,
+    "objects": [
+      "cat",
+      "car"
+    ],
+    "gt_objects": [
+      "car",
+      "cat",
+      "truck"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 278705,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "car",
+      "person",
+      "skateboard"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 291490,
+    "objects": [
+      "cat"
+    ],
+    "gt_objects": [
+      "bed",
+      "cat"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 310862,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "dining table",
+      "person",
+      "tie"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 222991,
+    "objects": [],
+    "gt_objects": [
+      "umbrella"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 441286,
+    "objects": [
+      "person",
+      "surfboard"
+    ],
+    "gt_objects": [
+      "person",
+      "surfboard"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 246522,
+    "objects": [
+      "clock"
+    ],
+    "gt_objects": [
+      "clock"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 359540,
+    "objects": [
+      "person",
+      "sports ball"
+    ],
+    "gt_objects": [
+      "baseball bat",
+      "baseball glove",
+      "person",
+      "sports ball"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 418696,
+    "objects": [],
+    "gt_objects": [
+      "car",
+      "traffic light",
+      "truck"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 395701,
+    "objects": [
+      "couch",
+      "tv"
+    ],
+    "gt_objects": [
+      "book",
+      "bottle",
+      "chair",
+      "couch",
+      "orange",
+      "potted plant",
+      "tv"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 370999,
+    "objects": [],
+    "gt_objects": [
+      "dining table"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 269113,
+    "objects": [
+      "dog"
+    ],
+    "gt_objects": [
+      "dog"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 304812,
+    "objects": [
+      "person",
+      "surfboard"
+    ],
+    "gt_objects": [
+      "person",
+      "surfboard"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 293804,
+    "objects": [
+      "couch"
+    ],
+    "gt_objects": [
+      "chair",
+      "couch",
+      "potted plant",
+      "vase"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 376900,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "person",
+      "sports ball",
+      "tennis racket"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 537053,
+    "objects": [],
+    "gt_objects": [
+      "giraffe",
+      "zebra"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 185950,
+    "objects": [
+      "person",
+      "skateboard"
+    ],
+    "gt_objects": [
+      "person",
+      "skateboard"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 442822,
+    "objects": [],
+    "gt_objects": [
+      "boat"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 30785,
+    "objects": [
+      "bowl"
+    ],
+    "gt_objects": [
+      "bowl",
+      "broccoli",
+      "dining table",
+      "sandwich"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 224724,
+    "objects": [
+      "person",
+      "umbrella"
+    ],
+    "gt_objects": [
+      "car",
+      "handbag",
+      "motorcycle",
+      "person"
+    ],
+    "hallucinated": [
+      "umbrella"
+    ]
+  },
+  {
+    "image_id": 133000,
+    "objects": [
+      "train"
+    ],
+    "gt_objects": [
+      "person",
+      "train"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 550322,
+    "objects": [
+      "cup",
+      "dining table"
+    ],
+    "gt_objects": [
+      "bowl",
+      "cup",
+      "dining table",
+      "scissors",
+      "spoon"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 565962,
+    "objects": [
+      "cat"
+    ],
+    "gt_objects": [
+      "cat",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 234807,
+    "objects": [
+      "horse"
+    ],
+    "gt_objects": [
+      "horse"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 442306,
+    "objects": [
+      "person",
+      "umbrella"
+    ],
+    "gt_objects": [
+      "person",
+      "umbrella"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 89556,
+    "objects": [
+      "car"
+    ],
+    "gt_objects": [
+      "car",
+      "fire hydrant",
+      "truck"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 555050,
+    "objects": [],
+    "gt_objects": [
+      "car",
+      "chair",
+      "couch",
+      "cow",
+      "dining table",
+      "person",
+      "traffic light"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 328430,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "chair",
+      "person",
+      "sports ball",
+      "tennis racket"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 193181,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "baseball bat",
+      "baseball glove",
+      "person",
+      "sports ball"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 885,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "person",
+      "sports ball",
+      "tennis racket"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 394275,
+    "objects": [],
+    "gt_objects": [
+      "bus",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 474039,
+    "objects": [
+      "person",
+      "teddy bear"
+    ],
+    "gt_objects": [
+      "person",
+      "teddy bear"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 465180,
+    "objects": [
+      "elephant"
+    ],
+    "gt_objects": [
+      "elephant",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 275727,
+    "objects": [
+      "train"
+    ],
+    "gt_objects": [
+      "traffic light",
+      "train"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 234757,
+    "objects": [
+      "bird",
+      "traffic light"
+    ],
+    "gt_objects": [
+      "bench",
+      "parking meter"
+    ],
+    "hallucinated": [
+      "bird",
+      "traffic light"
+    ]
+  },
+  {
+    "image_id": 29640,
+    "objects": [],
+    "gt_objects": [
+      "broccoli",
+      "carrot",
+      "oven",
+      "spoon"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 515577,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "person",
+      "skis"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 440475,
+    "objects": [
+      "dining table",
+      "chair"
+    ],
+    "gt_objects": [
+      "apple",
+      "book",
+      "bowl",
+      "chair",
+      "couch",
+      "dining table",
+      "person",
+      "potted plant",
+      "tv",
+      "vase"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 17379,
+    "objects": [
+      "tv"
+    ],
+    "gt_objects": [
+      "person",
+      "sink",
+      "tv"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 360564,
+    "objects": [
+      "toilet",
+      "sink"
+    ],
+    "gt_objects": [
+      "sink",
+      "toilet"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 573008,
+    "objects": [
+      "clock"
+    ],
+    "gt_objects": [
+      "clock"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 248284,
+    "objects": [
+      "umbrella"
+    ],
+    "gt_objects": [
+      "handbag",
+      "person",
+      "traffic light",
+      "umbrella"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 223090,
+    "objects": [
+      "knife"
+    ],
+    "gt_objects": [
+      "carrot",
+      "knife"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 170595,
+    "objects": [
+      "bed"
+    ],
+    "gt_objects": [
+      "cake",
+      "dining table",
+      "sandwich"
+    ],
+    "hallucinated": [
+      "bed"
+    ]
+  },
+  {
+    "image_id": 58705,
+    "objects": [
+      "person",
+      "person"
+    ],
+    "gt_objects": [
+      "banana",
+      "person",
+      "tie"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 341058,
+    "objects": [],
+    "gt_objects": [
+      "boat",
+      "bottle",
+      "chair",
+      "dining table",
+      "umbrella"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 4395,
+    "objects": [
+      "person",
+      "tie"
+    ],
+    "gt_objects": [
+      "person",
+      "tie"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 119995,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "person",
+      "sports ball",
+      "tennis racket"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 438862,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "bench",
+      "orange",
+      "person",
+      "sports ball"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 360951,
+    "objects": [
+      "dining table",
+      "laptop",
+      "laptop"
+    ],
+    "gt_objects": [
+      "dining table",
+      "keyboard",
+      "laptop",
+      "mouse",
+      "tv"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 38678,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "cup",
+      "dining table",
+      "donut",
+      "person",
+      "sandwich",
+      "train"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 534664,
+    "objects": [
+      "suitcase"
+    ],
+    "gt_objects": [
+      "suitcase"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 187734,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "chair",
+      "person",
+      "sports ball",
+      "tennis racket"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 438304,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "person",
+      "sports ball",
+      "tennis racket"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 375493,
+    "objects": [
+      "person",
+      "fire hydrant"
+    ],
+    "gt_objects": [
+      "bottle",
+      "cat",
+      "fire hydrant",
+      "person",
+      "stop sign"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 146667,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "apple",
+      "backpack",
+      "car",
+      "chair",
+      "handbag",
+      "motorcycle",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 74733,
+    "objects": [],
+    "gt_objects": [
+      "chair",
+      "cup",
+      "dining table",
+      "person",
+      "pizza"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 187243,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "person",
+      "sink",
+      "toilet"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 521509,
+    "objects": [
+      "person",
+      "bed"
+    ],
+    "gt_objects": [
+      "bed",
+      "person",
+      "potted plant",
+      "vase"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 84362,
+    "objects": [
+      "cat",
+      "couch"
+    ],
+    "gt_objects": [
+      "cat",
+      "chair",
+      "couch",
+      "person",
+      "remote",
+      "truck",
+      "tv"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 186624,
+    "objects": [
+      "train",
+      "train"
+    ],
+    "gt_objects": [
+      "backpack",
+      "handbag",
+      "person",
+      "train"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 552775,
+    "objects": [
+      "person",
+      "oven",
+      "microwave"
+    ],
+    "gt_objects": [
+      "bottle",
+      "bowl",
+      "knife",
+      "oven",
+      "person",
+      "refrigerator",
+      "spoon"
+    ],
+    "hallucinated": [
+      "microwave"
+    ]
+  },
+  {
+    "image_id": 290833,
+    "objects": [
+      "zebra"
+    ],
+    "gt_objects": [
+      "giraffe",
+      "person",
+      "zebra"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 181796,
+    "objects": [
+      "dining table"
+    ],
+    "gt_objects": [
+      "cup",
+      "dining table",
+      "fork",
+      "knife",
+      "spoon",
+      "wine glass"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 539962,
+    "objects": [
+      "bench",
+      "umbrella"
+    ],
+    "gt_objects": [
+      "chair",
+      "dining table",
+      "frisbee",
+      "person",
+      "umbrella"
+    ],
+    "hallucinated": [
+      "bench"
+    ]
+  },
+  {
+    "image_id": 459887,
+    "objects": [
+      "banana"
+    ],
+    "gt_objects": [
+      "banana",
+      "bowl",
+      "dining table"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 246436,
+    "objects": [
+      "person",
+      "pizza"
+    ],
+    "gt_objects": [
+      "bowl",
+      "cup",
+      "microwave",
+      "oven",
+      "person",
+      "pizza"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 314709,
+    "objects": [
+      "person",
+      "skis"
+    ],
+    "gt_objects": [
+      "person",
+      "skis"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 105455,
+    "objects": [
+      "clock"
+    ],
+    "gt_objects": [
+      "car",
+      "clock"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 294695,
+    "objects": [
+      "person",
+      "kite"
+    ],
+    "gt_objects": [
+      "kite",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 553221,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "kite",
+      "person",
+      "skis",
+      "surfboard"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 498807,
+    "objects": [
+      "person",
+      "surfboard"
+    ],
+    "gt_objects": [
+      "person",
+      "surfboard"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 415748,
+    "objects": [
+      "person",
+      "elephant"
+    ],
+    "gt_objects": [
+      "elephant",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 215723,
+    "objects": [
+      "person",
+      "umbrella"
+    ],
+    "gt_objects": [
+      "car",
+      "dining table",
+      "orange",
+      "person",
+      "traffic light",
+      "truck",
+      "umbrella"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 34071,
+    "objects": [
+      "parking meter"
+    ],
+    "gt_objects": [
+      "parking meter"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 96825,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "backpack",
+      "person",
+      "skis"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 23359,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "person",
+      "snowboard"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 284743,
+    "objects": [
+      "person",
+      "baseball bat"
+    ],
+    "gt_objects": [
+      "baseball bat",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 567011,
+    "objects": [
+      "person",
+      "surfboard"
+    ],
+    "gt_objects": [
+      "person",
+      "surfboard"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 296222,
+    "objects": [
+      "person",
+      "chair",
+      "pizza"
+    ],
+    "gt_objects": [
+      "chair",
+      "cup",
+      "fork",
+      "handbag",
+      "person",
+      "pizza"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 32887,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "backpack",
+      "cell phone",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 75456,
+    "objects": [
+      "pizza"
+    ],
+    "gt_objects": [
+      "pizza"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 481413,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "frisbee",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 348488,
+    "objects": [
+      "vase",
+      "horse"
+    ],
+    "gt_objects": [
+      "horse",
+      "person",
+      "vase"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 349152,
+    "objects": [
+      "dining table",
+      "donut"
+    ],
+    "gt_objects": [
+      "dining table",
+      "donut",
+      "knife",
+      "spoon"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 6723,
+    "objects": [
+      "car"
+    ],
+    "gt_objects": [
+      "bicycle",
+      "bus",
+      "car",
+      "truck"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 393014,
+    "objects": [],
+    "gt_objects": [
+      "hot dog",
+      "sandwich"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 450399,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "bowl",
+      "cell phone",
+      "donut",
+      "person",
+      "spoon"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 373382,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "handbag",
+      "person",
+      "tennis racket"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 16228,
+    "objects": [
+      "horse"
+    ],
+    "gt_objects": [
+      "bench",
+      "bus",
+      "car",
+      "horse",
+      "person",
+      "tie",
+      "train",
+      "umbrella"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 509735,
+    "objects": [],
+    "gt_objects": [
+      "giraffe",
+      "zebra"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 356968,
+    "objects": [
+      "horse"
+    ],
+    "gt_objects": [
+      "horse"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 383838,
+    "objects": [
+      "person",
+      "remote"
+    ],
+    "gt_objects": [
+      "cell phone",
+      "chair",
+      "person",
+      "remote"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 17182,
+    "objects": [],
+    "gt_objects": [
+      "apple",
+      "book",
+      "chair",
+      "dining table"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 430286,
+    "objects": [
+      "bed"
+    ],
+    "gt_objects": [
+      "bed",
+      "remote"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 365745,
+    "objects": [
+      "truck"
+    ],
+    "gt_objects": [
+      "backpack",
+      "person",
+      "traffic light",
+      "truck"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 457262,
+    "objects": [
+      "banana",
+      "dining table"
+    ],
+    "gt_objects": [
+      "banana",
+      "dining table"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 562818,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "backpack",
+      "person",
+      "skis",
+      "snowboard"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 496722,
+    "objects": [],
+    "gt_objects": [
+      "car",
+      "parking meter",
+      "traffic light"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 451435,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "person",
+      "sports ball",
+      "tennis racket"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 109118,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "baseball glove",
+      "chair",
+      "person",
+      "sports ball"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 575187,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "book",
+      "giraffe",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 246963,
+    "objects": [
+      "person",
+      "motorcycle"
+    ],
+    "gt_objects": [
+      "motorcycle",
+      "person",
+      "stop sign"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 256916,
+    "objects": [
+      "dining table",
+      "pizza"
+    ],
+    "gt_objects": [
+      "chair",
+      "dining table",
+      "knife",
+      "pizza"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 344100,
+    "objects": [
+      "dining table"
+    ],
+    "gt_objects": [
+      "cup",
+      "dining table",
+      "laptop",
+      "sandwich",
+      "spoon"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 118367,
+    "objects": [
+      "hot dog"
+    ],
+    "gt_objects": [
+      "carrot",
+      "hot dog",
+      "person",
+      "sandwich"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 177714,
+    "objects": [],
+    "gt_objects": [
+      "apple",
+      "carrot",
+      "fork"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 47585,
+    "objects": [
+      "person",
+      "person",
+      "umbrella"
+    ],
+    "gt_objects": [
+      "person",
+      "tie",
+      "umbrella"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 300039,
+    "objects": [
+      "person",
+      "person"
+    ],
+    "gt_objects": [
+      "bottle",
+      "cell phone",
+      "cup",
+      "dining table",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 365098,
+    "objects": [
+      "boat"
+    ],
+    "gt_objects": [
+      "boat",
+      "tie"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 407614,
+    "objects": [
+      "refrigerator",
+      "refrigerator"
+    ],
+    "gt_objects": [
+      "bottle",
+      "bowl",
+      "chair",
+      "cup",
+      "microwave",
+      "orange",
+      "oven",
+      "potted plant",
+      "refrigerator",
+      "sink",
+      "surfboard"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 440508,
+    "objects": [
+      "train"
+    ],
+    "gt_objects": [
+      "car",
+      "orange",
+      "train"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 446651,
+    "objects": [
+      "person",
+      "person",
+      "motorcycle"
+    ],
+    "gt_objects": [
+      "car",
+      "motorcycle",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 267903,
+    "objects": [],
+    "gt_objects": [
+      "sink",
+      "toilet"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 125257,
+    "objects": [
+      "person",
+      "snowboard"
+    ],
+    "gt_objects": [
+      "person",
+      "snowboard"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 22705,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "bottle",
+      "bowl",
+      "person",
+      "refrigerator",
+      "wine glass"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 72813,
+    "objects": [
+      "dog",
+      "bed"
+    ],
+    "gt_objects": [
+      "bed",
+      "dog",
+      "tv"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 46252,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "baseball bat",
+      "baseball glove",
+      "person",
+      "sports ball"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 60363,
+    "objects": [
+      "clock"
+    ],
+    "gt_objects": [
+      "bird",
+      "clock"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 355905,
+    "objects": [
+      "dog"
+    ],
+    "gt_objects": [
+      "dog"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 554291,
+    "objects": [
+      "cat"
+    ],
+    "gt_objects": [
+      "bowl",
+      "cat",
+      "chair",
+      "couch",
+      "dining table",
+      "dog",
+      "mouse"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 536038,
+    "objects": [
+      "person",
+      "bed"
+    ],
+    "gt_objects": [
+      "bed",
+      "book",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 429281,
+    "objects": [
+      "banana"
+    ],
+    "gt_objects": [
+      "apple",
+      "banana",
+      "dining table",
+      "orange"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 430871,
+    "objects": [
+      "parking meter"
+    ],
+    "gt_objects": [
+      "parking meter",
+      "traffic light"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 193245,
+    "objects": [
+      "person",
+      "kite"
+    ],
+    "gt_objects": [
+      "kite",
+      "person"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 544052,
+    "objects": [],
+    "gt_objects": [
+      "skateboard"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 125806,
+    "objects": [
+      "cow"
+    ],
+    "gt_objects": [
+      "cow"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 489842,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "person",
+      "tie",
+      "vase"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 374982,
+    "objects": [
+      "person",
+      "dining table"
+    ],
+    "gt_objects": [
+      "chair",
+      "cup",
+      "dining table",
+      "person",
+      "pizza"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 98633,
+    "objects": [
+      "cake"
+    ],
+    "gt_objects": [
+      "cake"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 346232,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "backpack",
+      "car",
+      "person",
+      "truck",
+      "umbrella"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 229659,
+    "objects": [
+      "laptop",
+      "dining table"
+    ],
+    "gt_objects": [
+      "bottle",
+      "chair",
+      "clock",
+      "dining table",
+      "laptop",
+      "person",
+      "tv"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 3553,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "person",
+      "skateboard"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 88250,
+    "objects": [
+      "elephant"
+    ],
+    "gt_objects": [
+      "elephant"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 555597,
+    "objects": [],
+    "gt_objects": [
+      "car",
+      "parking meter",
+      "person",
+      "truck"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 568710,
+    "objects": [
+      "couch"
+    ],
+    "gt_objects": [
+      "book",
+      "chair",
+      "couch",
+      "dining table",
+      "oven",
+      "person",
+      "potted plant",
+      "vase"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 208208,
+    "objects": [
+      "airplane"
+    ],
+    "gt_objects": [
+      "airplane"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 581615,
+    "objects": [],
+    "gt_objects": [
+      "person",
+      "toilet"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 279730,
+    "objects": [
+      "person",
+      "hot dog"
+    ],
+    "gt_objects": [
+      "cup",
+      "dining table",
+      "hot dog",
+      "person",
+      "sandwich"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 407403,
+    "objects": [
+      "person"
+    ],
+    "gt_objects": [
+      "person",
+      "vase"
+    ],
+    "hallucinated": []
+  },
+  {
+    "image_id": 301135,
+    "objects": [
+      "person",
+      "bench"
+    ],
+    "gt_objects": [
+      "backpack",
+      "bench",
+      "bicycle",
+      "car",
+      "handbag",
+      "person"
+    ],
+    "hallucinated": []
+  }
+]

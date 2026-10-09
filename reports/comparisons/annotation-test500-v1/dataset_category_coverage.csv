@@ -1,0 +1,81 @@
+category_id,category,instances,crowd_instances,scenes
+1,person,1127,21,269
+2,bicycle,27,0,16
+3,car,203,2,52
+4,motorcycle,39,0,16
+5,airplane,9,0,8
+6,bus,22,0,20
+7,train,15,0,14
+8,truck,45,0,28
+9,boat,57,2,13
+10,traffic light,52,0,23
+11,fire hydrant,5,0,5
+13,stop sign,6,0,6
+14,parking meter,9,0,6
+15,bench,38,0,24
+16,bird,53,2,14
+17,cat,18,0,16
+18,dog,25,0,19
+19,horse,28,0,16
+20,sheep,21,0,5
+21,cow,31,0,8
+22,elephant,21,0,12
+23,bear,6,0,4
+24,zebra,19,0,9
+25,giraffe,24,0,15
+27,backpack,43,0,31
+28,umbrella,71,1,29
+31,handbag,65,0,33
+32,tie,23,0,16
+33,suitcase,34,0,13
+34,frisbee,15,0,10
+35,skis,16,0,9
+36,snowboard,9,0,5
+37,sports ball,38,1,19
+38,kite,55,0,11
+39,baseball bat,11,0,10
+40,baseball glove,14,0,11
+41,skateboard,17,0,14
+42,surfboard,30,0,16
+43,tennis racket,23,0,17
+44,bottle,81,1,34
+46,wine glass,24,0,10
+47,cup,65,0,28
+48,fork,21,0,16
+49,knife,30,0,17
+50,spoon,33,0,17
+51,bowl,53,0,32
+52,banana,23,0,9
+53,apple,35,1,9
+54,sandwich,25,0,14
+55,orange,20,0,8
+56,broccoli,38,0,8
+57,carrot,49,0,9
+58,hot dog,13,0,6
+59,pizza,22,0,11
+60,donut,44,3,7
+61,cake,10,0,8
+62,chair,162,0,59
+63,couch,30,0,20
+64,potted plant,27,0,17
+65,bed,18,0,18
+67,dining table,70,0,47
+70,toilet,12,0,11
+72,tv,26,0,21
+73,laptop,24,0,20
+74,mouse,19,0,13
+75,remote,35,0,16
+76,keyboard,17,0,10
+77,cell phone,12,0,12
+78,microwave,5,0,5
+79,oven,17,0,14
+80,toaster,0,0,0
+81,sink,20,0,19
+82,refrigerator,10,0,10
+84,book,84,2,20
+85,clock,25,0,20
+86,vase,25,0,15
+87,scissors,4,0,3
+88,teddy bear,26,0,9
+89,hair drier,1,0,1
+90,toothbrush,4,0,2
