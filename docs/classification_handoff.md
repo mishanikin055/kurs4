@@ -2,7 +2,9 @@
 
 Обновлено 09.10.2026. Репозиторий `/home/mikhail/kurs4` в WSL2,
 ветка `codex/classification-comparison`, origin `mishanikin055/kurs4`.
-Прочитать AGENTS.md, PROJECT_PLAN.md и classification/README.md.
+Прочитать [AGENTS.md](../AGENTS.md) и [classification.md](../classification.md);
+команды — в classification/README.md. PROJECT_PLAN.md использовать только для нужного
+раздела, если тематических инструкций недостаточно; весь план читать не требуется.
 
 ## Последние указания пользователя
 
