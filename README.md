@@ -17,7 +17,9 @@
 ResNet-50 используется повторно, остальные три checkpoint продолжаются с `--resume`.
 Полное сравнение [GT-crops](reports/comparisons/classification-gt-crops-v1/analysis.md)
 уже завершено: четыре модели × три прохода по 1883 вырезкам на 500 сценах.
-Detector-crops и оставшийся validation50k выполняются последовательно; актуальный
+Полное сравнение [detector-crops](reports/comparisons/classification-detector-crops-v1/analysis.md)
+тоже завершено: четыре модели × три прохода по 2296 вырезкам.
+Оставшийся validation50k выполняется; актуальный
 статус — [docs/classification_handoff.md](docs/classification_handoff.md) и run.json.
 Полный анализ всех трёх режимов ещё не готов. После его проверки пользователь
 поручил передать сравнение аннотаторов субагенту с отдельным контекстом.

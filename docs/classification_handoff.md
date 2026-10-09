@@ -17,8 +17,10 @@
 Запущен последовательный `reports/classification/completion-v1/run.sh`:
 GT-crops → detector-crops → ImageNet validation50k с `--resume`. Три прежних
 полных ResNet-50 пропускаются; все fingerprint-файлы совпали с source_snapshot,
-контейнер и веса прежние. GT-crops завершены (4 × 3 × 1883); остальные этапы
-проверять по run.json и Docker, не запускать второй benchmark параллельно.
+контейнер и веса прежние. Оба crop-режима завершены и проверены:
+GT-crops 4 × 3 × 1883, detector-crops 4 × 3 × 2296, без ошибок,
+предсказания совпадают между повторами. ImageNet50k продолжился с
+efficientnet_v2_s_repeat1; проверять по run.json и Docker, не запускать второй benchmark параллельно.
 Для повторного продолжения завершённых/частичных новых crops использовать
 `--resume`; исходники benchmark не менять, пока идёт эксперимент.
 
@@ -36,9 +38,11 @@ scripts/verify_classification.py --runs-dir <raw-runs> --output <verification>`;
 scripts/analyze_classification.py`. Для графика имеется `--plots`, matplotlib
 есть в CPU checks образа compose.detection.yaml; это не запуск детекторных моделей.
 
-После завершения обновить статусы/README, поправить устаревшую фразу об интервалах
-в classification/crops/report.py и перестроить crop-таблицы (не менять этот
-fingerprint-файл во время crop-прогонов). Проверить отчёты, ограничения и выводы,
+После завершения обновить статусы/README. Устаревшая фраза об интервалах
+в classification/crops/report.py уже исправлена после завершения crop-прогонов;
+crop-таблицы перестроены, SHA-256 генератора записан в report_manifest.json.
+Исходные benchmark snapshots сохранены; этот файл не входит в fingerprint whole-image.
+Проверить отчёты, ограничения и выводы,
 коммитить и push в существующий origin. Затем запустить ровно одного субагента
 через collaboration.spawn_agent с fork_turns="none", рабочая папка та же.
 Промпт по шаблону пользователя: «Начни делать сравнительный анализ моделей

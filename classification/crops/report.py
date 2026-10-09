@@ -157,6 +157,8 @@ def report(runs: Path, output: Path, include_ci: bool = False) -> None:
         output / "report_manifest.json",
         {
             "schema_version": "1.0",
+            "script_sha256": sha256(Path(__file__)),
+            "include_ci": include_ci,
             "experiment": experiment,
             "sources": provenance,
             "bootstrap_sha256": sha256(runs / "bootstrap.json") if boot else None,
@@ -200,7 +202,7 @@ def report(runs: Path, output: Path, include_ci: bool = False) -> None:
             "Top-1/Top-5 оценивают общие COCO-категории после mapping; это не точность пород и подтипов.",
             "Рамки и исходные категории детектора сохраняются. Gated-замена в CSV — гипотетический эксперимент, а не автоматическое изменение результата.",
             "Порог score/margin заранее зафиксирован; он не калиброван для надёжного отказа на неизвестных объектах.",
-            "GT-crops и detector-crops имеют отдельные manifests, таблицы и интервалы. Bootstrap переносит целые сцены вместе со всеми их объектами.",
+            "GT-crops и detector-crops имеют отдельные manifests и таблицы. Новые доверительные интервалы по указанию пользователя не рассчитываются.",
             "Задержка p50/p95 включает препроцессинг, модель и постпроцессинг. Чтение оригинала, вырезание и запись выделены отдельно.",
             "CSV содержит пропущенные объекты, ложные рамки, неподдерживаемые категории и исправленные/внесённые ошибки; подробные JSON сохраняются в каждом проходе.",
         ]

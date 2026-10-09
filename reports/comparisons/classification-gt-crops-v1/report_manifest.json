@@ -1,5 +1,7 @@
 {
   "schema_version": "1.0",
+  "script_sha256": "b25b81393ea6650e2f595e89475baa28f53c632355be2da578a9ab2f36cd6f78",
+  "include_ci": false,
   "experiment": {
     "schema_version": "1.0",
     "config": {

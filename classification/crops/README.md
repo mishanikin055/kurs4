@@ -76,8 +76,12 @@ VRAM — peak PyTorch allocated/reserved, RAM — peak RSS дочернего п
 четыре модели × три повтора × 1883 вырезки, 500 сцен, без ошибок; предсказания
 совпадают между повторами. [Анализ](../../reports/comparisons/classification-gt-crops-v1/analysis.md),
 [верификация](../../reports/verification/classification-gt-crops-v1.json).
-Detector-crops выполняются в reports/classification/detector-crops-v1/;
-статус проверять по run.json. Dev-калибровка отказа не выполнялась.
+Detector-crops тоже завершены: четыре модели × три повтора × 2296 вырезок,
+из них 1054 matched-supported объекта для условной точности, 829 пропущенных
+supported GT. [Анализ](../../reports/comparisons/classification-detector-crops-v1/analysis.md),
+[верификация](../../reports/verification/classification-detector-crops-v1.json).
+Фиксированная гипотетическая замена категории ухудшает matched accuracy у всех
+четырёх моделей; исходная метка детектора сохранена. Dev-калибровка отказа не выполнялась.
 Новые доверительные интервалы запрещены во всех сравнениях проекта.
 
 ## Запуск после отдельного продолжения
