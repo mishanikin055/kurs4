@@ -1,0 +1,23 @@
+{
+  "status": "complete_in_user_defined_scope",
+  "human_evaluation": "excluded_by_user",
+  "external_dataset": "not used; limitation",
+  "new_confidence_intervals": "not calculated",
+  "script_sha256": "5a01949dde52d0f92a5bc70e80635264f152f2ffbba02feefe34bb1a5701353e",
+  "sources": {
+    "reports/comparisons/detection.csv": "22d3d6e341efa9d475cd01de3d483fdca84156b9afed883dac8a7d6320590a03",
+    "reports/comparisons/classification-validation50000-v1/classification.csv": "99f1c7ba02525921f65c512caada08ea65b4d2f7839ae6832f06a435041f3b4b",
+    "reports/comparisons/classification-gt-crops-v1/classification_crops.csv": "2f2aed394f5be23d51559fd627fbd5dd733d410e9e30e27568e2e429899d0306",
+    "reports/comparisons/classification-detector-crops-v1/classification_crops.csv": "d13478eaa03095a3b844dc9ff5d3b9c3c88e07e6bccd0c02480abfa59e0ddfd7",
+    "reports/comparisons/annotation-test500-v1/annotation.csv": "6a029c8d622f0ae9112f73de38217972dc33711fd3726cdc37d9090a5b40f05f",
+    "reports/comparisons/annotation-test500-v1/report_manifest.json": "433059466286a5a4b4cda25ad3e354fbe38c4443f812e1f65d63b974315fbd25",
+    "reports/comparisons/annotation-test500-v1/analysis_manifest.json": "ec643ba49940a73485af835356abb784d2cf122c7dddcba41b15153c4d95afb8",
+    "reports/comparisons/annotation-test500-v1/qualitative_review_manifest.json": "fbf954bc180e7fd126159a61d6c483cd67e25dae15b6857566570d9754109dcf",
+    "reports/comparisons/classification_analysis_manifest.json": "b1af27f20cdd16eab23b5ed5e9ba83d94144d53665f4f1775bc9a0f20770bfd6",
+    "reports/comparisons/detection_analysis_manifest.json": "a352df6b3c712641edf66201adbc9d8cfed0c17e5185927b98745f56f5382686"
+  },
+  "outputs": {
+    "Итоги сравнительного анализа моделей.md": "c227d586101228914e06c38224a0b80d9804d3713238e78957c39cb6ba50b7b1",
+    "Как выполнялся сравнительный анализ.md": "0de2d77b6f312c525d5965ca248f586aa95f7badc03bcec2b651a626f69dcf40"
+  }
+}

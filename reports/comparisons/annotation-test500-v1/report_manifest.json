@@ -1,6 +1,6 @@
 {
   "experiment": "reports/annotation/test500-v1",
-  "script_sha256": "44d7ccdc8badb18e74f0d189a0962409770d8118ef3f52d8f04e897e232fdc15",
+  "script_sha256": "7077aeff6bf81907565c111daa12b690cc33a328c7b809a8969b938b088431e3",
   "metrics_sha256": "085f45d9cb86b4e5c2a1d0d10edc0d5966e076428909b56acb7816e02c2c07fc",
   "evaluator_sources_sha256": "1f73c5e9ea591ce8af6cc12a1b04a9462a23187266c236c00332e8ebf8dadceb",
   "experiment_sha256": "13394291ba0cccd05ef857eb9e1b772ef56494c88b70c8b62041a1c92a10e4a5",
@@ -44,7 +44,8 @@
     }
   },
   "confidence_intervals": "not computed by user instruction",
-  "human_scores": "pending",
+  "human_scores": "excluded_by_user",
+  "human_evaluation_decision_date": "2026-10-09",
   "external_dataset": "not provided",
   "SPICE": "not evaluated; evaluator not validated",
   "rows": [

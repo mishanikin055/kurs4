@@ -43,7 +43,8 @@
     "qwen3_vl_2b": "448db8c3831404c6d95821047a541d2e9f33aab0eb10a966d05f7cf3fbb3bfe8",
     "smolvlm2_500m": "3fd3d318626cdacac9cb56dd00c7ba145a15ff74fea2170f7c47643c1a273a34"
   },
-  "review_sha256": "f42349f869958a869d90f6a722ffedcaab48e37b5ca54741a37ab49cc949880b",
+  "review_sha256": "d7568c8b620ed68d2e04da40b42e0de42103767614278ed308d4b79579103613",
   "scope": "24 captions on 6 images; not a full visual review of 500",
-  "confidence_intervals": "not calculated"
+  "confidence_intervals": "not calculated",
+  "human_evaluation_status": "excluded_by_user"
 }

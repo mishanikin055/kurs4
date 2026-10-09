@@ -180,6 +180,7 @@ def verify(experiment: Path, report: Path | None) -> dict[str, Any]:
         }
     if report:
         saved = read_json(report / "report_manifest.json")
+        require(saved["human_scores"] == "excluded_by_user", "Human evaluation scope differs")
         for key, path in {
             "script_sha256": ROOT / "annotation/report.py",
             "metrics_sha256": ROOT / "annotation/metrics.py",
@@ -216,6 +217,7 @@ def verify(experiment: Path, report: Path | None) -> dict[str, Any]:
     return {
         "verifier_sha256": sha256(Path(__file__)),
         "numeric_report_recomputed": report is not None,
+        "human_evaluation": "excluded_by_user",
         "report_manifest_sha256": sha256(report / "report_manifest.json") if report else None,
         "report_outputs": {
             p.name: sha256(p)

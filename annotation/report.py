@@ -112,7 +112,8 @@ def report(experiment: Path, output: Path) -> None:
             "source_snapshot_sha256": sha256(experiment / "source_snapshot.tar.gz"),
             "inputs": hashes,
             "confidence_intervals": "not computed by user instruction",
-            "human_scores": "pending",
+            "human_scores": "excluded_by_user",
+            "human_evaluation_decision_date": "2026-10-09",
             "external_dataset": "not provided",
             "SPICE": "not evaluated; evaluator not validated",
             "rows": summary,
@@ -139,11 +140,10 @@ def report(experiment: Path, output: Path) -> None:
         "",
         "FP16, batch 1, greedy decoding, максимум 96 новых токенов, один прогрев на dev-изображении. p50/p95 относятся к одному проходу; межпрогонная устойчивость не измерена. Доверительные интервалы не рассчитывались.",
         "",
-        "Экспертные оценки и внешний разрешённый набор отсутствуют; заготовка слепой оценки подготовлена, оценки не заполнены. SPICE не вычислялся.",
+        "По решению пользователя от 09.10.2026 человеческая оценка исключена из объёма сравнения. Использованы автоматические метрики и отдельный визуальный разбор ИИ. Человеческие баллы не создавались. Внешний набор не использован, SPICE не вычислялся; это ограничения завершённого сравнения.",
     ]
     (output / "annotation.md").write_text("\n".join(markdown) + "\n")
-    if len(all_samples) == 4:
-        blind_review(output, all_samples, image_rows)
+    # Historical review forms stay on disk; human evaluation is excluded by the user.
 
 
 def blind_review(
