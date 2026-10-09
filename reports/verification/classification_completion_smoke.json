@@ -1,0 +1,72 @@
+{
+  "schema_version": "1.0",
+  "verified_date": "2026-10-09",
+  "runs_dir": "reports/classification/smoke-completion-v1",
+  "mode": "offline GPU smoke, not an accuracy benchmark",
+  "models": {
+    "convnext_tiny": {
+      "status": "smoke_passed",
+      "processed": 1,
+      "native_parity": {
+        "schema_version": "1.0",
+        "status": "passed",
+        "max_score_difference": 0.0
+      },
+      "artifacts": {
+        "run.json": "4d1bb76cf1bb1fbb52b9ee7b0311a2ea246578a6b7886a65a5afc2108c9f4b66",
+        "samples.jsonl": "09c78f3f8a032765cf8979c854a63ee7f413b556f3953534d5b2add1d6562e58",
+        "environment.json": "c0d547a22b56955e78723337a325caf72547bf87218b3ee440a61ca6433c7995",
+        "native_parity.json": "8500c69639fc4073377524d38c8cab74510b445c5ad10c90e7a75d391d6d0397",
+        "original.png": "2215b7955af97aba156c44454ff7d2deb6043f07a6d22546351c1e8c525a8507"
+      }
+    },
+    "efficientnet_v2_s": {
+      "status": "smoke_passed",
+      "processed": 1,
+      "native_parity": {
+        "schema_version": "1.0",
+        "status": "passed",
+        "max_score_difference": 0.0
+      },
+      "artifacts": {
+        "run.json": "493ed2c0287f80aedc7241d0c6c6c3682e213bf0acf8a729909f2c292fc3b190",
+        "samples.jsonl": "c004f0678bef454ee86cb45ad6b8f7afd3675c206f7a1f974709c5073c31b8e5",
+        "environment.json": "23981790b8cf4263a33b09ae7b5d0fcc48aa2c8815b851c5bb8e6709962c2874",
+        "native_parity.json": "8500c69639fc4073377524d38c8cab74510b445c5ad10c90e7a75d391d6d0397",
+        "original.png": "2215b7955af97aba156c44454ff7d2deb6043f07a6d22546351c1e8c525a8507"
+      }
+    },
+    "resnet50": {
+      "status": "smoke_passed",
+      "processed": 1,
+      "native_parity": {
+        "schema_version": "1.0",
+        "status": "passed",
+        "max_score_difference": 0.0
+      },
+      "artifacts": {
+        "run.json": "769c0424f025733548ab2f0ff534ccd50cf82df352e77bb30471adfdc2540a5f",
+        "samples.jsonl": "a105965971fbbd2007dab2e670fe139297cffcc8813915694adeb2cae6c2111d",
+        "environment.json": "4fe6e2c6e27aa06488ab7f9e51ace0b53ef8df4cbae7fddfbf2c11e7595b55de",
+        "native_parity.json": "8500c69639fc4073377524d38c8cab74510b445c5ad10c90e7a75d391d6d0397",
+        "original.png": "2215b7955af97aba156c44454ff7d2deb6043f07a6d22546351c1e8c525a8507"
+      }
+    },
+    "vit_b_16": {
+      "status": "smoke_passed",
+      "processed": 1,
+      "native_parity": {
+        "schema_version": "1.0",
+        "status": "passed",
+        "max_score_difference": 0.0
+      },
+      "artifacts": {
+        "run.json": "68220da195f90a1ec6ed2522392c9ba85bdd109e717bdfb1f2aa3ff8b95c423f",
+        "samples.jsonl": "03e0c744a96ca9d8f9255afe7219fe5b0e725ded6710c0d87fd028045f701674",
+        "environment.json": "227b1d679a402beaee9c83ddbc62ac4eadb37b3f96ce30750952e362bb8da6eb",
+        "native_parity.json": "8500c69639fc4073377524d38c8cab74510b445c5ad10c90e7a75d391d6d0397",
+        "original.png": "2215b7955af97aba156c44454ff7d2deb6043f07a6d22546351c1e8c525a8507"
+      }
+    }
+  }
+}

@@ -1,6 +1,6 @@
 # Курсовой проект: детекция, классификация и аннотирование
 
-Подготовлен первый экспериментальный модуль — сравнение четырёх детекторов из раздела 3.2 плана. Также подготовлен whole-image модуль классификации ImageNet-1K: [classification/README.md](classification/README.md). Все четыре классификатора прошли офлайн GPU-smoke и предварительное сравнение на 5000 ImageNet-изображениях, три повтора. [Таблица](reports/comparisons/classification-evaluation5000-v1/classification.md), [анализ](reports/comparisons/classification-evaluation5000-v1/analysis.md). [Прикладные crops](classification/crops/README.md) реализованы и проверены только небольшим smoke. Полный ImageNet50k и сравнительные crop-прогоны отложены по указанию пользователя; доверительные интервалы в основной таблице не используются. Приложение и аннотаторы пока не реализованы.
+Реализованы экспериментальные модули детекции и классификации: [detection/README.md](detection/README.md), [classification/README.md](classification/README.md). Все четыре классификатора прошли офлайн GPU-smoke и предварительное сравнение на 5000 ImageNet-изображениях, три повтора. [Таблица](reports/comparisons/classification-evaluation5000-v1/classification.md), [анализ](reports/comparisons/classification-evaluation5000-v1/analysis.md). [Прикладные crops](classification/crops/README.md) оцениваются отдельно. Приложение и аннотаторы пока не реализованы. Новые доверительные интервалы не рассчитываются ни в одном сравнении проекта.
 
 Инструкция с командами: [detection/README.md](detection/README.md). Обоснование участников: [docs/model_selection.md](docs/model_selection.md). Решения по окружению и протоколу: [docs/decisions.md](docs/decisions.md).
 
@@ -13,4 +13,11 @@
 Полный ImageNet50k для ResNet-50 завершён: три повтора, Top-1 80.854%, Top-5 95.438%.
 [Таблица полного прогона](reports/comparisons/classification-validation50000-v1/classification.md),
 [анализ](reports/comparisons/classification-validation50000-v1/analysis.md).
-Остальные полные прогоны остаются отложенными. Статус — docs/classification_handoff.md.
+09.10.2026 по новой задаче начато завершение классификации: сохранённый полный
+ResNet-50 используется повторно, остальные три checkpoint продолжаются с `--resume`.
+Полное сравнение [GT-crops](reports/comparisons/classification-gt-crops-v1/analysis.md)
+уже завершено: четыре модели × три прохода по 1883 вырезкам на 500 сценах.
+Detector-crops и оставшийся validation50k выполняются последовательно; актуальный
+статус — [docs/classification_handoff.md](docs/classification_handoff.md) и run.json.
+Полный анализ всех трёх режимов ещё не готов. После его проверки пользователь
+поручил передать сравнение аннотаторов субагенту с отдельным контекстом.

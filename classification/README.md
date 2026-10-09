@@ -190,3 +190,30 @@ scripts/classification.sh benchmark --model resnet50 --manifest data/imagenet/va
 [Итоги](../reports/comparisons/classification-validation50000-v1/classification.md):
 Top-1 80.854%, Top-5 95.438%, Macro-F1 0.80632. Остальные full-модели — not_run.
 Число обработок за три повтора — 150 000, разных изображений — 50 000.
+
+По новой задаче 09.10.2026 начато завершение остальных полных checkpoint:
+
+```bash
+scripts/classification.sh benchmark --manifest data/imagenet/validation.json --output-dir reports/classification/validation50000-v1 --resume
+```
+
+Сохранённые три полных ResNet-50 используются повторно; их инференс не повторяется.
+Перед resume проверено совпадение всех исходников с source_snapshot и Docker image ID.
+После завершения весь четырёхмодельный эксперимент можно проверить без модели:
+
+```bash
+docker compose -f compose.classification.yaml run --rm checks scripts/verify_classification.py --runs-dir reports/classification/validation50000-v1 --output reports/verification/classification-validation50000-v1.json
+```
+
+Аналогичные проверки нужны для `gt-crops-v1` и `detector-crops-v1`. После трёх
+проверенных режимов итоговый описательный анализ строится без нового инференса:
+
+```bash
+docker compose -f compose.classification.yaml run --rm checks scripts/analyze_classification.py
+```
+
+Результат — `Описание результатов классификации.md` и analysis.md в трёх папках
+сравнения. Для графика опционально использовать `--plots` в CPU checks образа
+compose.detection.yaml, где уже установлен matplotlib; детектор не загружается.
+Новые доверительные интервалы не считать во всех сравнениях проекта.
+Фактический статус и последовательность продолжения — [handoff](../docs/classification_handoff.md).

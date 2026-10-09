@@ -10,9 +10,9 @@
 - ImageNet validation 50 000 загружен и проверен: по 50 изображений на класс, 14 HF-шардов. Источник ILSVRC/imagenet-1k, revision `49e2ee26f3810fb5a7536bbf732a7b07389a47b5`.
 - Предварительный evaluation5000 завершён: 4 × 3 × 5000, по 5 на класс, seed 42. Отчёт — `reports/comparisons/classification-evaluation5000-v1/`.
 - Полный validation50k завершён **только для ResNet-50**: три повтора по 50 000, Top-1 80.854%, Top-5 95.438%. Отчёт — `reports/comparisons/classification-validation50000-v1/`; проверка — `reports/verification/classification_validation50000.json`.
-- Остальные модели на полном validation и полные crops **отложены по указанию пользователя**. Не запускать их автоматически при задаче на документацию или backend; продолжать по новой задаче на эти прогоны. Полный четырёхмодельный победитель ещё не определён.
-- **Новые доверительные интервалы не считать и в основной отчёт не включать.** Ранее выполненный bootstrap сохраняется в исходных артефактах. Поле bootstrap_samples в старом конфиге не отменяет это указание.
-- GT/detector-crops реализованы в `classification/crops/`, но проверены только smoke: две вырезки каждого режима для каждой модели. Полного сравнения качества crops нет. Приложение не реализовано.
+- По новой задаче пользователя от 09.10.2026 начато завершение остальных моделей на полном validation и полных GT/detector-crops. Папки: `reports/classification/{validation50000-v1,gt-crops-v1,detector-crops-v1}/`; последовательные команды и логи — `reports/classification/completion-v1/`. Полный четырёхмодельный победитель ещё не определён; статус проверять по run.json.
+- **Новые доверительные интервалы не считать и в основной отчёт не включать во всех трёх сравнениях проекта.** Ранее выполненный bootstrap сохраняется в исходных артефактах. Поле bootstrap_samples в старом конфиге не отменяет это указание.
+- GT/detector-crops реализованы в `classification/crops/`. Полные GT-crops завершены: 4 × 3 × 1883, [анализ](reports/comparisons/classification-gt-crops-v1/analysis.md), [проверка](reports/verification/classification-gt-crops-v1.json). Полные detector-crops выполняются; законченного анализа всех трёх режимов пока нет. Приложение не реализовано.
 
 ## Что читать и где работать
 
