@@ -18,7 +18,9 @@ def write_csv(path: Path, rows: list[dict], columns: list[str] | None = None) ->
         writer.writerows(rows)
 
 
-def build_report(runs: Path, output: Path, include_ci: bool = False) -> None:
+def build_report(
+    runs: Path, output: Path, include_ci: bool = False, repeats: int | None = None
+) -> None:
     output.mkdir(parents=True, exist_ok=True)
     experiment = (
         read_json(runs / "experiment.json") if (runs / "experiment.json").exists() else None
@@ -30,7 +32,12 @@ def build_report(runs: Path, output: Path, include_ci: bool = False) -> None:
     )
     if bootstrap and bootstrap["identity"]["experiment_hash"] != object_hash(experiment):
         raise ValueError("Bootstrap belongs to another experiment")
+    if repeats is not None and (
+        experiment is None or repeats < 1 or repeats > experiment["config"]["repeats"]
+    ):
+        raise ValueError("Invalid report repeat selection")
     sources = {}
+    excluded_runs = []
     rows = []
     per_class = []
     confusion = []
@@ -41,7 +48,12 @@ def build_report(runs: Path, output: Path, include_ci: bool = False) -> None:
             (run, read_json(run / "run.json")) for run in all_runs if (run / "run.json").exists()
         ]
         complete = [(p, m) for p, m in metadata if m["status"] == "complete"]
-        required = experiment["config"]["repeats"] if experiment else 3
+        required = (
+            repeats if repeats is not None else experiment["config"]["repeats"] if experiment else 3
+        )
+        excluded_runs.extend(p.name for p, m in metadata if m["repeat"] >= required)
+        metadata = [(p, m) for p, m in metadata if m["repeat"] < required]
+        complete = [(p, m) for p, m in metadata if m["status"] == "complete"]
         is_complete = len(complete) == required and all(not m["shortened"] for _, m in complete)
         failures = [
             f"{p.name}:{m['status']}:{m.get('error', '')}"
@@ -213,7 +225,7 @@ def build_report(runs: Path, output: Path, include_ci: bool = False) -> None:
     text = [
         "# Сравнение классификаторов",
         "",
-        "Сравниваются готовые ImageNet-1K checkpoint без обучения. Качество — первый повтор; задержки — все завершённые повторы. Статус каждой строки показывает полноту эксперимента.",
+        "Сравниваются готовые ImageNet-1K checkpoint без обучения. Качество — первый повтор; задержки — выбранные для отчёта завершённые повторы. Статус каждой строки показывает полноту эксперимента.",
         "",
         "| Модель | Статус | N | Top-1 | Top-5 | Macro-F1 | p50, мс | p95, мс | RAM, MiB | VRAM reserved, MiB |",
         "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
@@ -246,6 +258,13 @@ def build_report(runs: Path, output: Path, include_ci: bool = False) -> None:
             "Штатные входы: ResNet-50 224 (resize 232), EfficientNetV2-S 384 (resize 384), ConvNeXt-Tiny 224 (resize 236), ViT-B/16 224 (resize 256). Отличаются обучающие рецепты и preprocessing; выводы относятся к готовым checkpoint и данному оборудованию. Набор не является доказанным мировым топ-4 по популярности.",
         ]
     )
+    if repeats is not None:
+        text.extend(
+            [
+                "",
+                f"По изменённому указанию пользователя выбраны первые {repeats} повтора каждой модели. Исходный config/experiment identity сохранён; дополнительные готовые проходы исключены из основной таблицы: {', '.join(excluded_runs) or 'нет'}. Качество — первый повтор.",
+            ]
+        )
     if paired:
         text.extend(
             [
@@ -294,6 +313,16 @@ def build_report(runs: Path, output: Path, include_ci: bool = False) -> None:
         {
             "schema_version": "1.0",
             "include_ci": include_ci,
+            "repeat_selection": {
+                "reported_repeats": repeats
+                if repeats is not None
+                else experiment["config"]["repeats"]
+                if experiment
+                else 3,
+                "original_config_repeats": experiment["config"]["repeats"] if experiment else None,
+                "quality_repeat": 1,
+                "excluded_runs": excluded_runs,
+            },
             "script_sha256": sha256(Path(__file__)),
             "experiment": experiment,
             "sources": sources,

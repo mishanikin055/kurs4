@@ -163,7 +163,7 @@ def crop_quality(run: Path) -> tuple[dict[str, Any], str]:
     return {k: v for k, v in recomputed.items() if k != "per_class"}, parity.hexdigest()
 
 
-def verify(runs: Path, output: Path) -> None:
+def verify(runs: Path, output: Path, repeats: int | None = None) -> None:
     experiment = read_json(runs / "experiment.json")
     require(
         experiment["model_ids"] == ["resnet50", "efficientnet_v2_s", "convnext_tiny", "vit_b_16"]
@@ -176,6 +176,8 @@ def verify(runs: Path, output: Path) -> None:
     require(object_hash(sources) == experiment["source_hash"], "Source snapshot differs")
     require(not experiment.get("shortened") and not experiment.get("smoke"), "Not a full run")
     require(not (runs / "bootstrap.json").exists(), "Unexpected CI artifact in this experiment")
+    selected_repeats = repeats if repeats is not None else experiment["config"]["repeats"]
+    require(1 <= selected_repeats <= experiment["config"]["repeats"], "Invalid repeat selection")
     summary = {
         "schema_version": "1.0",
         "verified_at_utc": datetime.now(timezone.utc).isoformat(),
@@ -187,6 +189,9 @@ def verify(runs: Path, output: Path) -> None:
         "source_hash": experiment["source_hash"],
         "container_image_id": experiment["image_id"],
         "confidence_intervals": "not calculated",
+        "reported_repeats": selected_repeats,
+        "original_config_repeats": experiment["config"]["repeats"],
+        "excluded_completed_runs": [],
         "models": {},
     }
     for model in experiment["model_ids"]:
@@ -196,7 +201,7 @@ def verify(runs: Path, output: Path) -> None:
         )
         verified = []
         parities = []
-        for repeat in range(experiment["config"]["repeats"]):
+        for repeat in range(selected_repeats):
             run = runs / f"{model}_repeat{repeat + 1}"
             meta = read_json(run / "run.json")
             require(meta["status"] == "complete" and not meta["shortened"], "Incomplete run")
@@ -244,6 +249,12 @@ def verify(runs: Path, output: Path) -> None:
             "processed_total": sum(r.get("n_images", r.get("n_crops", 0)) for r in verified),
             "runs": verified,
         }
+        for repeat in range(selected_repeats, experiment["config"]["repeats"]):
+            path = runs / f"{model}_repeat{repeat + 1}" / "run.json"
+            if path.exists() and read_json(path)["status"] == "complete":
+                summary["excluded_completed_runs"].append(
+                    {"run": path.parent.name, "run_sha256": sha256(path)}
+                )
     write_json(output, summary)
 
 
@@ -251,8 +262,11 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Проверка полных результатов классификации без CI")
     parser.add_argument("--runs-dir", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument(
+        "--repeats", type=int, help="Проверить первые N повторов без изменения identity"
+    )
     args = parser.parse_args()
-    verify(args.runs_dir, args.output)
+    verify(args.runs_dir, args.output, args.repeats)
 
 
 if __name__ == "__main__":

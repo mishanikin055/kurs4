@@ -1,0 +1,55 @@
+{
+  "schema_version": "1.1",
+  "script_sha256": "1508a1df295a5d1d98d224ed230f330b52a439d13028695a1f250e8978c76894",
+  "confidence_intervals": "not calculated",
+  "repeat_selection": {
+    "validation50000": [
+      1,
+      2
+    ],
+    "gt": [
+      1,
+      2,
+      3
+    ],
+    "detector": [
+      1,
+      2,
+      3
+    ]
+  },
+  "quality_repeat": 1,
+  "excluded_completed_runs": [
+    "validation50000-v1/resnet50_repeat3"
+  ],
+  "resource_verification": "pooled timings and peak run resources recomputed from artifacts",
+  "outputs_and_sources": {
+    "reports/comparisons/classification-validation50000-v1/analysis.md": "a3947ad1989bd0c4520123a16e765b0d53b949626d1343219e8e8fab51201d9f",
+    "reports/comparisons/classification-validation50000-v1/classification.csv": "99f1c7ba02525921f65c512caada08ea65b4d2f7839ae6832f06a435041f3b4b",
+    "reports/comparisons/classification-validation50000-v1/classification.md": "d12b5bcddbc6f0501af73feda826b43b7933d47270b7c8e3c2d42684d38906cc",
+    "reports/comparisons/classification-validation50000-v1/classification_confusion.csv": "18a2aa1b5db069f7e7837b63e39944a40dab2c05d7a24181f7e2cadac20f2920",
+    "reports/comparisons/classification-validation50000-v1/classification_per_class.csv": "86d98009a08ad56b0da5b014f7813fd35c61b859c378ecd9bb3f89e16809e004",
+    "reports/comparisons/classification-validation50000-v1/classification_report_manifest.json": "c4dbe81d467c268db9eae4927925eb895de8c8aed98700363e2946e967040c10",
+    "reports/verification/classification-validation50000-v1.json": "1c151eb842fe78646b019eaa9ec365024e5fa8fbbc8f154c732d8a4da805d94b",
+    "reports/classification/validation50000-v1/experiment.json": "fc4119b8012b43b0da35a932a619db81e3a076732903febe0ba3492c7cbe5bd9",
+    "reports/classification/validation50000-v1/source_snapshot.tar.gz": "9a850e00a19c00d3bfe10cd6bf56d725df9b02758652a0b7f9b247ca3df65b11",
+    "reports/comparisons/classification-gt-crops-v1/analysis.md": "b30489a6ff2c66276f8edaf676ed454b5545b42f6e1af24b9bebd0fd9c75d7fc",
+    "reports/comparisons/classification-gt-crops-v1/classification_crops.csv": "2f2aed394f5be23d51559fd627fbd5dd733d410e9e30e27568e2e429899d0306",
+    "reports/comparisons/classification-gt-crops-v1/classification_crops.md": "caf675e0d06178cecd8f174294faa36a7d7aa95fefdef92405af52d4a83b6855",
+    "reports/comparisons/classification-gt-crops-v1/per_class.csv": "79967c502d0378606a2ccc20375e9149f040e62c5391e7ad874f6242d5cc3efa",
+    "reports/comparisons/classification-gt-crops-v1/report_manifest.json": "2a3b1e7a1d6ed6a37c19e87277302842ef458b863c806616f97b13a5930f27fb",
+    "reports/verification/classification-gt-crops-v1.json": "0d26388d003b28634eb83732c9b9e02cd06fc0adac9be632e78a4c78a3c0453b",
+    "reports/classification/gt-crops-v1/experiment.json": "2c9799901ecb97c5d119659dbc15313b881ee7a6acf250d129740582c501773a",
+    "reports/classification/gt-crops-v1/source_snapshot.tar.gz": "a618423eba44d85d865b8811c74f0ab89e7e9ec4c20ff596dd3547f3c9136f66",
+    "reports/comparisons/classification-detector-crops-v1/analysis.md": "c03849aad73c0eb4ef6c8e8a892b5bae056ffec38f036063bef78389bf13007c",
+    "reports/comparisons/classification-detector-crops-v1/classification_crops.csv": "d13478eaa03095a3b844dc9ff5d3b9c3c88e07e6bccd0c02480abfa59e0ddfd7",
+    "reports/comparisons/classification-detector-crops-v1/classification_crops.md": "a954d37ff194994f9e936171efd28887e93a2a25d158232826bfadcc19498cfd",
+    "reports/comparisons/classification-detector-crops-v1/per_class.csv": "0fd90ccc12fd4d7e115f502249d7e61855c872a713ad29de2daf72aef021fc77",
+    "reports/comparisons/classification-detector-crops-v1/report_manifest.json": "25fd9cae6e3b5a05408c61fbd399a0946034713f050d262ae7166171794f9e83",
+    "reports/verification/classification-detector-crops-v1.json": "9b833c841b4272ded9efce9de16a09c5b0b8a46f9916a5732f5a0e995042744e",
+    "reports/classification/detector-crops-v1/experiment.json": "90b378378c7cb10588832759106fc4742720cb20b8ca3e41b72537baf4cd9099",
+    "reports/classification/detector-crops-v1/source_snapshot.tar.gz": "ea6ca339308804ecfa0f8a86cd7ce0fbd784a8566373741b556b045c108f56fe",
+    "Описание результатов классификации.md": "64af090467e15994fa29443168cf426679b761ef6f362fcb4974c5c205a578af",
+    "reports/comparisons/classification_quality_time.png": "442e58737a79154e4722998c97ace43392df7835deec20de0e36441ef1316507"
+  }
+}

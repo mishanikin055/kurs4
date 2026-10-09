@@ -14,42 +14,72 @@
 Субагента запускать только после проверки и оформления полного анализа
 классификаторов. Новые доверительные интервалы запрещены во **всех** сравнениях.
 
-Запущен последовательный `reports/classification/completion-v1/run.sh`:
-GT-crops → detector-crops → ImageNet validation50k с `--resume`. Три прежних
-полных ResNet-50 пропускаются; все fingerprint-файлы совпали с source_snapshot,
-контейнер и веса прежние. Оба crop-режима завершены и проверены:
-GT-crops 4 × 3 × 1883, detector-crops 4 × 3 × 2296, без ошибок,
-предсказания совпадают между повторами. ImageNet50k продолжился с
-efficientnet_v2_s_repeat1; проверять по run.json и Docker, не запускать второй benchmark параллельно.
-Для повторного продолжения завершённых/частичных новых crops использовать
-`--resume`; исходники benchmark не менять, пока идёт эксперимент.
+**Последнее изменение пользователя от 09.10.2026:** полный ImageNet закончить
+после второго круга (4 × 2 × 50 000), для аннотаторов — ровно один полный прогон
+каждой модели. Это имеет приоритет над прежним требованием трёх кругов и текстом
+старого heartbeat. Сохранённые третьи повторы не удалять. В основной ImageNet-таблице
+выбирать одинаковые первые два повтора, включая только первые два ResNet-50.
 
-Добавлены `scripts/verify_classification.py` и `scripts/analyze_classification.py`.
-Первый проверяет полный четырёхмодельный эксперимент без загрузки моделей и CI;
-второй строит описательный анализ после проверки всех трёх режимов. Новые файлы
-не входят в fingerprint старого benchmark. CPU-тесты: 30 passed, Ruff check/format
-пройдены; свежий офлайн GPU-smoke четырёх моделей — smoke-completion-v1.
+## Итог классификации на 09.10.2026
 
-Итоговые папки reports/comparisons/classification-{validation50000,gt-crops,detector-crops}-v1/.
-Проверки сохранять как reports/verification/classification-{validation50000,gt-crops,detector-crops}-v1.json.
-Команды: `docker compose -f compose.classification.yaml run --rm checks
-scripts/verify_classification.py --runs-dir <raw-runs> --output <verification>`;
-затем `docker compose -f compose.classification.yaml run --rm checks
-scripts/analyze_classification.py`. Для графика имеется `--plots`, matplotlib
-есть в CPU checks образа compose.detection.yaml; это не запуск детекторных моделей.
+Все выбранные проходы завершены и проверены:
 
-После завершения обновить статусы/README. Устаревшая фраза об интервалах
-в classification/crops/report.py уже исправлена после завершения crop-прогонов;
-crop-таблицы перестроены, SHA-256 генератора записан в report_manifest.json.
-Исходные benchmark snapshots сохранены; этот файл не входит в fingerprint whole-image.
-Проверить отчёты, ограничения и выводы,
-коммитить и push в существующий origin. Затем запустить ровно одного субагента
+- ImageNet: 4 × 2 × 50 000, предсказания совпадают между первыми двумя повторами;
+- GT-crops: 4 × 3 × 1883, 500 сцен;
+- detector-crops: 4 × 3 × 2296, 500 сцен, 1054 matched-supported для условной точности.
+
+Сохранённые полные resnet50_repeat1/2/3 использованы без повторного инференса.
+Третий ResNet-50 исключён из основной таблицы времени/ресурсов, но не удалён.
+Исходный config/experiment identity с repeats=3 и source_snapshot сохранён.
+Во время vit_b_16_repeat2 приостановлен только родительский планировщик;
+контроллер `reports/classification/completion-v1/finish_round2.py` дождался всех
+50 000 изображений, завершения worker и CPU-evaluate, затем прекратил планировщик
+до старта новых третьих проходов. `stop_after_repeat2.json` имеет статус
+`complete_after_repeat2`, контейнер удалён; ожидаемый exit137 оболочки относится
+к прекращению планировщика, все выбранные run.json имеют status=complete без ошибок.
+**Не запускать прежний run.sh или обычный benchmark --resume:** это вернёт третий круг.
+
+Результаты: [Описание результатов классификации](../Описание%20результатов%20классификации.md),
+`reports/comparisons/classification-{validation50000,gt-crops,detector-crops}-v1/`,
+график `reports/comparisons/classification_quality_time.png`.
+Проверки: `reports/verification/classification-{validation50000,gt-crops,detector-crops}-v1.json`.
+Независимый пересчёт без моделей/CI — `scripts/verify_classification.py`;
+для полного ImageNet `--repeats 2`, для готовых crops три повтора по умолчанию.
+Пересборка whole-image отчёта — `scripts/classification.sh report ... --repeats 2`.
+Анализ: `docker compose -f compose.detection.yaml run --rm checks
+scripts/analyze_classification.py --plots`; CPU-образ содержит matplotlib,
+детекторная модель не загружается. Report/analysis manifests сохраняют hashes
+источников и явный выбор повторов отдельно от замороженного эксперимента.
+
+EfficientNetV2-S: ImageNet Top-1 84.238%, лучший по качеству готового checkpoint.
+ResNet-50: p50 10.224 ms, самый быстрый; ConvNeXt-Tiny: Top-1 82.514%, p50 10.821 ms.
+ViT-B/16 лучший по Top-1/Top-5 на crops; на detector-crops лучший Macro-F1 у
+EfficientNetV2-S. Замена категории при score≥0.5/margin≥0.1 ухудшает matched
+accuracy у всех четырёх; метку детектора сохранять. Покрытие словаря 55.81%,
+пропущено 829 supported GT; условную точность не выдавать за качество конвейера.
+Отказ на dev не калиброван, породы/подтипы COCO не проверяет.
+
+CPU-проверки: 32 pytest-теста классификации/crops, Ruff check/format пройдены.
+Свежий офлайн GPU-smoke четырёх моделей — smoke-completion-v1, отдельная проверка
+native parity. Таблицы и их выводы сформированы и независимо проверены субагентом
+`classification_reports` с отдельным контекстом по последнему указанию пользователя.
+Подтверждены все 12 строк, знаменатели, ресурсы и 27 хешей итогового manifest.
+Устаревшая фраза об интервалах в classification/crops/report.py исправлена только
+после окончания crops, их отчёты перестроены без нового инференса.
+
+## Следующий этап
+
+После финальной проверки анализа, commit и push запустить ровно одного субагента
 через collaboration.spawn_agent с fork_turns="none", рабочая папка та же.
 Промпт по шаблону пользователя: «Начни делать сравнительный анализ моделей
 аннотирования. Как делать — читай AGENTS.md и annotation.md по ссылке из него.
-Доверительные интервалы не считать». Указать, что модели выполняются строго по одной,
-классификация закончена, приложение в эту задачу не входит. Повторных GPU-прогонов
-классификации ради правки отчёта не требуется.
+Каждая модель — один полный прогон. Доверительные интервалы не считать».
+Модели строго по одной, общий storage/locks/inference.lock; приложение в задачу
+не входит. Отметку запуска сохранить в
+`reports/classification/completion-v1/annotation_delegation.json`, перед повторным
+делегированием проверить collaboration.list_agents и эту отметку.
+Автоматическая проверка раз в 10 минут удалена по указанию пользователя;
+не создавать её повторно без нового поручения.
 
 ## История прежних указаний и результатов
 
@@ -62,7 +92,7 @@ crop-таблицы перестроены, SHA-256 генератора зап�
 - Коммитить проверенные изменения и пушить в существующий origin.
   Авторизация GitHub сохранена Windows GCM; push обеих веток проверен. Секреты в чат не выводить.
 
-## Завершено
+## Исторически завершено до продолжения
 
 - `3492a99`: детекция, четыре модели × три повтора × 4500 COCO test,
   таблицы/анализ reports/comparisons/detection.*. Ранние 500 были dev.
@@ -140,7 +170,7 @@ reports/classification/smoke-v1/efficientnet_v2_s_repeat1/samples.jsonl — ре
 prediction.json рядом — удобная JSON-копия первой записи. original.png — вход.
 Классификатор целого изображения выдаёт top5, без рамок и общей текстовой аннотации.
 
-## Продолжение после нового указания
+## Исторические команды продолжения (не запускать для завершённого сравнения)
 
 Проверить git status и docker ps; не запускать повтор работающего эксперимента.
 Для полного ImageNet — scripts/classification.sh benchmark с validation.json;

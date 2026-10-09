@@ -10,16 +10,22 @@
 
 Краткое состояние для продолжения в новом чате: [docs/classification_handoff.md](docs/classification_handoff.md).
 
-Полный ImageNet50k для ResNet-50 завершён: три повтора, Top-1 80.854%, Top-5 95.438%.
-[Таблица полного прогона](reports/comparisons/classification-validation50000-v1/classification.md),
-[анализ](reports/comparisons/classification-validation50000-v1/analysis.md).
-09.10.2026 по новой задаче начато завершение классификации: сохранённый полный
-ResNet-50 используется повторно, остальные три checkpoint продолжаются с `--resume`.
-Полное сравнение [GT-crops](reports/comparisons/classification-gt-crops-v1/analysis.md)
-уже завершено: четыре модели × три прохода по 1883 вырезкам на 500 сценах.
-Полное сравнение [detector-crops](reports/comparisons/classification-detector-crops-v1/analysis.md)
-тоже завершено: четыре модели × три прохода по 2296 вырезкам.
-Оставшийся validation50k выполняется; актуальный
-статус — [docs/classification_handoff.md](docs/classification_handoff.md) и run.json.
-Полный анализ всех трёх режимов ещё не готов. После его проверки пользователь
-поручил передать сравнение аннотаторов субагенту с отдельным контекстом.
+Сравнительный анализ классификаторов завершён 09.10.2026:
+[описание результатов](Описание%20результатов%20классификации.md),
+[ImageNet50k](reports/comparisons/classification-validation50000-v1/classification.md),
+[GT-crops](reports/comparisons/classification-gt-crops-v1/analysis.md),
+[detector-crops](reports/comparisons/classification-detector-crops-v1/analysis.md).
+Полный ImageNet — четыре модели × два прохода по 50 000, оба crop-режима сохранили
+уже завершённые три повтора: 1883 GT и 2296 detector-crops на 500 COCO-сценах.
+Предыдущие полные ResNet-50 использованы повторно; сохранённый третий не включён
+в основную ImageNet-таблицу. Новых третьих кругов не запускалось.
+
+EfficientNetV2-S лучший по ImageNet Top-1 (84.238%), ResNet-50 самый быстрый,
+ViT-B/16 лучший по условным Top-1/Top-5 на crops. Все диагностические варианты
+замены категории ухудшили точность исходного детектора; его метка сохраняется.
+Словарь покрывает 55.81% non-crowd GT; dev-калибровка отказа и точность пород
+не проверены. Оценки режимов не объединяются в общий балл.
+Все выбранные проходы проверены по сырым артефактам; 32 CPU-теста и Ruff прошли.
+Аннотаторы сравнивать по **одному полному прогону каждой модели**, без новых
+доверительных интервалов. Пользователь поручил этот следующий этап субагенту
+с отдельным контекстом после проверки классификации.

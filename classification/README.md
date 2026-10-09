@@ -104,14 +104,19 @@ scripts/classification.sh benchmark --output-dir reports/classification/evaluati
 scripts/classification.sh report --runs-dir reports/classification/evaluation5000-v1 --output-dir reports/comparisons/classification-evaluation5000-v1
 ```
 
-Полное штатное сравнение — отдельный эксперимент с теми же настройками:
+Полный ImageNet был начат отдельным экспериментом с исходным repeats=3.
+По актуальному указанию от 09.10.2026 он завершён после второго круга.
+Ниже команда пересборки основного отчёта из первых двух повторов; старый benchmark или `completion-v1/run.sh` повторно не запускать:
 
 ```bash
-scripts/classification.sh benchmark --manifest data/imagenet/validation.json --output-dir reports/classification/validation50000-v1
-scripts/classification.sh report --runs-dir reports/classification/validation50000-v1 --output-dir reports/comparisons/classification_validation50000
+scripts/classification.sh report --runs-dir reports/classification/validation50000-v1 --output-dir reports/comparisons/classification-validation50000-v1 --repeats 2
 ```
 
-20 прогревов, 3 повтора, 4 CPU threads. TF32 и cuDNN autotuning выключены;
+20 прогревов, 4 CPU threads; два повтора полного ImageNet по актуальному указанию.
+Уже выполненные evaluation5000 и GT/detector-crops сохраняют три повтора.
+Исходный repeats=3 в старых configs/manifests не переписывается; report отдельно
+фиксирует выбор первых двух повторов, не включая сохранённый третий ResNet-50.
+TF32 и cuDNN autotuning выключены;
 deterministic algorithms и CUBLAS_WORKSPACE_CONFIG фиксируются.
 Порядок моделей сдвигается между повторами. Модельный дочерний процесс
 обрабатывает весь manifest и завершается до старта следующего. Родитель не
@@ -170,42 +175,44 @@ GPU smoke — отдельная проверка реальных моделе�
 сохранённого source_snapshot; для новых прогонов использовать новую папку.
 
 Модуль реализует whole-image ImageNet и отдельные [GT/detector-crops](crops/README.md).
-Mapping, matching и диагностические метрики реализованы; оба crop-режима прошли
-только GPU-smoke по двум вырезкам для каждой модели. Эти проверки не создают
-итогового качества на crops; полные прогоны отложены. Порог отказа не калиброван
-на dev. Оценки crops не смешиваются с ImageNet Top-1/Top-5. Приложение и общий
-pipeline остаются отдельными этапами; весь раздел классификации ещё не завершён.
+Mapping, matching и диагностические метрики реализованы; оба crop-режима завершили
+по три полных прохода каждой модели. Результаты и команды — в crops/README.md.
+Порог отказа не калиброван на dev. Оценки crops не смешиваются с ImageNet
+Top-1/Top-5; приложение и общий pipeline остаются отдельными этапами.
 
-Последующее указание: полный validation50k только для первой модели:
+Исторически сначала был выполнен только полный ResNet-50 с `--model resnet50`.
+Фильтр `--model` выбирает исполняемую модель из зафиксированных четырёх,
+не меняя протокол качества и dataset identity. Старые команды запуска не являются
+инструкцией повторять уже завершённый benchmark.
 
-```bash
-scripts/classification.sh benchmark --model resnet50 --manifest data/imagenet/validation.json --output-dir reports/classification/validation50000-v1
-```
-
-`--model` выбирает исполняемую модель из зафиксированных четырёх, не меняя
-протокол качества и dataset identity. Для продолжения с другой моделью позже
-добавить `--resume` и другой ID, сохранив исходники/конфиг/контейнер/веса/данные.
-
-Проверено 09.10.2026: полный ResNet-50 завершил все три повтора на 50 000 изображений.
+До продолжения 09.10.2026 полный ResNet-50 завершил все три повтора на 50 000 изображений.
 [Итоги](../reports/comparisons/classification-validation50000-v1/classification.md):
-Top-1 80.854%, Top-5 95.438%, Macro-F1 0.80632. Остальные full-модели — not_run.
+Top-1 80.854%, Top-5 95.438%, Macro-F1 0.80632. Тогда остальные full-модели были not_run.
 Число обработок за три повтора — 150 000, разных изображений — 50 000.
 
-По новой задаче 09.10.2026 начато завершение остальных полных checkpoint:
+По задаче 09.10.2026 остальные checkpoint завершены через resume с прежним
+source snapshot и Docker image ID. После изменения расписания закончены первые
+два прохода всех четырёх моделей; третий круг остальных моделей не запускался.
+Сохранённые три полных ResNet-50 не повторялись; третий исключён из основной
+сравнительной таблицы. Контроллер `reports/classification/completion-v1/finish_round2.py`
+завершил vit_b_16_repeat2, выполнил CPU-evaluate и прекратил приостановленный
+планировщик до запуска третьего круга. `stop_after_repeat2.json` имеет статус
+`complete_after_repeat2`; исходный experiment/config с repeats=3 сохранён.
+Все выбранные проходы и идентичность предсказаний между повторами проверены.
+Для пересборки отчёта без инференса:
 
 ```bash
-scripts/classification.sh benchmark --manifest data/imagenet/validation.json --output-dir reports/classification/validation50000-v1 --resume
+scripts/classification.sh report --runs-dir reports/classification/validation50000-v1 --output-dir reports/comparisons/classification-validation50000-v1 --repeats 2
 ```
 
-Сохранённые три полных ResNet-50 используются повторно; их инференс не повторяется.
-Перед resume проверено совпадение всех исходников с source_snapshot и Docker image ID.
-После завершения весь четырёхмодельный эксперимент можно проверить без модели:
+Независимая верификация уже выполнена; её команда:
 
 ```bash
-docker compose -f compose.classification.yaml run --rm checks scripts/verify_classification.py --runs-dir reports/classification/validation50000-v1 --output reports/verification/classification-validation50000-v1.json
+docker compose -f compose.classification.yaml run --rm checks scripts/verify_classification.py --runs-dir reports/classification/validation50000-v1 --output reports/verification/classification-validation50000-v1.json --repeats 2
 ```
 
-Аналогичные проверки нужны для `gt-crops-v1` и `detector-crops-v1`. После трёх
+Аналогичные проверки уже выполнены для `gt-crops-v1` и `detector-crops-v1` по всем
+трём готовым повторам, без `--repeats 2`. После трёх
 проверенных режимов итоговый описательный анализ строится без нового инференса:
 
 ```bash

@@ -54,6 +54,7 @@ def main() -> None:
     report = commands.add_parser("report")
     report.add_argument("--runs-dir", type=Path, required=True)
     report.add_argument("--output-dir", type=Path, required=True)
+    report.add_argument("--repeats", type=int, help="Выбрать первые N повторов только для отчёта")
     args = parser.parse_args()
 
     def terminate(signum: int, frame: object) -> None:
@@ -131,7 +132,7 @@ def main() -> None:
     else:
         from classification.report import build_report
 
-        build_report(args.runs_dir, args.output_dir)
+        build_report(args.runs_dir, args.output_dir, repeats=args.repeats)
 
 
 if __name__ == "__main__":
