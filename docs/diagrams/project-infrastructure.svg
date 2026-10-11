@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto-start-reverse"><path d="M0 0L8 4L0 8Z" fill="#53657c"/></marker></defs>
+<rect width="1600" height="900" fill="#ffffff"/>
+<style>text{font-family:"Segoe UI",Arial,sans-serif;fill:#172b46}.title{font-size:38px;font-weight:700}.name{font-size:28px;font-weight:700}.body{font-size:23px}.small{font-size:20px;fill:#52657d}.label{font-size:20px;fill:#354a65;paint-order:stroke;stroke:white;stroke-width:7px;stroke-linejoin:round}.line{fill:none;stroke:#53657c;stroke-width:3;marker-end:url(#arrow)}</style>
+<text class="title" x="60" y="65">Инфраструктура обработки изображений</text>
+<text class="body" x="60" y="105" fill="#52657d">FastAPI · PostgreSQL · RabbitMQ · Celery · GPU</text>
+<rect x="35" y="150" width="1530" height="675" rx="24" fill="#f7f9fc" stroke="#d5dfea" stroke-width="2"/>
+<text class="small" x="60" y="185">Docker Compose · общая сеть контейнеров</text>
+<rect x="70" y="280" width="270" height="215" rx="18" fill="#f5efff" stroke="#91a7c2" stroke-width="2" stroke-dasharray="9 7"/>
+<text class="small" x="92" y="319" text-anchor="start">frontend · планируется</text>
+<text class="name" x="92" y="360" text-anchor="start">Frontend</text>
+<text class="body" x="92" y="401" text-anchor="start">Загрузка фото</text>
+<text class="body" x="92" y="434" text-anchor="start">Просмотр статуса</text>
+<text class="body" x="92" y="467" text-anchor="start">и результатов</text>
+<rect x="430" y="280" width="310" height="215" rx="18" fill="#eaf2ff" stroke="#91a7c2" stroke-width="2"/>
+<text class="small" x="452" y="319" text-anchor="start">backend</text>
+<text class="name" x="452" y="360" text-anchor="start">FastAPI</text>
+<text class="body" x="452" y="401" text-anchor="start">Приём изображения</text>
+<text class="body" x="452" y="434" text-anchor="start">Создание задания</text>
+<text class="body" x="452" y="467" text-anchor="start">API статуса / результата</text>
+<rect x="830" y="280" width="245" height="215" rx="18" fill="#fff4df" stroke="#91a7c2" stroke-width="2"/>
+<text class="small" x="852" y="319" text-anchor="start">rabbitmq</text>
+<text class="name" x="852" y="360" text-anchor="start">RabbitMQ</text>
+<text class="body" x="852" y="401" text-anchor="start">Очередь inference</text>
+<text class="body" x="852" y="434" text-anchor="start">Передача job_id</text>
+<text class="body" x="852" y="467" text-anchor="start">Подтверждение ACK</text>
+<rect x="1165" y="230" width="360" height="345" rx="18" fill="#e7f5ee" stroke="#91a7c2" stroke-width="2"/>
+<text class="small" x="1187" y="269" text-anchor="start">worker · GPU</text>
+<text class="name" x="1187" y="310" text-anchor="start">Celery worker</text>
+<text class="body" x="1187" y="351" text-anchor="start">1. RF-DETR Small</text>
+<text class="body" x="1187" y="384" text-anchor="start">    детекция объектов</text>
+<text class="body" x="1187" y="417" text-anchor="start">2. ViT-B/16</text>
+<text class="body" x="1187" y="450" text-anchor="start">    классификация вырезок</text>
+<text class="body" x="1187" y="483" text-anchor="start">3. Florence-2 base-ft</text>
+<text class="body" x="1187" y="516" text-anchor="start">    описание изображения</text>
+<text class="small" x="1187" y="555" text-anchor="start">Один процесс модели за раз</text>
+<rect x="430" y="655" width="310" height="145" rx="18" fill="#eaf2ff" stroke="#91a7c2" stroke-width="2"/>
+<text class="small" x="452" y="694" text-anchor="start">db</text>
+<text class="name" x="452" y="735" text-anchor="start">PostgreSQL</text>
+<text class="body" x="452" y="776" text-anchor="start">Статусы и результаты</text>
+<rect x="830" y="655" width="310" height="145" rx="18" fill="#f1f4f8" stroke="#91a7c2" stroke-width="2"/>
+<text class="small" x="852" y="694" text-anchor="start">volume · image_data</text>
+<text class="name" x="852" y="735" text-anchor="start">Изображения</text>
+<text class="small" x="852" y="776" text-anchor="start">Исходные и нормализованные</text>
+<path class="line" d="M340 350H430" stroke-dasharray="8 6"/>
+<text class="label" x="385" y="333" text-anchor="middle">HTTP</text>
+<path class="line" d="M430 440H340" stroke-dasharray="8 6"/>
+<text class="label" x="385" y="525" text-anchor="middle">Статус / JSON</text>
+<path class="line" d="M740 350H830"/>
+<text class="label" x="785" y="331" text-anchor="middle">job_id</text>
+<path class="line" d="M1075 350H1165"/>
+<text class="label" x="1120" y="331" text-anchor="middle">Задание</text>
+<path class="line" d="M1165 450H1075"/>
+<text class="label" x="1120" y="478" text-anchor="middle">ACK</text>
+<path class="line" d="M530 495V655" marker-start="url(#arrow)"/>
+<text class="label" x="530" y="584" text-anchor="middle">Запись / чтение</text>
+<path class="line" d="M1230 575V609H675V655"/>
+<text class="label" x="955" y="598" text-anchor="middle">Статусы и результаты моделей</text>
+<path class="line" d="M740 440H780V727H830"/>
+<text class="label" x="875" y="540" text-anchor="middle">Запись файлов</text>
+<path class="line" d="M1060 655V635H1415V575"/>
+<text class="label" x="1290" y="665" text-anchor="middle">Чтение изображения</text>
+<text class="small" x="1185" y="729" text-anchor="start">Веса моделей: read-only</text>
+<text class="small" x="1185" y="762" text-anchor="start">GPU доступна только worker</text>
+<text class="small" x="60" y="865" text-anchor="start">Пунктир — планируемый frontend. Результаты возвращает API из PostgreSQL.</text>
+</svg>

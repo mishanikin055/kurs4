@@ -1,6 +1,6 @@
 [tool.pytest.ini_options]
 cache_dir = "/tmp/kurs4-pytest-cache"
-testpaths = ["tests", "detection/tests", "classification/tests", "annotation/tests"]
+testpaths = ["tests", "detection/tests", "classification/tests", "annotation/tests", "backend/tests"]
 
 [tool.ruff]
 target-version = "py311"

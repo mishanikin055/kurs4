@@ -1,0 +1,78 @@
+x-app: &app
+  init: true
+  env_file: .secrets/app.env
+  restart: unless-stopped
+  stop_grace_period: 60s
+  environment:
+    APP_IMAGE_ROOT: /var/lib/kurs4/images
+  volumes:
+    - image_data:/var/lib/kurs4/images
+  depends_on:
+    db:
+      condition: service_healthy
+    rabbitmq:
+      condition: service_healthy
+
+services:
+  db:
+    image: postgres:18-alpine@sha256:96d56f7f57c6aacd1fcb908bc83b345ec5f83231ee486dd66a1baadce274db88
+    env_file: .secrets/app.env
+    restart: unless-stopped
+    mem_limit: 512m
+    volumes:
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+  rabbitmq:
+    image: rabbitmq:4-alpine@sha256:2cb43283d8bbd3caa6c0f0dc00e96c8de772df33df7fd8af6aee4d605aeb8ada
+    hostname: kurs4-rabbitmq
+    env_file: .secrets/app.env
+    restart: unless-stopped
+    mem_limit: 512m
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+      - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+  backend:
+    <<: *app
+    image: kurs4-backend:v1
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+      target: api
+    mem_limit: 512m
+    ports:
+      - "127.0.0.1:${APP_HTTP_PORT:-8000}:8000"
+  worker:
+    <<: *app
+    image: kurs4-worker:v1
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+      target: worker
+    # Explicit opt-in: starting this service processes queued application images.
+    profiles: ["processing"]
+    restart: unless-stopped
+    mem_limit: 5g
+    volumes:
+      - image_data:/var/lib/kurs4/images:ro
+      - ./storage/locks:/var/lib/kurs4/locks
+      - ./detection/models/rf_detr_small:/models/detection/models/rf_detr_small:ro
+      - ./classification/models/vit_b_16:/models/classification/models/vit_b_16:ro
+      - ./annotation/models/florence2_base_ft:/models/annotation/models/florence2_base_ft:ro
+    environment:
+      APP_IMAGE_ROOT: /var/lib/kurs4/images
+      APP_LOCK_PATH: /var/lib/kurs4/locks/inference.lock
+      APP_MODEL_ROOT: /models
+
+volumes:
+  pgdata:
+  rabbitmq_data:
+  image_data:

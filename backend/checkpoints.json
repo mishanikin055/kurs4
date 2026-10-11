@@ -1,0 +1,123 @@
+{
+  "detection": {
+    "model_name": "rf_detr_small",
+    "model_revision": "gcs-generation-1753220474114031",
+    "weights_sha256": "d81979a9213a2109345158ce9232668df4c1ae52e9b8db3f2ec0a8cbad959b33",
+    "files": [
+      {
+        "path": "rf-detr-small.pth",
+        "sha256": "d81979a9213a2109345158ce9232668df4c1ae52e9b8db3f2ec0a8cbad959b33"
+      },
+      {
+        "path": "LICENSE",
+        "sha256": "8cabf52c61130fc97a7e5da5e3685ccf44841c0c53d6f881189369b136603cca"
+      },
+      {
+        "path": "label_mapping.json",
+        "sha256": "5e6c8e4a389d2b5588727bf501d46d92d747a3f8a462f84c2013fe2472dfb84e"
+      }
+    ],
+    "parameters": {
+      "batch_size": 1,
+      "score_threshold": 0.3,
+      "max_detections": 100,
+      "precision": "fp32"
+    }
+  },
+  "classification": {
+    "model_name": "vit_b_16",
+    "model_revision": "vit_b_16-c867db91.pth",
+    "weights_sha256": "c867db91d3e12c6cbadabb610d73c24a546bf82d8c03a9fea34f43a712ddb0e9",
+    "files": [
+      {
+        "path": "vit_b_16-c867db91.pth",
+        "sha256": "c867db91d3e12c6cbadabb610d73c24a546bf82d8c03a9fea34f43a712ddb0e9"
+      },
+      {
+        "path": "LICENSE",
+        "sha256": "6502f676851cfe25f8af75531dfb32375b7325b73c37e7b43741fa422893e71d"
+      }
+    ],
+    "parameters": {
+      "batch_size": 1,
+      "top_k": 5,
+      "precision": "fp32",
+      "weights": "IMAGENET1K_V1"
+    }
+  },
+  "annotation": {
+    "model_name": "florence2_base_ft",
+    "model_revision": "f6c1a25888ffc1d945ee8a1a77ac833c7303d46e",
+    "weights_sha256": "58757d657ff44051314c8030b68e04cb1bb618ca9a4885418f111f6fb708185a",
+    "files": [
+      {
+        "path": ".gitattributes",
+        "sha256": "28aac17b0f70983ef58c18a7ee355503e454ce3178fce77a7b50503906df0635"
+      },
+      {
+        "path": "CODE_OF_CONDUCT.md",
+        "sha256": "9daeae709a0bd71bcfd1c96dc5822ecec5210327eff929da64b0ae7f8faf1444"
+      },
+      {
+        "path": "LICENSE",
+        "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383"
+      },
+      {
+        "path": "README.md",
+        "sha256": "092b90e814cd6c15f734b15a81e294b4d12c92d12bff3c674a9474ca935ecd1c"
+      },
+      {
+        "path": "SECURITY.md",
+        "sha256": "7b6976eec43edfa68b79a459dd089c56b7a395916dbf1a01bd11e6d86e12128f"
+      },
+      {
+        "path": "SUPPORT.md",
+        "sha256": "149773411caf2c59cb1a6bfb2c6f070d1d054f1f018e7a80be319a8c384eeaf5"
+      },
+      {
+        "path": "config.json",
+        "sha256": "c666d0fe0172d46e115e8fba6cd93cd83714575b33a73005cab8d24ce2a3aa8f"
+      },
+      {
+        "path": "model.safetensors",
+        "sha256": "58757d657ff44051314c8030b68e04cb1bb618ca9a4885418f111f6fb708185a"
+      },
+      {
+        "path": "preprocessor_config.json",
+        "sha256": "2f5921bbc53c7cc04251e1027b45b1cec726276be6db23d1bb40641bfbe2cf29"
+      },
+      {
+        "path": "tokenizer.json",
+        "sha256": "847bbeab6174d66a88898f729d52fa8d355fafe1bea101cf960dd404581df70e"
+      },
+      {
+        "path": "tokenizer_config.json",
+        "sha256": "79ffcf43af8ebda99d165f61d243180da2e2639952e41e71e11611c18770489c"
+      },
+      {
+        "path": "vocab.json",
+        "sha256": "394fdc63c71aabe0a9b97117f5d62fb5fcc4d59b2b3ea929a3929e6a53217b3c"
+      },
+      {
+        "path": "configuration_florence2.py",
+        "sha256": "653bafddc9651eaff1583a16db4a2bb27d33ec7d541dfab7201aaa4ecaa1cfbf"
+      },
+      {
+        "path": "modeling_florence2.py",
+        "sha256": "5bb7aa72c6ba62e96e1bbae6bc1aaf7b4e8e28cdfc62e670de3d5b67eeab1fdf"
+      },
+      {
+        "path": "processing_florence2.py",
+        "sha256": "4bd7158536cbf1c7891fc8efd94437d79fd09f07f539c7398fab8a885d7d8bca"
+      }
+    ],
+    "parameters": {
+      "batch_size": 1,
+      "prompt": "<CAPTION>",
+      "max_new_tokens": 96,
+      "num_beams": 1,
+      "do_sample": false,
+      "precision": "fp16"
+    }
+  }
+}

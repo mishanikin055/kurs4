@@ -1,0 +1,111 @@
+{
+  "date": "2026-10-11",
+  "scope": "Слои backend, выбранная тройка, Celery subprocess-конвейер и восстановление",
+  "git_revision": "ada215ee313b336c02472d62cf076af5651b5216",
+  "worktree_dirty": true,
+  "models": [
+    "rf_detr_small",
+    "vit_b_16",
+    "florence2_base_ft"
+  ],
+  "model_inference_executed": false,
+  "checkpoint_files_sha256_verified": true,
+  "checks": {
+    "backend_image_pytest": {
+      "passed": 46,
+      "skipped": 1,
+      "command": "docker run --rm --init --network kurs4-backend-test_default --env-file .secrets/app.env -e APP_TEST_INTEGRATION=1 kurs4-backend-test:v2 python -m pytest backend/tests -q"
+    },
+    "real_db_outage": {
+      "passed": 1,
+      "command": ".venv-backend/bin/python backend/tests/check_db_outage.py"
+    },
+    "detection_and_shared_cpu": {
+      "passed": 28,
+      "command": "docker run --rm --network none --entrypoint python -v \"$PWD:/workspace:ro\" -e PYTHONDONTWRITEBYTECODE=1 kurs4-detection:v1 -m pytest tests detection/tests -q"
+    },
+    "classification_cpu": {
+      "passed": 25,
+      "command": "docker run --rm --network none --entrypoint python -v \"$PWD:/workspace:ro\" -e PYTHONDONTWRITEBYTECODE=1 kurs4-classification:v1 -m pytest classification/tests -q"
+    },
+    "annotation_cpu": {
+      "passed": 20,
+      "command": "docker run --rm --network none --entrypoint python -v \"$PWD:/workspace:ro\" -e PYTHONDONTWRITEBYTECODE=1 kurs4-annotation:v1 -m pytest annotation/tests -q"
+    },
+    "ruff_check": "passed: 69 Python files",
+    "ruff_format_check": "passed: 69 Python files",
+    "alembic_check": "No new upgrade operations detected",
+    "compose_config": "passed: app + app.gpu; comparisons + gpu",
+    "docker_builds": [
+      "api",
+      "test",
+      "worker"
+    ],
+    "worker_dependency_checks": "pip check passed in both ML environments",
+    "worker_imports": {
+      "torch": "2.7.1+cu128",
+      "torchvision": "0.22.1+cu128",
+      "detection_transformers": "5.19.0",
+      "annotation_transformers": "4.57.6"
+    },
+    "git_diff_check": "passed"
+  },
+  "worker_cases": [
+    "success",
+    "no_detections",
+    "stage_failures",
+    "duplicate_delivery",
+    "recovery_preserves_completed_stage",
+    "attempts_exhausted",
+    "legacy_checkpoints",
+    "db_outage_requeue",
+    "SIGTERM_cleanup_requeue",
+    "SIGKILL_coordinator_inherited_lock",
+    "unexpected_coordinator_error"
+  ],
+  "limitations": [
+    "Реальный GPU-smoke тройки не выполнен; приложение с моделями не принято по одним mock-тестам.",
+    "Прикладной worker не запущен; API обновлён, /health проверен.",
+    "Старые задания без checkpoint закрываются model_not_configured; нужны новые загрузки.",
+    "Starlette TestClient выдаёт предупреждение об устаревающей зависимости httpx.",
+    "Полный pytest в лёгком backend-окружении не собирает ML-тесты; они проверены в отдельных Docker-окружениях."
+  ],
+  "source_sha256": {
+    "backend/__init__.py": "a148cc52428aa2ff3663297bbc11fd4c8835eb148c7cc556cd182f21ff495552",
+    "backend/api.py": "a45270afd41d6a0bf5c13ca510d2d25e17cc9dc3ea7909a90507aae5b2b42a32",
+    "backend/checkpoints.json": "46a2a053ce889c2924a2c674c4ddecfa8dfceef4ea43f923433c74601b2630f4",
+    "backend/db.py": "b00d5fd592a47b238623404a3a8fda6772a88547f8ca25fd0df4f39b2f8b7ce1",
+    "backend/imagenet_labels.json": "01d0c3435bbecbcee1daa9359ace5b529a78d0fca944890c4d975809b9f23add",
+    "backend/main.py": "b9b4546767c9912c89c5b81b4681b7ea157f922c4518f431ea1fe25c8526a50b",
+    "backend/migrations/env.py": "85982031b52e7b95cd03c99c3f8b9c657d4dd89ddba24e98ae30be98873ad4ea",
+    "backend/migrations/versions/a2f004752f43_initial_images_jobs_and_model_results.py": "154d32575f66cc4c4fe0e0b537183c1f832b601673dc057c7648451888bd650b",
+    "backend/models.py": "f3f0ae7e8c1711c60688cf95cb347e686b675dbbff3ee4a44de7f54e53a4a5bb",
+    "backend/processing.py": "e10ec55c35a6b96999074ac500204b8f108e802160135ebd2d3190235ed12fc9",
+    "backend/repository.py": "c65ad80b9e7e81eb3b7af65218568afbd709459192ed03d2362a6593f8acb232",
+    "backend/requirements-annotation.in": "17fadfd56d83d05ef33ca49be1e0ca2382c04d898d3db53935aab9fd01c88385",
+    "backend/requirements-detection.in": "e02e6f525693c8ad50888b08983a276389b985f832b3c034cacf4e195303c88c",
+    "backend/requirements-dev.in": "f70600e56aa662cd76d6a17c37685825a320ab3e42a6c8a6e0314623c97f125a",
+    "backend/requirements-dev.txt": "6c0996bb032f980ed11304328fdb3289e87a6425bfa7e7837d1525ca3fcfe23a",
+    "backend/requirements.in": "981f8dc48f14c03ca2885e468698b99d3651949be89b5ac4f5eb74f693cd715f",
+    "backend/requirements.txt": "7e9061152e7991ae5b67b126da48135bc79aec2a3787ac3ac588f0c1beebbf55",
+    "backend/schemas.py": "061a1f0e339e20d511f3fb927b212408b777f1cf1b9a0a299d87e4121ae395d7",
+    "backend/service.py": "ba8147280e51c7ab087c54eb8ecc6e405e93e55d5380e3f57a4f36cf96d608eb",
+    "backend/settings.py": "d796f4b98bbd47913ad12672533b012b3b4121a83acdcf4ddce34c29533991a4",
+    "backend/storage.py": "565c64d6178868fbf6bf8bb9eadd9d002badba54db2202a37635dbd8c601fc5c",
+    "backend/tables.py": "3993148df2eadaf057b8e250c97cd1e9768a22a0b7b18e213f42689564dbb831",
+    "backend/tasks.py": "f9706b0f5cce130c447884220a7cc5d7542325eeedf4d68856a2b80e448ef21d",
+    "backend/tests/check_db_outage.py": "757230d03de25027df9ea0093b605a675d6f7d4b9af8b2ea066046581bf5e84d",
+    "backend/tests/mock_model.py": "89cb0118da76cf769f4e2c3ac26ba74de1fbc1d2ba28aa543a9d4dc4aeeeeaeb",
+    "backend/tests/mock_worker.py": "11683cdf1e029ecd704c46e7ff3d8e9f0c1a52cb24f2ccff6597c87ea6bbe285",
+    "backend/tests/test_api.py": "3a49db8220a671e768c5048ff33c761a1819510c39cada3cdcaae04984c86e50",
+    "backend/tests/test_integration.py": "6868a309004b1dd073d937eee0bac4798e6a291da3cce849b175d9bb1ae20ca0",
+    "backend/tests/test_processing.py": "e5108ba158c01c25695dafa6d75f211345ae5449f621b9ee1ceacf574ed0b668",
+    "backend/tests/test_storage.py": "e1040948aafc183afe61d9f2eaf74fb3e9536ad67e719036269cbdaa119b90aa",
+    "backend/tests/test_worker_integration.py": "8861988ba248d45dfdd07f448824faa9856a816af760514069061117631f902b"
+  },
+  "image_ids": {
+    "kurs4-backend:v1": "sha256:fa32f87935df11244ee2e869de2423dec0b04662f01e409c63906427d2fabd64",
+    "kurs4-backend-test:v2": "sha256:f4e8201ae823f170cccf8138831f6acd08cd14c82b2c2872cd5d38076df1253c",
+    "kurs4-worker:v2": "sha256:874605e9bca83c38bc75278b1f77d8019a726f30e5722eb464e7c3f50e8d6430"
+  }
+}
