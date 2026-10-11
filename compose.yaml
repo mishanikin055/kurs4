@@ -1,0 +1,63 @@
+x-runtime: &runtime
+  init: true
+  working_dir: /workspace
+  entrypoint: ["python"]
+  user: "${LOCAL_UID:-1000}:${LOCAL_GID:-1000}"
+  network_mode: "${COMPARISON_NETWORK:-none}"
+  mem_limit: 6g
+  shm_size: 256m
+  environment: &environment
+    HOME: /tmp
+    PYTHONPATH: /workspace
+    PYTHONUNBUFFERED: "1"
+    HF_HUB_OFFLINE: "1"
+    TRANSFORMERS_OFFLINE: "1"
+    OMP_NUM_THREADS: "4"
+    CUBLAS_WORKSPACE_CONFIG: ":4096:8"
+    RUFF_CACHE_DIR: /tmp/ruff
+  volumes: &volumes
+    - ./scripts:/workspace/scripts:ro
+    - ./tests:/workspace/tests:ro
+    - ./detection:/workspace/detection:ro
+    - ./classification:/workspace/classification:ro
+    - ./annotation:/workspace/annotation:ro
+    - ./data:/workspace/data:${PREPARE_ACCESS:-ro}
+    - ./detection/models:/workspace/detection/models:${PREPARE_ACCESS:-ro}
+    - ./classification/models:/workspace/classification/models:${PREPARE_ACCESS:-ro}
+    - ./annotation/models:/workspace/annotation/models:${PREPARE_ACCESS:-ro}
+    - ./annotation/configs:/workspace/annotation/configs:${PREPARE_ACCESS:-ro}
+    - ./reports:/workspace/reports
+    - ./storage/locks:/workspace/storage/locks
+    - ./pyproject.toml:/workspace/pyproject.toml:ro
+    - ./compose.yaml:/workspace/compose.yaml:ro
+    - ./compose.gpu.yaml:/workspace/compose.gpu.yaml:ro
+    - ./.git:/workspace/.git:ro
+services:
+  detection:
+    <<: *runtime
+    image: kurs4-detection:v1
+    build:
+      context: .
+      dockerfile: detection/Dockerfile
+    environment:
+      <<: *environment
+      CONTAINER_IMAGE_ID: "${DETECTION_IMAGE_ID:-unrecorded}"
+  classification:
+    <<: *runtime
+    image: kurs4-classification:v1
+    build:
+      context: .
+      dockerfile: classification/Dockerfile
+    environment:
+      <<: *environment
+      CONTAINER_IMAGE_ID: "${CLASSIFICATION_IMAGE_ID:-unrecorded}"
+  annotation:
+    <<: *runtime
+    image: kurs4-annotation:v1
+    build:
+      context: .
+      dockerfile: annotation/Dockerfile
+    mem_limit: 7g
+    environment:
+      <<: *environment
+      CONTAINER_IMAGE_ID: "${ANNOTATION_IMAGE_ID:-unrecorded}"

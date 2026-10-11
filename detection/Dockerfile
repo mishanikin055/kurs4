@@ -4,4 +4,4 @@ WORKDIR /workspace
 COPY detection/requirements.in detection/requirements.lock.txt /tmp/
 RUN python -m pip install --no-cache-dir -r /tmp/requirements.in -c /tmp/requirements.lock.txt && python -m pip check
 ENV PYTHONPATH=/workspace PYTHONUNBUFFERED=1 HF_HOME=/workspace/detection/models/cache/huggingface TORCH_HOME=/workspace/detection/models/cache/torch YOLO_CONFIG_DIR=/tmp/ultralytics MPLCONFIGDIR=/tmp/matplotlib HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 OMP_NUM_THREADS=4
-ENTRYPOINT ["python", "-m", "detection.cli"]
+ENTRYPOINT ["python"]

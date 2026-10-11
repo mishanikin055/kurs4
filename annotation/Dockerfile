@@ -4,4 +4,4 @@ WORKDIR /workspace
 COPY annotation/requirements.in annotation/requirements.lock.txt /tmp/
 RUN python -m pip install --no-cache-dir -r /tmp/requirements.in -c /tmp/requirements.lock.txt && python -m pip check && chmod 1777 /opt/conda/lib/python3.11/site-packages/pycocoevalcap/tokenizer
 ENV NLTK_DATA=/workspace/data/annotation_evaluator/nltk_data PYTHONPATH=/workspace PYTHONUNBUFFERED=1 HF_HOME=/tmp/hf HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 OMP_NUM_THREADS=4 CUBLAS_WORKSPACE_CONFIG=:4096:8
-ENTRYPOINT ["python", "-m", "annotation.cli"]
+ENTRYPOINT ["python"]

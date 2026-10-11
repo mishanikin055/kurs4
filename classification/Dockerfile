@@ -4,4 +4,4 @@ WORKDIR /workspace
 COPY classification/requirements.in classification/requirements.lock.txt /tmp/
 RUN python -m pip install --no-cache-dir -r /tmp/requirements.in -c /tmp/requirements.lock.txt && python -m pip check
 ENV PYTHONPATH=/workspace PYTHONUNBUFFERED=1 TORCH_HOME=/workspace/classification/models/cache/torch HF_HOME=/workspace/data/imagenet/hf-cache HF_HUB_OFFLINE=1 OMP_NUM_THREADS=4 CUBLAS_WORKSPACE_CONFIG=:4096:8
-ENTRYPOINT ["python", "-m", "classification.cli"]
+ENTRYPOINT ["python"]

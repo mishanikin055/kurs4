@@ -1,78 +1,151 @@
-# Курсовой проект: детекция, классификация и аннотирование
+# Детекция, классификация и аннотирование изображений
 
-GitHub Actions workflows удалены; проверки запускаются локально в Linux/Docker Compose.
+Курсовой проект: три сравнения четырёх готовых моделей без обучения.
+Завершённые научные сравнения сохранены; приложение FastAPI/PostgreSQL/Streamlit,
+общий конвейер и поиск ещё не реализованы.
 
-Реализованы экспериментальные модули детекции и классификации: [detection/README.md](detection/README.md), [classification/README.md](classification/README.md). Все четыре классификатора прошли офлайн GPU-smoke и предварительное сравнение на 5000 ImageNet-изображениях, три повтора. [Таблица](reports/comparisons/classification-evaluation5000-v1/classification.md), [анализ](reports/comparisons/classification-evaluation5000-v1/analysis.md). [Прикладные crops](classification/crops/README.md) оцениваются отдельно. Добавлен модуль сравнения аннотаторов: [annotation/README.md](annotation/README.md);
-четыре офлайн GPU-smoke и основной test500 завершены. Приложение пока не реализовано. Новые доверительные интервалы не рассчитываются ни в одном сравнении проекта.
+## Папки и служебные файлы
 
-Инструкция с командами: [detection/README.md](detection/README.md). Обоснование участников: [docs/model_selection.md](docs/model_selection.md). Решения по окружению и протоколу: [docs/decisions.md](docs/decisions.md).
+- `scripts/detection/`, `scripts/classification/`, `scripts/annotation/` — по
+  четыре скрипта с явной загрузкой конкретной модели и один `common.py`:
+  набор, замеры, метрики, сохранение и таблица. Общий модуль запускает этот же
+  скрипт в дочернем процессе с наследуемой блокировкой и ждёт его завершения.
+- `scripts/prepare.py` — явная загрузка из закреплённых источников, SHA-256,
+  подготовка и проверка manifests. Сравнения его автоматически не вызывают.
+- `scripts/export_tables.py` — вывод сохранённых сравнительных CSV в консоль;
+  только стандартная библиотека Python.
+- `data/` — COCO, ImageNet и ресурсы метрик; `*/models/` — локальные веса.
+  Данные, веса, кэши, окружения и `.secrets/` игнорируются Git.
+- `detection/`, `classification/`, `annotation/` — закреплённые configs,
+  Dockerfile, requirements и тесты. `annotation/evaluation/` — проверенный
+  сторонний код CHAIR/Pattern, словари, источники и лицензии.
+- `compose.yaml` — три отдельных ML-окружения; `compose.gpu.yaml` — GPU текущей
+  WSL через `/dev/dxg` и библиотеки драйвера read-only. Docker socket не нужен.
+- `reports/runs/<направление>/<run>/` — новые однопроходные результаты;
+  остальные `reports/` — сохранённые исторические эксперименты, таблицы и DOCX.
+- `tests/` — проверки подготовки; `*/tests/` — метрики и инварианты направлений;
+  `pyproject.toml` — pytest/Ruff; `docs/decisions.md` — принятые решения;
+  `docs/refactoring-baseline.json` — исходные SHA-256 2046 исторических файлов.
+- `AGENTS.md` и тематические `*.md` — инструкции работы;
+  `REFACTORING_TASK.md` — согласованное задание переделки. Исходные материалы
+  в `Материалы для курсовой/` не перемещаются и автоматически не коммитятся.
 
-Веса детекторов находятся в `detection/models/`, классификаторов — в `classification/models/`; данные — в `data/coco/` и `data/imagenet/`, результаты — в `reports/`. Веса и датасет исключены из Git. Необходимы Linux/WSL2, Docker и Docker Compose. Для GPU требуется NVIDIA Container Toolkit либо подготовленный профиль WSL2.
+## Подготовка
 
-Полное сравнение детекторов завершено: COCO test 4500 изображений, три повтора, 1000 парных bootstrap-выборок. [Таблица](reports/comparisons/detection.md), [анализ](reports/comparisons/detection_analysis.md), [описание результатов](Описание%20результатов%20детекции.md). Исходные сбои test-v1 сохранены; восстановление и происхождение отражены в test-v2/recovery.json.
+Bash, `/home/mikhail/kurs4`. Используются три проверенных образа;
+`docker compose build` собирает их по закреплённым Dockerfile.
 
-Краткое состояние для продолжения в новом чате: [docs/classification_handoff.md](docs/classification_handoff.md).
-
-Сравнительный анализ классификаторов завершён 09.10.2026:
-[описание результатов](Описание%20результатов%20классификации.md),
-[ImageNet50k](reports/comparisons/classification-validation50000-v1/classification.md),
-[GT-crops](reports/comparisons/classification-gt-crops-v1/analysis.md),
-[detector-crops](reports/comparisons/classification-detector-crops-v1/analysis.md).
-Полный ImageNet — четыре модели × два прохода по 50 000, оба crop-режима сохранили
-уже завершённые три повтора: 1883 GT и 2296 detector-crops на 500 COCO-сценах.
-Предыдущие полные ResNet-50 использованы повторно; сохранённый третий не включён
-в основную ImageNet-таблицу. Новых третьих кругов не запускалось.
-
-EfficientNetV2-S лучший по ImageNet Top-1 (84.238%), ResNet-50 самый быстрый,
-ViT-B/16 лучший по условным Top-1/Top-5 на crops. Все диагностические варианты
-замены категории ухудшили точность исходного детектора; его метка сохраняется.
-Словарь покрывает 55.81% non-crowd GT; dev-калибровка отказа и точность пород
-не проверены. Оценки режимов не объединяются в общий балл.
-Все выбранные проходы проверены по сырым артефактам; 32 CPU-теста и Ruff прошли.
-Аннотаторы сравнивать по **одному полному прогону каждой модели**, без новых
-доверительных интервалов. Пользователь поручил этот следующий этап субагенту
-с отдельным контекстом после проверки классификации.
-
-
-Автоматическое сравнение аннотаторов завершено: четыре модели × один проход ×
-500 COCO-изображений, без ошибок и новых CI. [Таблица](reports/comparisons/annotation-test500-v1/annotation.md),
-[описание результатов](Описание%20результатов%20аннотирования.md),
-[команды](annotation/README.md). Florence-2 base-ft имеет лучший CIDEr (1.4954),
-минимальные CHAIRs/CHAIRi и p50 (0.181 с). Более длинные Qwen/Smol captions
-оцениваются с явным ограничением lexical metrics и длины ответа; экспертные
-баллы и внешний набор отсутствуют. Это завершённые автоматические измерения,
-человеческая проверка исключена по решению пользователя, сравнение завершено в актуальном объёме. [Точка продолжения](docs/annotation_handoff.md).
-
-
-Все три сравнения завершены: [общий итог с выбором моделей](Итоги%20сравнительного%20анализа%20моделей.md)
-и [пошаговое описание работы простым языком](Как%20выполнялся%20сравнительный%20анализ.md).
-Объяснены размеры наборов, повторное использование готовых прогонов и ограничения.
-Человеческих оценок не будет по решению пользователя; фиктивных баллов нет.
-
-## Итоговые таблицы в Word
-
-[Скачать DOCX: все итоговые таблицы](reports/exports/%D0%98%D1%82%D0%BE%D0%B3%D0%BE%D0%B2%D1%8B%D0%B5%20%D1%82%D0%B0%D0%B1%D0%BB%D0%B8%D1%86%D1%8B%20%D1%81%D1%80%D0%B0%D0%B2%D0%BD%D0%B8%D1%82%D0%B5%D0%BB%D1%8C%D0%BD%D0%BE%D0%B3%D0%BE%20%D0%B0%D0%BD%D0%B0%D0%BB%D0%B8%D0%B7%D0%B0.docx) —
-25 редактируемых таблиц: качество, время, память, проверка замены категории
-детектора, все классы ImageNet и категории COCO. Предварительная оценка
-на 5000 снимках и ранее рассчитанные интервалы детекции вынесены в приложения.
-
-Экспорт из существующих CSV без запуска моделей:
 ```bash
-python scripts/export_comparison_tables.py
+cd /home/mikhail/kurs4
+export LOCAL_UID="$(id -u)" LOCAL_GID="$(id -g)"
+export DETECTION_IMAGE_ID="$(docker image inspect kurs4-detection:v1 --format '{{.Id}}')"
+export CLASSIFICATION_IMAGE_ID="$(docker image inspect kurs4-classification:v1 --format '{{.Id}}')"
+export ANNOTATION_IMAGE_ID="$(docker image inspect kurs4-annotation:v1 --format '{{.Id}}')"
+docker compose run --rm detection scripts/prepare.py detection --verify-only
+docker compose run --rm classification scripts/prepare.py classification --verify-only
+docker compose run --rm annotation scripts/prepare.py annotation --verify-only
 ```
-Для экспорта требуется отдельное окружение с `python-docx==1.2.0`
-(не новая зависимость инференса). Источники, число строк таблиц и контрольная
-сумма DOCX — `reports/exports/tables_manifest.json`. После сохранения генератор
-проверяет каждую ячейку документа, включая 1000 классов ImageNet.
 
-Для презентации подготовлен отдельный [краткий DOCX](reports/exports/%D0%A2%D0%B0%D0%B1%D0%BB%D0%B8%D1%86%D1%8B%20%D0%B4%D0%BB%D1%8F%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D0%B8%D0%B8.docx): две таблицы на каждое сравнение, лучшие значения выделены цветом, под таблицами — выводы и пояснения. Пересборка: `python scripts/export_presentation_tables.py`; источники и проверка — `reports/exports/presentation_tables_manifest.json`.
+Данные и веса уже подготовлены. Для новой установки загрузка разрешается
+явно: `--download`, сеть `COMPARISON_NETWORK=bridge` и запись
+`PREPARE_ACCESS=rw`. Без этих переменных runtime офлайн, данные и веса read-only.
 
-Обновление таблиц для презентации от 10.10.2026: в каждой таблице пять
-показателей плюс название модели. F1 убран; детекция показывает precision
-и recall раздельно, первая таблица детекции включает RAM. Память приведена
-в GiB; выделены занятая/зарезервированная VRAM и время загрузки модели.
+```bash
+COMPARISON_NETWORK=bridge PREPARE_ACCESS=rw docker compose run --rm detection scripts/prepare.py detection --download
+COMPARISON_NETWORK=bridge PREPARE_ACCESS=rw docker compose run --rm classification -v "$PWD/.secrets/hf_token:/workspace/.secrets/hf_token:ro" scripts/prepare.py classification --download
+COMPARISON_NETWORK=bridge PREPARE_ACCESS=rw docker compose run --rm annotation scripts/prepare.py annotation --download
+```
 
-[Предыдущая версия презентационных таблиц](reports/exports/%D0%A2%D0%B0%D0%B1%D0%BB%D0%B8%D1%86%D1%8B%20%D0%B4%D0%BB%D1%8F%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D0%B8%D0%B8%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B4%D1%8B%D0%B4%D1%83%D1%89%D0%B0%D1%8F%20%D0%B2%D0%B5%D1%80%D1%81%D0%B8%D1%8F.docx)
-сохранена отдельным DOCX: первоначальные компактные таблицы до расширения
-10.10.2026. Восстановлена без изменений из коммита `211a032`; исходная
-контрольная сумма проверена. Текущая версия остаётся в прежнем файле.
+Для ImageNet пользователь заранее принимает условия HF; токен только в
+`.secrets/hf_token`, в вывод не попадает. Для подготовки manifests из локальных
+файлов: `PREPARE_ACCESS=rw docker compose run --rm <сервис> scripts/prepare.py <направление>`.
+`--dry-run` показывает источники без записи. Существующие отличающиеся manifests
+не заменяются. Для аннотаторов сначала должны быть подготовлены COCO и разметка.
+
+## Двенадцать команд запуска
+
+Ниже команды для будущих явно запрошенных запусков: **два изображения**, один проход.
+По последнему указанию пользователя в ходе переделки больше не запускать
+модели и не пересобирать сравнительные таблицы.
+Для полного набора удалите `--limit 2` и выберите новое имя `--run`;
+полные сравнения ради рефакторинга повторять не нужно.
+Четыре модели направления запускайте последовательно с одинаковыми параметрами.
+
+```bash
+docker compose -f compose.yaml -f compose.gpu.yaml run --rm detection scripts/detection/yolo26s.py --run my-check --limit 2
+docker compose -f compose.yaml -f compose.gpu.yaml run --rm detection scripts/detection/rtdetr_v2_r18.py --run my-check --limit 2
+docker compose -f compose.yaml -f compose.gpu.yaml run --rm detection scripts/detection/rf_detr_small.py --run my-check --limit 2
+docker compose -f compose.yaml -f compose.gpu.yaml run --rm detection scripts/detection/faster_rcnn.py --run my-check --limit 2
+
+docker compose -f compose.yaml -f compose.gpu.yaml run --rm classification scripts/classification/resnet50.py --run my-check --limit 2
+docker compose -f compose.yaml -f compose.gpu.yaml run --rm classification scripts/classification/efficientnet_v2_s.py --run my-check --limit 2
+docker compose -f compose.yaml -f compose.gpu.yaml run --rm classification scripts/classification/convnext_tiny.py --run my-check --limit 2
+docker compose -f compose.yaml -f compose.gpu.yaml run --rm classification scripts/classification/vit_b_16.py --run my-check --limit 2
+
+docker compose -f compose.yaml -f compose.gpu.yaml run --rm annotation scripts/annotation/blip_base.py --run my-check --limit 2
+docker compose -f compose.yaml -f compose.gpu.yaml run --rm annotation scripts/annotation/florence2_base_ft.py --run my-check --limit 2
+docker compose -f compose.yaml -f compose.gpu.yaml run --rm annotation scripts/annotation/qwen3_vl_2b.py --run my-check --limit 2
+docker compose -f compose.yaml -f compose.gpu.yaml run --rm annotation scripts/annotation/smolvlm2_500m.py --run my-check --limit 2
+```
+
+По умолчанию: детекция — 4500 COCO test/FP32/20 прогревов;
+классификация — 50 000 ImageNet validation/FP32/20 прогревов;
+аннотирование — COCO test500/FP16/один dev-прогрев/greedy/96 новых токенов.
+Batch 1. Неизменный `raw_caption` сохраняется. Новых CI и crop-запусков нет.
+
+Один `--run` фиксирует набор, параметры, лимит и исходники. Чужие параметры
+отклоняются; существующий результат модели не перезаписывается. После обрыва
+нужно новое имя. Lock `storage/locks/inference.lock` защищает модельный процесс
+до его завершения. После SIGKILL модельного потомка старые артефакты сохраняются.
+
+В каталоге сравнения находятся `comparison.csv`, `comparison.md`,
+`comparison.json`, результаты моделей `run.json` и `samples.jsonl` с
+предсказаниями/измерениями по изображениям, дополнительные таблицы по классам.
+Четыре строки включают `not_run`, ошибки/OOM и неполные запуски. `shortened`
+отмечает сокращённую проверку; её нельзя выдавать за полное сравнение.
+Детекторы сохраняют первое изображение и overlay; детекция и классификация
+проверяют native parity на первом изображении.
+
+## Восстановление отчёта и вывод в консоль
+
+Без GPU и загрузки весов; можно выбрать любой файл модели направления:
+
+```bash
+docker compose run --rm detection scripts/detection/yolo26s.py --run my-check --report-only
+docker compose run --rm classification scripts/classification/resnet50.py --run my-check --report-only
+docker compose run --rm annotation scripts/annotation/blip_base.py --run my-check --report-only
+```
+
+После запуска модели таблица четырёх участников выводится в консоль и сохраняется
+в CSV/Markdown. Для отдельного просмотра сохранённых таблиц без Docker:
+
+```bash
+python3 scripts/export_tables.py --table reports/runs/detection/my-check/comparison.csv
+python3 scripts/export_tables.py --table reports/runs/classification/my-check/comparison.csv --full
+python3 scripts/export_tables.py --table reports/runs/annotation/my-check/comparison.csv
+```
+
+`--table` можно повторить, `--full` показывает также все столбцы ресурсов.
+Word-экспорт исключён пользователем 11.10.2026. Прежние DOCX и manifests сохранены;
+новые документные зависимости и окружение экспорта не нужны.
+
+## Проверки и ограничения
+
+```bash
+docker compose run --rm detection -m pytest tests detection/tests -q
+docker compose run --rm classification -m pytest classification/tests -q
+docker compose run --rm annotation -m pytest annotation/tests -q
+docker compose run --rm detection -m ruff check .
+docker compose run --rm detection -m ruff format --check .
+docker compose -f compose.yaml -f compose.gpu.yaml config --quiet
+```
+
+CPU/mock-тесты и реальные GPU-проверки — отдельные результаты. p50/p95
+исключают загрузку/прогрев; точный состав скорости указан в таблицах направления.
+RAM — RSS модельного процесса, allocated/reserved — память PyTorch,
+без всей памяти драйвера/GPU. У разных checkpoint различаются native transforms
+и обучение авторов. Внешний набор и человеческая оценка не использованы.
+Сохранённые описания и source snapshots относятся к прежней ревизии;
+исторические команды внутри них не являются текущими командами запуска.
+Исторические выводы — [итоги](Итоги%20сравнительного%20анализа%20моделей.md)
+и [описание шагов](Как%20выполнялся%20сравнительный%20анализ.md).

@@ -1,98 +1,97 @@
 # Сравнение аннотаторов
 
-Четыре независимых готовых checkpoint: BLIP base, Florence-2 base-ft,
-Qwen3-VL 2B Instruct и SmolVLM2 500M Video Instruct. Исходное RGB-изображение
-передаётся без overlay, детекций и результатов классификатора.
-Веса находятся в **annotation/models/** (Git ignore), конкретные revisions,
-официальные источники, лицензии и размеры — `configs/models.json`;
-проверенные SHA-256 локальных файлов — `models/manifest.json`.
+Новая реализация — пять файлов в `scripts/annotation/`: `blip_base.py`,
+`florence2_base_ft.py`, `qwen3_vl_2b.py`, `smolvlm2_500m.py` явно загружают
+свои локальные Transformers checkpoint, готовят исходное RGB-изображение и
+вызывают `generate`. `common.py` читает набор, проверяет SHA, запускает один
+модельный дочерний процесс, измеряет ресурсы, вычисляет метрики и строит таблицы.
+В `annotation/` остаются configs, игнорируемые models, Dockerfile и закреплённые
+зависимости, тесты и необходимый сторонний код метрик `evaluation/` с источниками
+и лицензионными уведомлениями. Подготовка всех направлений — `scripts/prepare.py`.
 
-Linux Docker Compose, RTX 4050 Laptop 6 GB VRAM; контейнер ограничен 7 GiB,
-WSL видит 7,6 GiB. Только одна модель в RAM/GPU: координатор наследует общий
-`storage/locks/inference.lock` потомку и ждёт полного завершения.
-FP16 без offload/квантования, batch 1, greedy decoding, максимум 96 новых
-токенов, один прогрев на dev. BLIP/Florence используют eager attention,
-Qwen/SmolVLM — SDPA; это явное различие реализации готовых архитектур.
-Processors закреплены с use_fast=False (Florence tokenizer — fast,
-поскольку официальный репозиторий содержит tokenizer.json без merges.txt); у Qwen 65536–262144 pixels.
-
-Основной протокол: **ровно один проход на модель** по одним и тем же
-500 COCO val2017 из project-local detector test4500. Dev100 — отдельные
-изображения из detector dev500, seed 42. Нет новых доверительных интервалов.
-Не запускать benchmark в другой папке как второй полный повтор.
-Существующий output не перезаписывается; неполный проход сохраняется со статусом.
+Сначала подготовить данные/веса по корневому [README](../README.md).
+Runtime офлайн; автоматического скачивания нет. Четыре модели запускаются
+последовательно с одним новым именем сравнения и одинаковым `--limit`:
 
 ```bash
-scripts/annotation.sh build
-scripts/annotation.sh download
-docker compose -f compose.annotation.yaml run --rm --entrypoint python tools -c 'import nltk; nltk.download("punkt_tab", download_dir="/workspace/data/annotation_evaluator/nltk_data")'
-scripts/annotation.sh prepare
-scripts/annotation.sh smoke --model qwen3_vl_2b --output reports/annotation/smoke-qwen-v1
-scripts/annotation.sh dev --limit 10 --output reports/annotation/dev10-v1
-scripts/annotation.sh benchmark --output reports/annotation/test500-v1
-scripts/annotation.sh report --experiment reports/annotation/test500-v1 --output reports/comparisons/annotation-test500-v1
+docker compose -f compose.yaml -f compose.gpu.yaml run --rm annotation scripts/annotation/blip_base.py --run annotation-smoke-v2 --limit 2
+docker compose -f compose.yaml -f compose.gpu.yaml run --rm annotation scripts/annotation/florence2_base_ft.py --run annotation-smoke-v2 --limit 2
+docker compose -f compose.yaml -f compose.gpu.yaml run --rm annotation scripts/annotation/qwen3_vl_2b.py --run annotation-smoke-v2 --limit 2
+docker compose -f compose.yaml -f compose.gpu.yaml run --rm annotation scripts/annotation/smolvlm2_500m.py --run annotation-smoke-v2 --limit 2
 ```
 
-COCO captions предварительно извлекаются из официального
-[annotations_trainval2017.zip](https://images.cocodataset.org/annotations/annotations_trainval2017.zip)
-в data/coco/annotations/captions_val2017.json. Во время inference сеть отключена,
-веса/data read-only. Скачать checkpoint во время benchmark нельзя.
+Без `--limit` каждый скрипт выполняет один проход по 500 изображениям из
+`annotation/configs/test500.json`. Полные сравнения уже завершены; ради
+рефакторинга повторять их не требуется. Даже короткая проверка использует один
+отдельный прогрев на dev-изображении. Batch 1, FP16 без offload/квантования,
+greedy decoding, 96 новых токенов. BLIP/Florence — eager, Qwen/SmolVLM — SDPA.
+Qwen: 65536–262144 pixels. Florence: закреплённый проверенный Microsoft remote
+code из локального каталога, fast tokenizer и отключение DynamicCache для
+совместимости tuple cache. Остальные модели `trust_remote_code=False`.
 
-Каждая строка содержит неизменный raw_caption, completion token IDs (включая
-конечные специальные токены, исключая начальный decoder token/входной prompt),
-prompt и rendered_prompt, синхронизированные CUDA preprocess/generate/postprocess,
-read time. Сохраняются cold load, peak RSS, CUDA allocated/reserved peaks и
-source snapshot/container ID. Cold load — загрузка Adapter в новом процессе после проверки SHA и чтения
-среды (CUDA-контекст уже инициализирован); состояние файлового кэша ОС
-не сбрасывается. Downloads/hash verification не входят в cold load.
-Словари tokenizer различаются, tokens/s не равнозначен скорости слов.
+Результаты: `reports/runs/annotation/NAME/comparison.json`, `comparison.csv`,
+`comparison.md`; у каждой модели — `run.json` и `samples.jsonl`. После каждого запуска и report-only компактная сравнительная таблица печатается
+в консоль. В сохранённой таблице всегда
+ровно четыре строки, включая `not_run`, `failed`, `oom`, `incomplete`, `evaluation_failed`.
+`complete` означает обработку всех выбранных изображений; короткий запуск
+явно помечается. Разные limit/набор/конфиг/исходники не смешиваются под одним
+именем. Ошибка метрик получает `evaluation_failed`; успешный report-only может восстановить статус.
+Существующий результат модели не перезаписывается: после прерывания
+нужно новое имя, resume нет. Отчёт восстанавливается без весов/инференса:
 
-[Методика метрик](evaluation/README.md): CIDEr, BLEU-4, ROUGE-L, CHAIRs/CHAIRi
-и дополнительная объектная полнота. Эксперты заполняют 400 перемешанных строк
-для 100 общих изображений; ключ модели хранится отдельно. Автоматические
-числа не подтверждают всю фактическую корректность. По указанию пользователя
-человеческая оценка исключена, незаполненные формы сохранены исторически.
-Внешние разрешённые изображения/эталоны не предоставлены; SPICE не вычисляется.
-Известное использование COCO при подготовке готовых моделей ограничивает выводы
-о независимом обобщении; pretrained overlap нельзя устранить новым split val2017.
-
-Mock/CPU-проверки:
 ```bash
-docker compose -f compose.annotation.yaml run --rm checks -m pytest annotation/tests -q
-docker compose -f compose.annotation.yaml run --rm checks -m ruff check .
-docker compose -f compose.annotation.yaml run --rm checks -m ruff format --check .
+docker compose -f compose.yaml run --rm annotation scripts/annotation/blip_base.py --run annotation-smoke-v2 --report-only
 ```
-Реальные GPU-smoke считаются отдельными проверками; приложение здесь не реализуется.
 
-[Исторический план слепой оценки](../docs/annotation_expert_protocol.md). Формы с captions
-и закрытый ключ остаются локальными игнорируемыми файлами; экспертные баллы
-не собираются по решению пользователя.
+Восстановление использует сохранённый протокол и проверенные captions/instances;
+при изменении набора оно завершается ошибкой. Общий
+`storage/locks/inference.lock` наследуется реальным модельным процессом;
+следующая модель запускается только после его выхода. SIGTERM/INT родителя
+останавливают группу дочернего процесса, затем родитель обновляет статус.
 
+`raw_caption` сохраняется неизменным. Completion token IDs включают конечные
+специальные токены, исключают начальный decoder token/входной prompt.
+Сохраняются точные prompts, синхронизированные CUDA
+preprocess/generate/postprocess, чтение, cold load, peak RSS и PyTorch
+allocated/reserved VRAM (bytes). Cold load не включает проверку SHA и создание
+CUDA-контекста, кэш файлов ОС не сбрасывается. Пики памяти включают загрузку и
+прогрев, не учитывают память драйвера/других процессов. Словари tokenizer
+различаются: tokens/s не равнозначен скорости слов.
 
-## Итог основного test500
+[Метрики](evaluation/README.md): CIDEr в исходной шкале, BLEU-4, ROUGE-L,
+CHAIRs/CHAIRi (доли) и дополнительная объектная полнота. CHAIR использует
+GT captions+instances и проверенный словарь авторов; действия, свойства и
+вне-COCO объекты он не оценивает. Новые CI и человеческие баллы не создаются.
+Внешний набор и SPICE не использованы; известное использование COCO при
+подготовке моделей ограничивает независимость оценки.
 
-Все четыре модели завершили единственный проход по 500 изображениям без ошибок.
-[CSV](../reports/comparisons/annotation-test500-v1/annotation.csv),
+CPU-проверки отдельно от реальных GPU-smoke:
+
+```bash
+docker compose -f compose.yaml run --rm annotation -m pytest annotation/tests -q
+docker compose -f compose.yaml run --rm annotation -m ruff check scripts/annotation annotation/tests
+docker compose -f compose.yaml run --rm annotation -m ruff format --check scripts/annotation annotation/tests
+```
+
+Исторический test500-v1 завершён: четыре модели × 500 изображений, один проход,
+2000 raw captions, без ошибок. [CSV](../reports/comparisons/annotation-test500-v1/annotation.csv),
 [таблица](../reports/comparisons/annotation-test500-v1/annotation.md),
 [анализ](../Описание%20результатов%20аннотирования.md),
 [верификация](../reports/verification/annotation-test500-v1.json).
-Независимый verifier заново считает метрики из captions, агрегацию времени/ресурсов
-и проверяет точную decode parity 2000 текстов, source snapshot и веса без модели.
-Генераторы report и анализа имеют отдельные SHA; правка отчёта после inference
-не переписывает snapshot эксперимента. Исходный commit — `8619dc8`.
+Старые результаты, configs/manifests, source snapshots и незаполненные
+исторические формы сохранены; новый report-only читает только новый формат.
 
-Команды пересборки **без нового инференса**, выполнять последовательно:
 
-```bash
-scripts/annotation.sh report --experiment reports/annotation/test500-v1 --output reports/comparisons/annotation-test500-v1
-docker compose -f compose.annotation.yaml run --rm checks scripts/verify_annotation.py --experiment reports/annotation/test500-v1 --report reports/comparisons/annotation-test500-v1 --output reports/verification/annotation-test500-v1.json
-docker compose -f compose.annotation.yaml run --rm checks reports/comparisons/build_annotation_analysis.py --experiment reports/annotation/test500-v1 --output reports/comparisons/annotation-test500-v1 --document 'Описание результатов аннотирования.md' --verification reports/verification/annotation-test500-v1.json
-```
+## Проверки упрощённой реализации 11.10.2026
 
-Florence-2 лидирует по измеренным lexical metrics, CHAIR и p50; кандидат для
-коротких английских captions. По последнему указанию пользователя
-человеческая оценка исключена. Сравнение закончено по автоматическим метрикам
-и отдельному разбору ИИ, внешний набор и SPICE не использованы — это ограничения.
-Состояние — [handoff](../docs/annotation_handoff.md).
+20 CPU-тестов проходят, scoped Ruff check/format без замечаний. Все четыре
+модели завершили реальный офлайн GPU-smoke по двум изображениям, FP16,
+без замены checkpoint и без OOM. Все восемь raw_caption и последовательностей
+completion IDs точно совпали с историческим нативным инференсом на этих сценах.
+Report-only проверен отдельно без GPU. Полный инференс не повторялся.
 
-Объяснение всех этапов и размеров выборок — [Как выполнялся сравнительный анализ](../Как%20выполнялся%20сравнительный%20анализ.md).
+CPU-пересчёт шести автоматических метрик на всех 2000 сохранённых captions
+совпал с историческим CSV с допуском 1e-12; исходные captions неизменны.
+[Проверка паритета](../reports/runs/verification/annotation-parity.json),
+[короткая таблица](../reports/runs/annotation/refactor-smoke-20261011-v1/comparison.md).
+Короткие результаты не заменяют завершённое основное сравнение test500-v1.

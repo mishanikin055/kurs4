@@ -1,36 +1,64 @@
 # Инфраструктура: Linux, Docker и ресурсы
 
-## Состояние и существующие файлы
+Рабочая копия `/home/mikhail/kurs4`, WSL2 Ubuntu 26.04, Bash.
+Один основной `compose.yaml` содержит три ML-сервиса: detection, classification,
+annotation. Дополнение `compose.gpu.yaml` подключает GPU текущей WSL через
+`/dev/dxg`, `/usr/lib/wsl/lib` и `/usr/lib/wsl/drivers` read-only, без Docker socket.
+Основной файл также используется для CPU-метрик/тестов/report-only/подготовки.
+Команды — [README](README.md). Прежние Compose/shell-обёртки удалены.
 
-Рабочая копия `/home/mikhail/kurs4`, WSL2 Ubuntu 26.04, Linux/Bash; Windows — хост, не целевая ОС приложения. При переносе сверить dirty/untracked: clone не переносит локальные материалы. Упоминавшийся в прежних инструкциях WSL_SETUP.md в текущей копии отсутствует; не считать его доступной инструкцией.
+## Окружения
 
-Существуют ML-окружения сравнения: `compose.detection.yaml`, `compose.detection.wsl.yaml`, `compose.classification.yaml`, `compose.classification.wsl.yaml`, `compose.classification.crops.yaml`, `detection/Dockerfile`, `classification/Dockerfile`, файлы requirements.in/requirements.lock.txt этих модулей и shell wrappers в scripts/. Для аннотаторов добавлены `compose.annotation.yaml`, `compose.annotation.wsl.yaml`,
-`annotation/Dockerfile`, закреплённые requirements и `scripts/annotation.sh`;
-контейнер 7 GiB, runtime офлайн. Корневой compose.yaml для приложения пока отсутствует; db/api/worker/ui — будущие сервисы. Реальные команды — README соответствующего модуля. Плановые команды не считать доступными.
+Три `*/Dockerfile` сохраняют базовый digest PyTorch/CUDA и точные requirements;
+образы `kurs4-detection:v1`, `kurs4-classification:v1`, `kurs4-annotation:v1`.
+Transformers детекции и аннотирования имеют разные версии, объединять их нельзя
+без отдельной проверки. Entry point — Python, запуск прямым путём скрипта.
+`init: true` собирает потомков; лимиты RAM — 6 GiB детекция/классификация,
+7 GiB аннотирование. Данные/веса read-only, результаты/locks — writable.
 
-## Оборудование и модельные процессы
+Runtime `network_mode: none`, HF offline, токен не монтируется.
+Явная подготовка использует `COMPARISON_NETWORK=bridge PREPARE_ACCESS=rw`
+и `scripts/prepare.py <направление> --download`. HF-токен для новой загрузки
+ImageNet подключается отдельным read-only mount `.secrets/hf_token`.
+Не выводить токены в чат/логи и не включать их в образ/Git.
+Локальная подготовка без сети также поддерживается.
 
-Рабочая машина пользователя: NVIDIA GeForce RTX 4050 Laptop GPU, 6 ГБ VRAM и **16 ГБ RAM**. Проверка `nvidia-smi` от 06.10.2026: 6141 MiB, драйвер 610.78. CPU по проверке `lscpu` от 08.10.2026 — Intel Core i5-12450H (прежняя запись i5-12400K со слов пользователя не подтвердилась). В WSL доступно около 7,6 GiB RAM; физические 16 ГБ хоста не означают такой же лимит Linux. WSL2 Ubuntu-26.04 установлен, что проверено через список дистрибутивов. При реализации записать точные характеристики и доступную память Linux-контейнера в environment manifest.
+После сборки записать фактические ID образов переменными DETECTION_IMAGE_ID,
+CLASSIFICATION_IMAGE_ID, ANNOTATION_IMAGE_ID из `docker image inspect`.
+JSON запуска фиксирует image ID, версии, исходники и Git revision/dirty status.
+Данные не встраиваются в Docker context; `.dockerignore` исключает datasets,
+веса всех трёх направлений, secrets, reports и исходные материалы.
 
-Порядок обязателен: **детектор → классификатор всех вырезанных объектов → отдельный аннотатор → согласование**. Batch size 1; одновременно загружена строго одна модель, включая RAM и GPU. Не загружать следующую в фоне. Каждый этап заканчивает модельный дочерний процесс до старта следующего. Для benchmark одна модель обрабатывает свой набор целиком, затем процесс завершается и запускается следующая.
+## Память и процессы
 
-Сначала проверить память и smoke, затем массовые загрузки/эксперименты. Qwen3-VL 2B требует ранней проверки; SmolVLM2 выбран в варианте 500M. Offload расходует также ограниченные 16 ГБ RAM. Данные читать потоково. Offload и квантование фиксировать отдельными режимами; FlashAttention и TensorRT не обязательны.
+RTX 4050 Laptop, 6141 MiB VRAM; Intel Core i5-12450H; хост 16 GiB RAM,
+WSL видит около 7.6 GiB. Перед GPU-проверками измерять реальные available RAM,
+свободную VRAM, cgroup limit и отсутствие конкурирующего инференса.
+PyTorch allocated/reserved не равны полной памяти GPU/Windows-драйвера.
+Подключение `/dev/dxg` не предполагает NVIDIA Container Toolkit; это настройка
+именно текущей WSL, для другого Linux требуется собственный проверенный профиль.
 
-## Контейнерная архитектура
+Строго одна модель в RAM/GPU, batch 1. `storage/locks/inference.lock` удерживается
+модельным дочерним процессом до выхода; следующая модель стартует после завершения.
+Остановка родителя должна завершить process group, а SIGKILL родителя не должен
+освободить lock живого потомка. `empty_cache()` это требование не заменяет.
+Cgroup OOM-kill и CUDA OOM должны иметь явный статус, неполный набор не становится
+полным результатом. После прерывания новое имя сравнения, без сложного resume.
 
-- Лёгкий app-образ для api/ui/migrate; ML-образ для worker/benchmark. Совместимость проверить до установки; закрепить проверенные версии и digest, не устанавливать автоматически все latest-зависимости.
-- При конфликте библиотек допустимы отдельные Python-окружения и subprocess с единым JSON-контрактом. Worker не управляет Docker socket и не запускает постоянно несколько модельных серверов.
-- Будущие сервисы: db, api, worker, ui; одноразовые migrate/benchmark. В работающем приложении GPU только у worker. Benchmark выполняется после остановки worker и использует **тот же** `storage/locks/inference.lock` в общем mount. В старом плане встречается storage/.locks — для интеграции использовать фактический путь существующих runner.
-- GPU reservation не обеспечивает эксклюзивность. Lock-дескриптор сохранять у модельного потомка; crash координатора/lease expiry не разрешает второй инференс. Остановить всех потомков до unlock.
-- Веса и данные runtime read-only, storage/reports и pgdata постоянны. Не встраивать веса в образ. `down -v` не применять как обычную остановку.
-- ui → api:8000, api/worker → db:5432. PostgreSQL внутри сети Compose; UI/API порты по умолчанию на localhost. Миграции завершаются до api/worker, БД имеет healthcheck, подключения переживают временные сбои.
-- Секреты вне Git/образа; .env.example содержит имена, не реальные значения. HF-токен только .secrets/hf_token, доступен загрузке, не benchmark.
-- WSL wrappers выбирают профиль с /dev/dxg и read-only библиотеками драйвера при отсутствии NVIDIA Container Toolkit; не считать это универсальной настройкой другого Linux. Не устанавливать display driver в контейнер.
+## Проверки и границы задачи
 
-## Артефакты и проверки
+По последнему указанию пользователя новые модельные запуски, пересчёт
+метрик из исторических предсказаний и пересборка таблиц в текущей переделке
+прекращены. Дополнительная реальная проверка — только по новой задаче.
 
-Детекторы — detection/models/, классификаторы — classification/models/; аннотаторы — `annotation/models/`, отдельно закреплённый игнорируемый каталог. Правила загрузки/хешей — [experiments.md](experiments.md). Источник benchmark связать с commit/dirty snapshot и ID/digest контейнера.
+Локальные pytest в трёх Docker-окружениях, Ruff check/format, Compose config,
+метрики на сохранённых предсказаниях и последовательные реальные офлайн smoke
+всех 12 моделей. Полные сравнения ради переделки не повторяются.
+Контроль сохранности — `docs/refactoring-baseline.json`; исторические отчёты,
+DOCX и source snapshots не изменяются. Mock/CPU и GPU результаты указывать отдельно.
+GitHub Actions удалены по указанию пользователя, проверки выполняются локально.
 
-GitHub Actions workflows удалены 11.10.2026 по указанию пользователя. Проверки выполнять локально в Linux/Docker Compose: релевантные pytest/Ruff, сборки и Compose, после появления backend — PostgreSQL integration. Реальные GPU-smoke выполнять локально на RTX 4050. Проверить cgroup RAM, GPU из нужного контейнера, read-only mounts, сохранность volumes, одновременные запуски/lock и остановку дочернего процесса после сбоя. Записать точное окружение в manifest, не смешивать память хоста/WSL/контейнера.
-
-Вспомогательные _theses_template/ и _theses_work/ удалены 08.10.2026 по указанию пользователя; не восстанавливать их из устаревшей плановой структуры.
+Приложение FastAPI/PostgreSQL/Streamlit, worker, UI и поиск не входят в рефакторинг.
+При их будущей реализации порядок детектор → классификатор всех вырезок →
+аннотатор → согласование и общий lock сохраняются; PostgreSQL integration
+обязателен при приёмке приложения. Не создавать фиктивные сервисы сейчас.

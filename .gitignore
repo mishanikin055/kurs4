@@ -28,3 +28,6 @@ reports/annotation/
 
 # Производные формы оценки содержат исходные captions и закрытый ключ.
 reports/comparisons/annotation-*/expert_*.csv
+
+# Новые результаты упрощённых однопроходных сравнений.
+reports/runs/
