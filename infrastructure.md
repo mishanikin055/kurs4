@@ -31,6 +31,6 @@
 
 Детекторы — detection/models/, классификаторы — classification/models/; аннотаторы — `annotation/models/`, отдельно закреплённый игнорируемый каталог. Правила загрузки/хешей — [experiments.md](experiments.md). Источник benchmark связать с commit/dirty snapshot и ID/digest контейнера.
 
-CPU CI на Linux: релевантные pytest/Ruff, сборки и Compose, после появления backend — PostgreSQL integration. Реальные GPU-smoke выполнять локально, обычный CI runner не эквивалент RTX 4050. Проверить cgroup RAM, GPU из нужного контейнера, read-only mounts, сохранность volumes, одновременные запуски/lock и остановку дочернего процесса после сбоя. Записать точное окружение в manifest, не смешивать память хоста/WSL/контейнера.
+GitHub Actions workflows удалены 11.10.2026 по указанию пользователя. Проверки выполнять локально в Linux/Docker Compose: релевантные pytest/Ruff, сборки и Compose, после появления backend — PostgreSQL integration. Реальные GPU-smoke выполнять локально на RTX 4050. Проверить cgroup RAM, GPU из нужного контейнера, read-only mounts, сохранность volumes, одновременные запуски/lock и остановку дочернего процесса после сбоя. Записать точное окружение в manifest, не смешивать память хоста/WSL/контейнера.
 
 Вспомогательные _theses_template/ и _theses_work/ удалены 08.10.2026 по указанию пользователя; не восстанавливать их из устаревшей плановой структуры.

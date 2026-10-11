@@ -1,5 +1,7 @@
 # Курсовой проект: детекция, классификация и аннотирование
 
+GitHub Actions workflows удалены; проверки запускаются локально в Linux/Docker Compose.
+
 Реализованы экспериментальные модули детекции и классификации: [detection/README.md](detection/README.md), [classification/README.md](classification/README.md). Все четыре классификатора прошли офлайн GPU-smoke и предварительное сравнение на 5000 ImageNet-изображениях, три повтора. [Таблица](reports/comparisons/classification-evaluation5000-v1/classification.md), [анализ](reports/comparisons/classification-evaluation5000-v1/analysis.md). [Прикладные crops](classification/crops/README.md) оцениваются отдельно. Добавлен модуль сравнения аннотаторов: [annotation/README.md](annotation/README.md);
 четыре офлайн GPU-smoke и основной test500 завершены. Приложение пока не реализовано. Новые доверительные интервалы не рассчитываются ни в одном сравнении проекта.
 
