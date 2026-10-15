@@ -6,10 +6,14 @@
     "reports/comparisons/classification-validation50000-v1/classification.csv": "99f1c7ba02525921f65c512caada08ea65b4d2f7839ae6832f06a435041f3b4b",
     "reports/comparisons/classification-gt-crops-v1/classification_crops.csv": "2f2aed394f5be23d51559fd627fbd5dd733d410e9e30e27568e2e429899d0306",
     "reports/comparisons/classification-detector-crops-v1/classification_crops.csv": "d13478eaa03095a3b844dc9ff5d3b9c3c88e07e6bccd0c02480abfa59e0ddfd7",
-    "reports/comparisons/annotation-test500-v1/annotation.csv": "6a029c8d622f0ae9112f73de38217972dc33711fd3726cdc37d9090a5b40f05f"
+    "reports/comparisons/annotation-test500-v1/annotation.csv": "6a029c8d622f0ae9112f73de38217972dc33711fd3726cdc37d9090a5b40f05f",
+    "reports/comparisons/quality_ram.png": "a5f54e1521361bfc04767cd243e9359b42cc00df84813e2b61a042fe631fa2c9",
+    "reports/comparisons/quality_latency.png": "b5ca54a654941d25060766cd1bc814debd355db9f35879c945fac3f1cf487969",
+    "reports/comparisons/quality_vram.png": "1e896e7c93b40062e4863784e939d972d427c463e8658176a6578cdbe1b4e417",
+    "reports/comparisons/classification_quality_time.png": "442e58737a79154e4722998c97ace43392df7835deec20de0e36441ef1316507"
   },
   "output": "reports/exports/Таблицы для презентации.docx",
-  "output_sha256": "4f8f4ca0ac8fce0a8902f601b45797c6efbb6ec0beec02fac5524c0993a142ec",
+  "output_sha256": "aeeccf960f1cca0eb21788c20c4d36b1948ee6b844c5e44ee48d95d7dee7e9c5",
   "tables": [
     {
       "title": "Качество обнаружения объектов и оперативная память",
@@ -285,8 +289,42 @@
   "verification": "All six saved tables match the selected CSV values; best values use unrounded numbers",
   "indicators_per_table": 5,
   "columns_per_table": 6,
-  "updated_date": "2026-10-10",
+  "updated_date": "2026-10-15",
   "memory_units": "GiB (1024 MiB), peak process RSS / PyTorch memory",
   "new_inference": false,
-  "new_confidence_intervals": false
+  "new_confidence_intervals": false,
+  "charts": [
+    {
+      "source": "reports/comparisons/quality_ram.png",
+      "sha256": "a5f54e1521361bfc04767cd243e9359b42cc00df84813e2b61a042fe631fa2c9",
+      "title": "Детекторы: качество и оперативная память",
+      "caption": "К таблице «Качество обнаружения объектов и оперативная память». Выше — больше mAP, левее — меньше RAM. На графике память в MiB, в таблице — в GiB: 1024 MiB = 1 GiB."
+    },
+    {
+      "source": "reports/comparisons/quality_latency.png",
+      "sha256": "b5ca54a654941d25060766cd1bc814debd355db9f35879c945fac3f1cf487969",
+      "title": "Детекторы: качество и скорость",
+      "caption": "К таблицам качества детекции и «Скорость и память». Выше — больше mAP, левее — меньше типичное время p50. RF-DETR Small лидирует по mAP, YOLO26s — по скорости."
+    },
+    {
+      "source": "reports/comparisons/quality_vram.png",
+      "sha256": "1e896e7c93b40062e4863784e939d972d427c463e8658176a6578cdbe1b4e417",
+      "title": "Детекторы: качество и видеопамять",
+      "caption": "К таблицам качества детекции и «Скорость и память». Показана занятая память PyTorch (allocated), а не резерв или весь расход GPU. На графике MiB, в таблице GiB: 1024 MiB = 1 GiB."
+    },
+    {
+      "source": "reports/comparisons/classification_quality_time.png",
+      "sha256": "442e58737a79154e4722998c97ace43392df7835deec20de0e36441ef1316507",
+      "title": "Классификаторы: качество и скорость",
+      "caption": "К таблицам ImageNet и вырезок объектов. Слева — целые изображения ImageNet, в центре — эталонные вырезки, справа — вырезки детектора. Выше — больше Top-1, левее — меньше время p50. Шкалы Top-1 различаются; точность на целых изображениях и вырезках напрямую не сравнивается."
+    }
+  ],
+  "chart_verification": {
+    "docx_archive_integrity": true,
+    "embedded_images": 4,
+    "original_tables_unchanged": true,
+    "original_paragraphs_unchanged": true,
+    "images_fit_page_bounds": true,
+    "word_visual_preview": false
+  }
 }
