@@ -1,87 +1,20 @@
-from datetime import datetime
-from typing import Literal
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field, FiniteFloat, model_validator
+from pydantic import BaseModel, Field, FiniteFloat, model_validator
 
 
 class AcceptedImage(BaseModel):
     image_id: UUID
-    job_id: UUID
-    status: str
-    publish_status: str
-    status_url: str
-
-
-class ImageInfo(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
-    id: UUID
-    original_filename: str
-    original_sha256: str
-    original_mime: str
-    original_size_bytes: int
-    normalized_sha256: str
-    width: int
-    height: int
-    normalization_version: str
-    created_at: datetime
-
-
-class ResultInfo(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
-    stage: str
-    status: str
-    model_name: str | None
-    model_revision: str | None
-    weights_sha256: str | None
-    parameters: dict
-    schema_version: int
-    payload: dict | None
-    started_at: datetime | None
-    finished_at: datetime | None
-    duration_ms: float | None
-    error: dict | None
-
-
-class JobInfo(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
-    id: UUID
-    status: str
-    current_stage: str | None
-    created_at: datetime
-    started_at: datetime | None
-    finished_at: datetime | None
-    error: dict | None
-    publish_status: str
-    published_at: datetime | None
-    publish_attempts: int
-    next_publish_at: datetime
-    publish_error: dict | None
-    processing_attempts: int
-    image: ImageInfo
-    results: list[ResultInfo]
-
-
-# Payload contracts are also validated in the worker before committing JSONB.
+    output_folder: str
 
 
 class DetectedObject(BaseModel):
     object_id: UUID
     bbox: tuple[FiniteFloat, FiniteFloat, FiniteFloat, FiniteFloat]
-    label: str
-    class_id: int
-    label_space: Literal["coco"]
-    score: FiniteFloat = Field(ge=0, le=1)
+    label: str = Field(min_length=1)
 
 
 class DetectionPayload(BaseModel):
-    coordinate_space: Literal["normalized_image"]
-    bbox_format: Literal["xyxy"]
-    image_width: int = Field(gt=0)
-    image_height: int = Field(gt=0)
     objects: list[DetectedObject]
 
     @model_validator(mode="after")
@@ -91,34 +24,20 @@ class DetectionPayload(BaseModel):
             raise ValueError("Duplicate object_id")
         for obj in self.objects:
             x1, y1, x2, y2 = obj.bbox
-            if not (0 <= x1 < x2 <= self.image_width and 0 <= y1 < y2 <= self.image_height):
-                raise ValueError("Box outside normalized image")
+            if not (0 <= x1 < x2 and 0 <= y1 < y2):
+                raise ValueError("Invalid box")
         return self
-
-
-class Prediction(BaseModel):
-    class_id: int = Field(ge=0, lt=1000)
-    synset: str
-    label: str
-    score: FiniteFloat = Field(ge=0, le=1)
 
 
 class ClassifiedObject(BaseModel):
     object_id: UUID
-    crop_bbox: tuple[int, int, int, int]
-    status: Literal["succeeded", "failed"]
-    top_k: list[Prediction]
+    label: str | None = Field(default=None, min_length=1)
     error: dict | None = None
 
     @model_validator(mode="after")
     def check_result(self):
-        x1, y1, x2, y2 = self.crop_bbox
-        if not (0 <= x1 < x2 and 0 <= y1 < y2):
-            raise ValueError("Invalid crop")
-        if self.status == "succeeded" and (len(self.top_k) != 5 or self.error is not None):
-            raise ValueError("Expected top five predictions")
-        if self.status == "failed" and (self.top_k or not self.error):
-            raise ValueError("Expected crop error")
+        if (self.label is None) == (self.error is None) or self.error == {}:
+            raise ValueError("Expected either one label or a crop error")
         return self
 
 
@@ -128,3 +47,31 @@ class ClassificationPayload(BaseModel):
 
 class AnnotationPayload(BaseModel):
     raw_caption: str = Field(min_length=1)
+
+
+class ImageResult(BaseModel):
+    id: UUID
+    width: int = Field(gt=0)
+    height: int = Field(gt=0)
+    models: dict[str, dict[str, str]]
+    detection: DetectionPayload
+    classification: ClassificationPayload
+    annotation: AnnotationPayload
+
+    @model_validator(mode="after")
+    def check_results(self):
+        detected = {obj.object_id for obj in self.detection.objects}
+        classified = [obj.object_id for obj in self.classification.objects]
+        if set(classified) != detected or len(classified) != len(detected):
+            raise ValueError("Classification object IDs do not match detection")
+        if any(obj.error for obj in self.classification.objects):
+            raise ValueError("Incomplete classification")
+        if any(
+            obj.bbox[2] > self.width or obj.bbox[3] > self.height for obj in self.detection.objects
+        ):
+            raise ValueError("Box outside normalized image")
+        if not self.annotation.raw_caption.strip():
+            raise ValueError("Empty caption")
+        if set(self.models) != {"detection", "classification", "annotation"}:
+            raise ValueError("Expected three model checkpoints")
+        return self

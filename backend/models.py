@@ -1,9 +1,10 @@
-"""Three concrete offline model adapters, invoked only in a fresh subprocess."""
+"""Three offline adapters; each resident process owns one initialized model."""
 
 import hashlib
 import json
 import math
 import sys
+import time
 from pathlib import Path
 from uuid import uuid4
 
@@ -25,15 +26,20 @@ def verify_files(stage: str, request: dict) -> Path:
     return directory
 
 
-def detect(image: Image.Image, directory: Path, parameters: dict) -> dict:
-    import torch
+def load_detector(directory: Path, device: str):
     from rfdetr import RFDETRSmall
+
+    wrapper = RFDETRSmall(pretrain_weights=str(directory / "rf-detr-small.pth"), device=device)
+    wrapper.model.model.to(device).eval()
+    return wrapper
+
+
+def detect(image: Image.Image, directory: Path, parameters: dict, *, loaded=None) -> dict:
+    import torch
     from torchvision.transforms import functional as F
 
-    wrapper = RFDETRSmall(
-        pretrain_weights=str(directory / "rf-detr-small.pth"), device=parameters["device"]
-    )
-    module = wrapper.model.model.to(parameters["device"]).eval()
+    wrapper = loaded if loaded is not None else load_detector(directory, parameters["device"])
+    module = wrapper.model.model
     tensor = F.to_tensor(image).to(parameters["device"])
     tensor = F.resize(tensor, [512, 512], antialias=False)
     tensor = F.normalize(tensor, wrapper.means, wrapper.stds).unsqueeze(0)
@@ -55,6 +61,8 @@ def detect(image: Image.Image, directory: Path, parameters: dict) -> dict:
     for box, score, label in sorted(values, key=lambda x: -x[1]):
         if not all(math.isfinite(x) for x in [*box, score]):
             raise ValueError("Nonfinite detector output")
+        if score < parameters["score_threshold"]:
+            continue
         if label not in categories:
             continue
         x1, y1, x2, y2 = box
@@ -71,23 +79,14 @@ def detect(image: Image.Image, directory: Path, parameters: dict) -> dict:
                 object_id=str(uuid4()),
                 bbox=box,
                 label=categories[label],
-                class_id=label,
-                label_space="coco",
-                score=score,
             )
         )
         if len(objects) >= parameters["max_detections"]:
             break
-    return dict(
-        coordinate_space="normalized_image",
-        bbox_format="xyxy",
-        image_width=image.width,
-        image_height=image.height,
-        objects=objects,
-    )
+    return {"objects": objects}
 
 
-def classify(image: Image.Image, directory: Path, parameters: dict, detection: dict) -> dict:
+def load_classifier(directory: Path, device: str):
     import torch
     from torchvision.models import ViT_B_16_Weights, vit_b_16
 
@@ -95,35 +94,50 @@ def classify(image: Image.Image, directory: Path, parameters: dict, detection: d
     state = torch.load(directory / "vit_b_16-c867db91.pth", map_location="cpu", weights_only=True)
     model.load_state_dict(state, strict=True)
     del state
-    model.eval().to(parameters["device"])
+    model.eval().to(device)
     transform = ViT_B_16_Weights.IMAGENET1K_V1.transforms()
     labels = json.loads((Path(__file__).with_name("imagenet_labels.json")).read_text())["classes"]
+    return model, transform, labels
+
+
+def classify(
+    image: Image.Image, directory: Path, parameters: dict, detection: dict, *, loaded=None
+) -> dict:
+    padding = parameters.get("crop_padding_fraction", 0.1)
+    if not math.isfinite(padding) or not 0 <= padding <= 1:
+        raise ValueError("Invalid crop padding")
+    import torch
+
+    model, transform, labels = (
+        loaded if loaded is not None else load_classifier(directory, parameters["device"])
+    )
     objects = []
     for obj in detection["objects"]:
         x1, y1, x2, y2 = obj["bbox"]
-        box = [math.floor(x1), math.floor(y1), math.ceil(x2), math.ceil(y2)]
-        record = dict(
-            object_id=obj["object_id"], crop_bbox=box, status="succeeded", top_k=[], error=None
-        )
+        dx, dy = (x2 - x1) * padding, (y2 - y1) * padding
+        box = [
+            max(0, math.floor(x1 - dx)),
+            max(0, math.floor(y1 - dy)),
+            min(image.width, math.ceil(x2 + dx)),
+            min(image.height, math.ceil(y2 + dy)),
+        ]
+        record = {"object_id": obj["object_id"]}
         try:
             with torch.inference_mode():
                 logits = model(transform(image.crop(box)).unsqueeze(0).to(parameters["device"]))
                 if logits.shape != (1, 1000) or not torch.isfinite(logits).all():
                     raise ValueError("Invalid classifier output")
-                scores, indices = logits.softmax(-1).topk(parameters["top_k"])
-            record["top_k"] = [
-                dict(class_id=i, synset=labels[i]["synset"], label=labels[i]["name"], score=score)
-                for i, score in zip(indices[0].tolist(), scores[0].tolist(), strict=True)
-            ]
+                index = logits.argmax(-1).item()
+            record["label"] = labels[index]["name"]
         except torch.cuda.OutOfMemoryError:
             raise
         except Exception as exc:
-            record.update(status="failed", error={"code": "crop_error", "type": type(exc).__name__})
+            record["error"] = {"code": "crop_error", "type": type(exc).__name__}
         objects.append(record)
     return {"objects": objects}
 
 
-def annotate(image: Image.Image, directory: Path, parameters: dict) -> dict:
+def load_annotator(directory: Path, device: str):
     import torch
     from transformers import AutoModelForCausalLM, AutoProcessor
 
@@ -136,10 +150,19 @@ def annotate(image: Image.Image, directory: Path, parameters: dict) -> dict:
         trust_remote_code=True,
         torch_dtype=torch.float16,
         low_cpu_mem_usage=True,
-        device_map={"": parameters["device"]},
+        device_map={"": device},
         attn_implementation="eager",
     ).eval()
     model.language_model._supports_default_dynamic_cache = lambda: False
+    return processor, model
+
+
+def annotate(image: Image.Image, directory: Path, parameters: dict, *, loaded=None) -> dict:
+    import torch
+
+    processor, model = (
+        loaded if loaded is not None else load_annotator(directory, parameters["device"])
+    )
     inputs = processor(text=parameters["prompt"], images=image, return_tensors="pt")
     inputs = {
         key: value.to(parameters["device"], dtype=torch.float16)
@@ -162,30 +185,88 @@ def annotate(image: Image.Image, directory: Path, parameters: dict) -> dict:
     }
 
 
-def main() -> None:
-    request_path, output_path = map(Path, sys.argv[1:])
-    request = json.loads(request_path.read_text())
+def predict(request: dict, directory: Path, *, loaded=None, image=None) -> dict:
     try:
-        directory = verify_files(request["stage"], request)
-        with Image.open(request["image_path"]) as source:
-            image = source.convert("RGB")
+        if image is None:
+            with Image.open(request["image_path"]) as source:
+                image = source.convert("RGB")
         stage = request["stage"]
         if stage == "detection":
-            payload = detect(image, directory, request["parameters"])
+            payload = detect(image, directory, request["parameters"], loaded=loaded)
         elif stage == "classification":
-            payload = classify(image, directory, request["parameters"], request["detection"])
+            payload = classify(
+                image, directory, request["parameters"], request["detection"], loaded=loaded
+            )
         elif stage == "annotation":
-            payload = annotate(image, directory, request["parameters"])
+            payload = annotate(image, directory, request["parameters"], loaded=loaded)
         else:
             raise ValueError("Unknown stage")
-        result = {"payload": payload}
+        return {"payload": payload}
     except Exception as exc:
-        result = {
+        return {
             "error": {
                 "code": "cuda_oom" if type(exc).__name__ == "OutOfMemoryError" else "model_error",
                 "type": type(exc).__name__,
             }
         }
+
+
+def serve(fd: int) -> None:
+    import socket
+
+    import torch
+
+    from backend.runtime import receive, send
+
+    torch.set_num_threads(4)
+    with socket.socket(fileno=fd) as channel:
+        spec = receive(channel)
+        directory = verify_files(spec["stage"], spec)
+        started = time.monotonic()
+        device = spec["parameters"]["device"]
+        if spec["stage"] == "detection":
+            loaded = load_detector(directory, device)
+        elif spec["stage"] == "classification":
+            loaded = load_classifier(directory, device)
+        else:
+            loaded = load_annotator(directory, device)
+        # Pay CUDA/kernel initialization once, before consuming user jobs.
+        warmup = dict(
+            spec, detection={"objects": [{"object_id": str(uuid4()), "bbox": [0, 0, 224, 224]}]}
+        )
+        response = predict(warmup, directory, loaded=loaded, image=Image.new("RGB", (224, 224)))
+        if "error" in response:
+            send(channel, response)
+            return
+        free = None
+        if device.startswith("cuda"):
+            torch.cuda.synchronize(device)
+            free = torch.cuda.mem_get_info(device)[0]
+        send(channel, {"ready": True, "startup_s": time.monotonic() - started, "vram_free": free})
+        while True:
+            request = receive(channel)
+            if any(request[key] != spec[key] for key in spec):
+                send(channel, {"error": {"code": "model_not_configured"}})
+                continue
+            started = time.monotonic()
+            response = predict(request, directory, loaded=loaded)
+            if device.startswith("cuda"):
+                torch.cuda.synchronize(device)
+            print(f"stage={spec['stage']} inference_s={time.monotonic() - started:.3f}", flush=True)
+            send(channel, response)
+
+
+def main() -> None:
+    if sys.argv[1] == "--serve":
+        serve(int(sys.argv[2]))
+        return
+    request_path, output_path = map(Path, sys.argv[1:])
+    request = json.loads(request_path.read_text())
+    try:
+        directory = verify_files(request["stage"], request)
+        result = predict(request, directory)
+    except Exception as exc:
+        result = {"error": {"code": "model_error", "type": type(exc).__name__}}
     output_path.write_text(json.dumps(result, allow_nan=False))
 
 

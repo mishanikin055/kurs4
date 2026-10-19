@@ -1,25 +1,24 @@
-"""Sequential subprocess inference with durable stage results and an inherited flock."""
+"""Sequential inference, a complete file bundle, then a single database write."""
 
 import fcntl
 import json
 import os
+import shutil
 import signal
 import subprocess
 import tempfile
 import time
-from contextlib import contextmanager
+from contextlib import contextmanager, nullcontext
 from pathlib import Path
 from uuid import UUID
 
-from sqlalchemy.exc import SQLAlchemyError
+from PIL import Image
 
-from backend.repository import JobRepository
-from backend.schemas import AnnotationPayload, ClassificationPayload, DetectionPayload
+from backend.repository import ImageRepository
+from backend.schemas import AnnotationPayload, ClassificationPayload, DetectionPayload, ImageResult
 from backend.settings import Settings, model_specs
-from backend.tables import STAGES, utcnow
-
-FINAL_RESULTS = {"succeeded", "partial", "failed", "skipped"}
-FINAL_JOBS = {"succeeded", "partial", "failed"}
+from backend.storage import result_directory, save_result
+from backend.tables import STAGES
 
 
 class ProcessingInterrupted(BaseException):
@@ -107,11 +106,13 @@ def run_stage(
             stop_process_group(process)
 
 
-def validate_payload(stage: str, payload: dict, job, detection: dict | None) -> tuple[str, dict]:
+def validate_payload(
+    stage: str, payload: dict, size: tuple[int, int] | None, detection: dict | None
+) -> tuple[str, dict]:
     if stage == "detection":
         parsed = DetectionPayload.model_validate(payload)
-        if (parsed.image_width, parsed.image_height) != (job.image.width, job.image.height):
-            raise ValueError("Wrong coordinate space dimensions")
+        if any(obj.bbox[2] > size[0] or obj.bbox[3] > size[1] for obj in parsed.objects):
+            raise ValueError("Box outside normalized image")
         return "succeeded", parsed.model_dump(mode="json")
     if stage == "annotation":
         parsed = AnnotationPayload.model_validate(payload)
@@ -123,152 +124,83 @@ def validate_payload(stage: str, payload: dict, job, detection: dict | None) -> 
     ids = [str(obj.object_id) for obj in parsed.objects]
     if set(ids) != set(expected) or len(ids) != len(expected):
         raise ValueError("Classification object IDs do not match detection")
-    import math
-
-    for obj in parsed.objects:
-        box = expected[str(obj.object_id)]["bbox"]
-        crop = (math.floor(box[0]), math.floor(box[1]), math.ceil(box[2]), math.ceil(box[3]))
-        if obj.crop_bbox != crop:
-            raise ValueError("Classification crop does not match detection")
-    count = sum(obj.status == "succeeded" for obj in parsed.objects)
+    count = sum(obj.label is not None for obj in parsed.objects)
     status = "succeeded" if count == len(parsed.objects) else "partial" if count else "failed"
-    return status, parsed.model_dump(mode="json")
+    return status, parsed.model_dump(mode="json", exclude_none=True)
 
 
-def finish_job(job) -> None:
-    results = {result.stage: result for result in job.results}
-    success = all(
-        result.status == "succeeded"
-        or (
-            result.stage == "classification"
-            and result.status == "skipped"
-            and result.error == {"code": "no_detections"}
-        )
-        for result in job.results
-    )
-    useful = any(result.status in {"succeeded", "partial"} for result in job.results)
-    job.status = "succeeded" if success else "partial" if useful else "failed"
-    job.current_stage = None
-    job.finished_at = utcnow()
-    job.error = (
-        None
-        if success
-        else {
-            "code": "stage_errors",
-            "stages": [
-                stage for stage, result in results.items() if result.status in {"failed", "partial"}
-            ],
-        }
-    )
-
-
-def close_unfinished(job, code: str) -> None:
-    for result in job.results:
-        if result.status not in FINAL_RESULTS:
-            result.status = "failed"
-            result.error = {"code": code}
-            result.finished_at = utcnow()
-    finish_job(job)
-
-
-def process_image(job_id: UUID, sessions, settings: Settings, *, runner=run_stage) -> None:
+def process_image(
+    image_id: UUID,
+    sessions,
+    settings: Settings,
+    *,
+    runner=run_stage,
+    lock_fd: int | None = None,
+) -> None:
     deadline = time.monotonic() + settings.job_timeout
-    with sessions() as session:
-        job = JobRepository(session).get(job_id)
-        if job is None or job.status in FINAL_JOBS:
-            return
-    with inference_lock(settings.lock_path, deadline) as lock_fd:
-        try:
-            with sessions.begin() as session:
-                job = JobRepository(session).get(job_id)
-                if job is None or job.status in FINAL_JOBS:
-                    return
-                if all(result.status in FINAL_RESULTS for result in job.results):
-                    finish_job(job)
-                    return
-                if job.processing_attempts >= 2:
-                    close_unfinished(job, "attempts_exhausted")
-                    return
-                job.processing_attempts += 1
-                job.status = "running"
-                job.started_at = job.started_at or utcnow()
+    destination = result_directory(settings, image_id)
+    source = settings.image_root / str(image_id)
+    lock = inference_lock(settings.lock_path, deadline) if lock_fd is None else nullcontext(lock_fd)
+    with lock as lock_fd:
+        with sessions() as session:
+            existing = ImageRepository(session).get(image_id)
+            if existing is not None:
+                # Duplicates must never rerun models or overwrite a completed image.
+                if Path(existing.result_path).parent != destination:
+                    raise ValueError("Conflicting volume path for completed image")
+                shutil.rmtree(source, ignore_errors=True)
+                return
+        manifest = destination / "results.json"
+        if manifest.is_file():
+            # If the DB was unavailable after file publication, retry only its write.
+            result = ImageResult.model_validate_json(manifest.read_text(encoding="utf-8"))
+            if result.id != image_id or not all(
+                (destination / name).is_file()
+                for name in ("original", "normalized.png", "detection.png")
+            ):
+                raise ValueError("Incomplete result bundle")
+        else:
+            specs = model_specs(settings)
+            with Image.open(source / "normalized.png") as image:
+                size = image.size
+            payloads = {}
             for stage in STAGES:
-                with sessions.begin() as session:
-                    job = JobRepository(session).get(job_id)
-                    results = {result.stage: result for result in job.results}
-                    result = results[stage]
-                    if result.status in FINAL_RESULTS:
-                        continue
-                    if time.monotonic() >= deadline:
-                        close_unfinished(job, "job_timeout")
-                        return
-                    detection = results["detection"].payload
-                    if stage == "classification" and (
-                        results["detection"].status != "succeeded" or not detection["objects"]
-                    ):
-                        result.status = "skipped"
-                        result.error = {
-                            "code": "no_detections"
-                            if results["detection"].status == "succeeded"
-                            else "detection_failed"
-                        }
-                        result.finished_at = utcnow()
-                        continue
-                    expected = model_specs(settings)[stage]
-                    if any(
-                        getattr(result, key) != expected[key]
-                        for key in ("model_name", "model_revision", "weights_sha256")
-                    ):
-                        result.status = "failed"
-                        result.error = {"code": "model_not_configured"}
-                        result.finished_at = utcnow()
-                        continue
-                    result.status = "running"
-                    result.started_at = utcnow()
-                    job.current_stage = stage
-                    request = dict(
-                        stage=stage,
-                        image_path=job.image.normalized_path,
-                        model_root=str(settings.model_root),
-                        parameters=result.parameters,
-                        model_name=result.model_name,
-                        model_revision=result.model_revision,
-                        weights_sha256=result.weights_sha256,
-                    )
-                    if stage == "classification":
-                        request["detection"] = detection
-                started = time.monotonic()
-                try:
-                    response = runner(
-                        request, settings, lock_fd, min(settings.stage_timeout, deadline - started)
-                    )
-                    error = response.get("error")
-                    if error:
-                        status, payload = "failed", None
-                    else:
-                        status, payload = validate_payload(
-                            stage, response["payload"], job, detection
-                        )
-                        error = {"code": "crop_errors"} if status in {"partial", "failed"} else None
-                except Exception as exc:
-                    status, payload = "failed", None
-                    error = {"code": "internal_error", "type": type(exc).__name__}
-                # DB errors deliberately escape: never ACK an uncommitted result.
-                with sessions.begin() as session:
-                    result = next(
-                        r for r in JobRepository(session).get(job_id).results if r.stage == stage
-                    )
-                    result.status, result.payload, result.error = status, payload, error
-                    result.finished_at = utcnow()
-                    result.duration_ms = (time.monotonic() - started) * 1000
-            with sessions.begin() as session:
-                finish_job(JobRepository(session).get(job_id))
-        except SQLAlchemyError:
-            raise
-        except Exception:
-            # Persist unexpected coordinator failures while still holding the lock.
-            # A failed commit here also escapes to the task's Reject/requeue path.
-            with sessions.begin() as session:
-                job = JobRepository(session).get(job_id)
-                if job is not None and job.status not in FINAL_JOBS:
-                    close_unfinished(job, "internal_error")
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    raise TimeoutError("Inference deadline exceeded")
+                detection = payloads.get("detection")
+                if stage == "classification" and not detection["objects"]:
+                    payloads[stage] = {"objects": []}
+                    continue
+                request = dict(
+                    stage=stage,
+                    image_path=str(source / "normalized.png"),
+                    model_root=str(settings.model_root),
+                    **specs[stage],
+                )
+                if stage == "classification":
+                    request["detection"] = detection
+                response = runner(
+                    request, settings, lock_fd, min(settings.stage_timeout, remaining)
+                )
+                if response.get("error"):
+                    raise RuntimeError(f"{stage}: {response['error'].get('code', 'model_error')}")
+                status, payload = validate_payload(stage, response["payload"], size, detection)
+                if status != "succeeded":
+                    raise RuntimeError(f"{stage}: incomplete result")
+                payloads[stage] = payload
+            result = ImageResult(
+                id=image_id,
+                width=size[0],
+                height=size[1],
+                models={
+                    stage: {key: specs[stage][key] for key in ("model_name", "model_revision")}
+                    for stage in STAGES
+                },
+                **payloads,
+            )
+            save_result(result, source, destination)
+        # No image, job, status, error or intermediate stage is written before this point.
+        with sessions.begin() as session:
+            ImageRepository(session).save(result, destination)
+        shutil.rmtree(source, ignore_errors=True)

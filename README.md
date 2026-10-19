@@ -1,324 +1,200 @@
-# Детекция, классификация и аннотирование изображений
+# Запуск приложения
 
-Курсовой проект: три сравнения четырёх готовых моделей без обучения.
-Завершённые научные сравнения сохранены. Приложение принимает изображения через
-FastAPI, сохраняет задания в PostgreSQL и публикует их в RabbitMQ. Реализована
-Celery-задача `process_image`: RF-DETR Small → ViT-B/16 всех вырезок → Florence-2
-base-ft, отдельный процесс на этап. Модели выбраны пользователем 11.10.2026.
-CPU/mock и интеграция инфраструктуры проверяются отдельно от реального GPU-инференса;
-smoke выбранной тройки пока не выполнен. Сравнения повторно не запускались.
+Команды для текущей WSL2: нужны запущенный Docker с Compose, Python 3 и доступ к NVIDIA GPU.
+Веса RF-DETR Small, ViT-B/16 и Florence-2 base-ft должны уже находиться в
+`detection/models/rf_detr_small`, `classification/models/vit_b_16` и
+`annotation/models/florence2_base_ft`. При запуске они не скачиваются.
 
-## План приложения
+## 1. Подготовить настройки
 
-Пользователь загружает изображение через `POST /images` и получает ID задания.
-FastAPI сохраняет файл и запись в БД, publisher отправляет `job_id` в RabbitMQ.
-Одна Celery-задача последовательно запускает детектор,
-классификатор всех вырезок и аннотатор с сохранением результатов в PostgreSQL. Результаты читаются через
-`GET /jobs/{job_id}`, состояние инфраструктуры — через `GET /health`.
-
-Три таблицы: `images`, `jobs`, `model_results`. Файлы изображений — в общем volume
-backend/worker. Поля публикации в jobs предотвращают потерю задания при обрыве
-между БД и брокером. Повторная публикация возможна; защита обработки от дублей
-реализована в `process_image`. Рамки привязаны
-к сохранённому изображению для будущего построения overlay без нового инференса.
-Выдача изображений, UI, поиск и согласование отложены.
-
-Активные документы: [AGENTS.md](AGENTS.md), [PROJECT_PLAN.md](PROJECT_PLAN.md),
-[backend.md](backend.md) для делегирования, [infrastructure.md](infrastructure.md)
-и этот README. Дублирующие инструкции и старые задания удалены. Справочные README
-работающего кода, научные результаты и история проверок сохраняются.
-
-`compose.app.yaml` содержит `backend`, `db`, `rabbitmq`, `worker` и постоянные
-volumes. Worker включается явно профилем `processing`. `compose.app.gpu.yaml`
-подключает GPU только worker в текущей WSL. `compose.yaml` и `compose.gpu.yaml`
-сохраняют отдельный стек научных сравнений.
-
-## Запуск backend: загрузка и доставка
-
-Секреты — только в игнорируемом `.secrets/app.env`. Для новой установки создать
-файл один раз, не выводя пароли в терминал:
-
-```bash
-mkdir -p .secrets
-python3 - <<'PYSETUP'
-import os
-import secrets
-from pathlib import Path
-content = Path("backend/app.env.example").read_text()
-content = content.replace("REPLACE_WITH_RANDOM_HEX", secrets.token_hex(24))
-content = content.replace("REPLACE_WITH_ANOTHER_RANDOM_HEX", secrets.token_hex(24))
-fd = os.open(".secrets/app.env", os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
-with os.fdopen(fd, "w") as stream:
-    stream.write(content)
-PYSETUP
-```
-
-Существующий env сохранять: изменение пароля в файле не меняет пароль уже
-инициализированной БД/брокера. Команды из корня репозитория:
-
-```bash
-docker compose -p kurs4-app -f compose.app.yaml config --quiet
-docker compose -p kurs4-app -f compose.app.yaml build backend
-docker compose -p kurs4-app -f compose.app.yaml up -d --wait db rabbitmq
-docker compose -p kurs4-app -f compose.app.yaml run --rm backend alembic -c backend/alembic.ini upgrade head
-docker compose -p kurs4-app -f compose.app.yaml up -d backend
-```
-
-[Swagger UI](http://127.0.0.1:8000/docs): `POST /images`, `GET /jobs/{job_id}`,
-`GET /health`. Порт можно изменить через `APP_HTTP_PORT`. Загрузка JPEG/PNG —
-до 10 MiB и 25 млн пикселей; проверяются реальные байты, EXIF и отсутствие
-анимации. Оригинал и нормализованный RGB PNG сохраняются до транзакции БД.
-На ошибке удаляются только файлы текущей загрузки. Ответы не раскрывают пути.
-Повторный POST создаёт новое задание, одинаковые SHA-256 не объединяются.
-
-Ответ `202` означает сохранение задания; `publish_status` меняется `pending → sent`
-после publisher confirm. При недоступном RabbitMQ загрузка сохраняется, publisher
-повторяет отправку с задержкой 5–60 секунд. При недоступной БД API возвращает `503`.
-Один API-процесс и один publisher обязательны. `/health` проверяет БД, брокер
-и цикл публикации; `processing: configured` означает наличие обработчика,
-а не проверку доступности GPU, весов или работающего consumer.
-
-При создании задания фиксируются модель, revision, SHA-256 весов и параметры из
-`backend/checkpoints.json`. Старые задания с пустыми checkpoint не получают новые
-модели задним числом: worker завершает их с `model_not_configured`, классификацию
-пропускает с `detection_failed`. Для обработки такого изображения нужна новая загрузка.
-
-Backend разделён на слои: `api.py` переводит HTTP-запросы и ошибки, `service.py`
-управляет приёмом изображения и транзакцией, `repository.py` содержит SQL-запросы,
-`db.py` создаёт подключения и сессию через `Depends(get_session)`, `tables.py`
-описывает ORM. `main.py` собирает приложение и lifespan publisher. Зависимость
-`get_service` можно подменить через `app.dependency_overrides`.
-
-## Worker и модели
-
-Новые команды запускают прикладной инференс, поэтому выполнять их после явного
-решения о smoke/обработке изображений. В этой задаче реальных моделей не запускали:
-
-```bash
-docker compose -p kurs4-app -f compose.app.yaml --profile processing build worker
-docker compose -p kurs4-app -f compose.app.yaml -f compose.app.gpu.yaml --profile processing up -d worker
-```
-
-Веса уже подготовлены сравнениями и подключаются read-only, автоматических
-скачиваний нет. Внутри worker два окружения: `/opt/detection` (Transformers 5.19.0,
-RF-DETR и ViT) и `/opt/annotation` (Transformers 4.57.6, Florence).
-Точные ML-зависимости ограничены историческими lock-файлами; единственное исключение
-для annotation — typing-extensions 4.16.0 для совместимости с текущим DB runtime.
-`pip check` обязателен при сборке каждого окружения. Датасеты worker не нужны.
-`imagenet_labels.json` — закреплённый словарь из classification/configs, сохранён
-отдельно для автономного backend. `checkpoints.json` фиксирует хеши весов и файлов
-модели; перед загрузкой в subprocess они проверяются, включая код Florence.
-
-Общий `storage/locks/inference.lock` наследуется модельным процессом; блокировка
-удерживается до его завершения. Batch 1, одна модель в памяти. Дефолтные таймауты:
-600 секунд на этап, 2400 секунд на доставку задания с ожиданием lock; процессы
-останавливаются по группам. Бюджет брокера — 7200 секунд. Настройки `APP_STAGE_TIMEOUT`
-и `APP_JOB_TIMEOUT` менять согласованно с `rabbitmq.conf` и временем остановки.
-При занятом lock после истечения бюджета сообщение перепубликуется через Celery retry.
-Успешные/ошибочные конечные этапы неизменяемы, после аварии выполняются только
-незавершённые; максимум две попытки обработки. Ноль объектов пропускает классификацию,
-но сохраняет успешный итог при успешном caption. Ошибка детектора не мешает caption.
-При сбое commit БД сообщение requeue, consumer останавливается; после перезапуска
-он ждёт БД перед чтением очереди. Exactly-once не обещается. Remote control,
-mingle и gossip отключены: для одного worker служебный обмен не нужен.
-
-Обычная остановка сохраняет данные:
-
-```bash
-docker compose -p kurs4-app -f compose.app.yaml down
-```
-
-`down -v` удаляет volumes и не является штатным перезапуском. Для backup нужны
-PostgreSQL и volume изображений; RabbitMQ хранит очередь в собственном volume.
-
-## Проверки backend
-
-Тестовый образ не включает модели. Для интеграции используются отдельные volumes
-и сеть проекта `kurs4-backend-test`. **Не запускать интеграционные тесты против
-рабочего брокера: тесты очищают тестовую очередь `inference`.** API-сервис тестового
-проекта во время pytest должен быть остановлен; publisher запускается внутри тестов.
-
-```bash
-docker build --target test -f backend/Dockerfile -t kurs4-backend-test:v2 .
-docker compose -p kurs4-backend-test -f compose.app.yaml up -d --wait db rabbitmq
-docker compose -p kurs4-backend-test -f compose.app.yaml run --rm backend alembic -c backend/alembic.ini upgrade head
-docker run --rm --init --network kurs4-backend-test_default --env-file .secrets/app.env -e APP_TEST_INTEGRATION=1 kurs4-backend-test:v2 python -m pytest backend/tests -q
-docker compose -p kurs4-backend-test -f compose.app.yaml run --rm backend alembic -c backend/alembic.ini check
-# Дополнительная проверка реального отключения БД (только изолированный проект):
-.venv-backend/bin/python backend/tests/check_db_outage.py
-docker compose -p kurs4-backend-test -f compose.app.yaml down
-```
-
-Без `APP_TEST_INTEGRATION=1` выполняются CPU-тесты, интеграция пропускается.
-Для локальной разработки: `uv venv --python 3.12 .venv-backend`, затем
-`uv pip sync --python .venv-backend/bin/python backend/requirements-dev.txt`.
-Полные списки зависимостей закреплены в `backend/requirements*.txt`; `.in` —
-исходные ограничения. Локальные команды: `.venv-backend/bin/python -m pytest backend/tests -q`,
-`RUFF_CACHE_DIR=/tmp/kurs4-ruff .venv-backend/bin/python -m ruff check .` и
-`RUFF_CACHE_DIR=/tmp/kurs4-ruff .venv-backend/bin/python -m ruff format --check .`.
-
-Интеграционные тесты запускают отдельный настоящий prefork consumer и синтетические
-модельные subprocess. `check_db_outage.py` — host-контроллер теста остановки БД,
-он работает только с проектом `kurs4-backend-test` и образом тестов `v2`.
-Эти проверки не подтверждают качество и совместимость реального GPU-инференса.
-
-Проверки от 11.10.2026: 46 backend-тестов из финального Docker-образа,
-отдельно 1 тест настоящего отключения БД; 73 CPU-теста сравнений в своих
-окружениях. Ruff check/format, Alembic check, Compose config и сборки api/test/worker
-прошли; импорты обоих ML-окружений и хеши файлов checkpoint проверены без загрузки
-моделей. TestClient выдаёт одно предупреждение об устаревающей зависимости httpx.
-Отчёт: [backend-layered-inference-2026-10-11.json](reports/verification/backend-layered-inference-2026-10-11.json).
-
-## Папки и служебные файлы
-
-- `backend/` — сборка приложения (`main.py`), HTTP (`api.py`), бизнес-логика (`service.py`),
-  SQL (`repository.py`), сессии/DI (`db.py`), ORM (`tables.py`), ответы и payload (`schemas.py`),
-  файлы (`storage.py`), Celery/publisher (`tasks.py`), конвейер (`processing.py`),
-  модельные адаптеры (`models.py`), env (`settings.py`),
-  миграции, Docker targets api/worker/test и отдельные CPU/интеграционные тесты.
-- `compose.app.yaml`, `rabbitmq.conf` — инфраструктура приложения; `backend/app.env.example`
-  — шаблон локальных секретов.
-- `scripts/detection/`, `scripts/classification/`, `scripts/annotation/` — по
-  четыре скрипта с явной загрузкой конкретной модели и один `common.py`:
-  набор, замеры, метрики, сохранение и таблица. Общий модуль запускает этот же
-  скрипт в дочернем процессе с наследуемой блокировкой и ждёт его завершения.
-- `scripts/prepare.py` — явная загрузка из закреплённых источников, SHA-256,
-  подготовка и проверка manifests. Сравнения его автоматически не вызывают.
-- `scripts/export_tables.py` — вывод сохранённых сравнительных CSV в консоль;
-  только стандартная библиотека Python.
-- `data/` — COCO, ImageNet и ресурсы метрик; `*/models/` — локальные веса.
-  Данные, веса, кэши, окружения и `.secrets/` игнорируются Git.
-- `detection/`, `classification/`, `annotation/` — закреплённые configs,
-  Dockerfile, requirements и тесты. `annotation/evaluation/` — проверенный
-  сторонний код CHAIR/Pattern, словари, источники и лицензии.
-- `compose.yaml` — три отдельных ML-окружения; `compose.gpu.yaml` — GPU текущей
-  WSL через `/dev/dxg` и библиотеки драйвера read-only. Docker socket не нужен.
-- `reports/runs/<направление>/<run>/` — новые однопроходные результаты;
-  остальные `reports/` — сохранённые исторические эксперименты, таблицы и DOCX.
-- `tests/` — проверки подготовки; `*/tests/` — метрики и инварианты направлений;
-  `pyproject.toml` — pytest/Ruff; `docs/decisions.md` — принятые решения;
-  `docs/refactoring-baseline.json` — исходные SHA-256 2046 исторических файлов.
-- `AGENTS.md` — навигация и правила; `PROJECT_PLAN.md` — архитектура;
-  `backend.md` — краткое задание; `infrastructure.md` — контейнеры и ресурсы.
-  Исходные материалы в `Материалы для курсовой/` не перемещаются и автоматически
-  не коммитятся. README в каталогах сравнений документируют существующий код.
-
-## Подготовка
-
-Bash, `/home/mikhail/kurs4`. Используются три проверенных образа;
-`docker compose build` собирает их по закреплённым Dockerfile.
+Выполнить в терминале WSL. Если `.secrets/app.env` уже существует, он сохранится.
 
 ```bash
 cd /home/mikhail/kurs4
-export LOCAL_UID="$(id -u)" LOCAL_GID="$(id -g)"
-export DETECTION_IMAGE_ID="$(docker image inspect kurs4-detection:v1 --format '{{.Id}}')"
-export CLASSIFICATION_IMAGE_ID="$(docker image inspect kurs4-classification:v1 --format '{{.Id}}')"
-export ANNOTATION_IMAGE_ID="$(docker image inspect kurs4-annotation:v1 --format '{{.Id}}')"
-docker compose run --rm detection scripts/prepare.py detection --verify-only
-docker compose run --rm classification scripts/prepare.py classification --verify-only
-docker compose run --rm annotation scripts/prepare.py annotation --verify-only
+mkdir -p .secrets
+python3 - <<'PY'
+import os
+import secrets
+from pathlib import Path
+
+path = Path(".secrets/app.env")
+if not path.exists():
+    content = Path("backend/app.env.example").read_text()
+    content = content.replace("REPLACE_WITH_RANDOM_HEX", secrets.token_hex(24))
+    content = content.replace("REPLACE_WITH_ANOTHER_RANDOM_HEX", secrets.token_hex(24))
+    fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    with os.fdopen(fd, "w") as stream:
+        stream.write(content)
+PY
 ```
 
-Данные и веса уже подготовлены. Для новой установки загрузка разрешается
-явно: `--download`, сеть `COMPARISON_NETWORK=bridge` и запись
-`PREPARE_ACCESS=rw`. Без этих переменных runtime офлайн, данные и веса read-only.
+## 2. Собрать и запустить
+
+Выполнять по порядку; при ошибке остановиться и проверить её. Первая сборка worker может занять длительное время.
 
 ```bash
-COMPARISON_NETWORK=bridge PREPARE_ACCESS=rw docker compose run --rm detection scripts/prepare.py detection --download
-COMPARISON_NETWORK=bridge PREPARE_ACCESS=rw docker compose run --rm classification -v "$PWD/.secrets/hf_token:/workspace/.secrets/hf_token:ro" scripts/prepare.py classification --download
-COMPARISON_NETWORK=bridge PREPARE_ACCESS=rw docker compose run --rm annotation scripts/prepare.py annotation --download
+docker compose -p kurs4-app -f compose.app.yaml --profile processing build backend worker frontend
+docker compose -p kurs4-app -f compose.app.yaml up -d --wait db rabbitmq
+docker compose -p kurs4-app -f compose.app.yaml run --rm backend alembic -c backend/alembic.ini upgrade head
+docker compose -p kurs4-app -f compose.app.yaml -f compose.app.gpu.yaml --profile processing up -d backend worker frontend
 ```
 
-Для ImageNet пользователь заранее принимает условия HF; токен только в
-`.secrets/hf_token`, в вывод не попадает. Для подготовки manifests из локальных
-файлов: `PREPARE_ACCESS=rw docker compose run --rm <сервис> scripts/prepare.py <направление>`.
-`--dry-run` показывает источники без записи. Существующие отличающиеся manifests
-не заменяются. Для аннотаторов сначала должны быть подготовлены COCO и разметка.
+Worker сначала проверяет веса, загружает и прогревает все три модели, затем
+начинает обрабатывать загруженные картинки, включая уже накопленные задания.
+Модели остаются в памяти до остановки worker; на новом изображении веса не
+перечитываются. Вычисления остаются последовательными, одно задание одновременно.
+При нехватке RAM/VRAM consumer не запускается. Подробности текущего короткого
+GPU smoke и его ограничений — [проверка постоянных моделей](reports/verification/resident-models-2026-10-13.md).
 
-## Двенадцать команд запуска
-
-Ниже команды для будущих явно запрошенных запусков: **два изображения**, один проход.
-По последнему указанию пользователя в ходе переделки больше не запускать
-модели и не пересобирать сравнительные таблицы.
-Для полного набора удалите `--limit 2` и выберите новое имя `--run`;
-полные сравнения ради рефакторинга повторять не нужно.
-Четыре модели направления запускайте последовательно с одинаковыми параметрами.
+`backend/runtime.py` отвечает за постоянные модельные subprocess и локальный IPC;
+`backend/tasks.py` — за Celery, `backend/processing.py` — за этапы и сохранение результатов.
+Проверка весов выполняется при старте. Перед сменой весов или параметров завершить
+очередь и пересоздать worker. Он удерживает общий inference-lock весь срок жизни
+моделей, поэтому перед запуском научного сравнения worker нужно остановить:
 
 ```bash
-docker compose -f compose.yaml -f compose.gpu.yaml run --rm detection scripts/detection/yolo26s.py --run my-check --limit 2
-docker compose -f compose.yaml -f compose.gpu.yaml run --rm detection scripts/detection/rtdetr_v2_r18.py --run my-check --limit 2
-docker compose -f compose.yaml -f compose.gpu.yaml run --rm detection scripts/detection/rf_detr_small.py --run my-check --limit 2
-docker compose -f compose.yaml -f compose.gpu.yaml run --rm detection scripts/detection/faster_rcnn.py --run my-check --limit 2
-
-docker compose -f compose.yaml -f compose.gpu.yaml run --rm classification scripts/classification/resnet50.py --run my-check --limit 2
-docker compose -f compose.yaml -f compose.gpu.yaml run --rm classification scripts/classification/efficientnet_v2_s.py --run my-check --limit 2
-docker compose -f compose.yaml -f compose.gpu.yaml run --rm classification scripts/classification/convnext_tiny.py --run my-check --limit 2
-docker compose -f compose.yaml -f compose.gpu.yaml run --rm classification scripts/classification/vit_b_16.py --run my-check --limit 2
-
-docker compose -f compose.yaml -f compose.gpu.yaml run --rm annotation scripts/annotation/blip_base.py --run my-check --limit 2
-docker compose -f compose.yaml -f compose.gpu.yaml run --rm annotation scripts/annotation/florence2_base_ft.py --run my-check --limit 2
-docker compose -f compose.yaml -f compose.gpu.yaml run --rm annotation scripts/annotation/qwen3_vl_2b.py --run my-check --limit 2
-docker compose -f compose.yaml -f compose.gpu.yaml run --rm annotation scripts/annotation/smolvlm2_500m.py --run my-check --limit 2
+docker compose -p kurs4-app -f compose.app.yaml --profile processing stop worker
 ```
 
-По умолчанию: детекция — 4500 COCO test/FP32/20 прогревов;
-классификация — 50 000 ImageNet validation/FP32/20 прогревов;
-аннотирование — COCO test500/FP16/один dev-прогрев/greedy/96 новых токенов.
-Batch 1. Неизменный `raw_caption` сохраняется. Новых CI и crop-запусков нет.
+## 3. Загрузить картинку и сохранить копию
 
-Один `--run` фиксирует набор, параметры, лимит и исходники. Чужие параметры
-отклоняются; существующий результат модели не перезаписывается. После обрыва
-нужно новое имя. Lock `storage/locks/inference.lock` защищает модельный процесс
-до его завершения. После SIGKILL модельного потомка старые артефакты сохраняются.
+Открыть [localhost:8080](http://localhost:8080), выбрать JPEG/PNG и нажать
+«Отправить». API отвечает `202` только после подтверждения RabbitMQ.
+Во время загрузки в БД ничего не создаётся. В сообщении очереди — только `image_id`.
+API не загружает модели и не зависит от доступности PostgreSQL.
 
-В каталоге сравнения находятся `comparison.csv`, `comparison.md`,
-`comparison.json`, результаты моделей `run.json` и `samples.jsonl` с
-предсказаниями/измерениями по изображениям, дополнительные таблицы по классам.
-Четыре строки включают `not_run`, ошибки/OOM и неполные запуски. `shortened`
-отмечает сокращённую проверку; её нельзя выдавать за полное сравнение.
-Детекторы сохраняют первое изображение и overlay; детекция и классификация
-проверяют native parity на первом изображении.
+Worker выполняет RF-DETR Small → ViT-B/16 на всех вырезках → Florence-2 base-ft.
+Вырезки расширяются на 10% с каждой стороны в пределах изображения; bbox не меняется.
+Если объектов нет, классификация сохраняется как пустой список, аннотатор работает.
 
-## Восстановление отчёта и вывод в консоль
+После полного инференса **всегда** сохраняется основная копия в `image_data`:
 
-Без GPU и загрузки весов; можно выбрать любой файл модели направления:
+```text
+/var/lib/kurs4/images/results/<image_id>/
+  original          # исходные байты JPEG/PNG
+  normalized.png    # RGB PNG после EXIF orientation
+  detection.png     # PNG с исходными COCO-рамками и подписями
+  results.json      # ответы трёх моделей и имена/ревизии checkpoint
+```
+
+Сначала комплект записывается во временный каталог, затем публикуется одним
+переименованием. Только после этого worker одной транзакцией сохраняет запись БД.
+`raw_caption` не меняется, `object_id` связывает bbox и класс вырезки. Scores,
+top-k, замеры и параметры в БД не записываются. Семантическое объединение меток
+в этой простой версии не выполняется; исходные ответы остаются отдельно.
+
+**Дополнительная папка на компьютере** выбирается кнопкой «Выбрать папку».
+После обработки нажать «Сохранить копию»: браузер создаст подпапку `<image_id>`
+и запишет четыре файла. Это дополнительная копия; файлы в volume остаются всегда.
+Папку можно не выбирать — тогда скачивается ZIP. Выбор папки требует поддержки
+File System Access API и защищённого контекста (например, localhost в Chromium).
+В остальных браузерах доступен ZIP через обычное окно загрузки браузера.
+
+Автоматического опроса, callback, статусов и сообщений об ошибках инференса нет.
+Если файлы ещё не появились, ручное сохранение возвращает `404`; попробовать позже.
+Вкладка должна оставаться открытой для сохранения в выбранную папку. После обновления
+страницы скачивание по известному UUID доступно через API; повторная загрузка
+изображения создаёт новый UUID. Состояние браузерной папки на сервер не передаётся.
+
+Посмотреть основную копию прямо в volume без загрузки на компьютер:
 
 ```bash
-docker compose run --rm detection scripts/detection/yolo26s.py --run my-check --report-only
-docker compose run --rm classification scripts/classification/resnet50.py --run my-check --report-only
-docker compose run --rm annotation scripts/annotation/blip_base.py --run my-check --report-only
+docker compose -p kurs4-app -f compose.app.yaml exec backend ls /var/lib/kurs4/images/results
+# Для конкретного UUID:
+# docker compose -p kurs4-app -f compose.app.yaml exec backend cat /var/lib/kurs4/images/results/UUID/results.json
 ```
 
-После запуска модели таблица четырёх участников выводится в консоль и сохраняется
-в CSV/Markdown. Для отдельного просмотра сохранённых таблиц без Docker:
+HTTP API: [Swagger](http://localhost:8000/docs).
+
+| Endpoint | Назначение |
+|---|---|
+| `POST /images` | Multipart `file`, JPEG/PNG до 10 MiB и 25 Мп; `202`: `image_id`, `output_folder` относительно image volume. |
+| `GET /images/{image_id}/files/{filename}` | Явное скачивание `original`, `normalized.png`, `detection.png` или `results.json` после появления полного комплекта. |
+| `GET /images/{image_id}/archive` | ZIP с четырьмя файлами готового результата. |
+| `GET /health` | Доступность RabbitMQ для приёма загрузок, без проверки моделей/БД. |
+
+`/jobs/...` удалены. HTTP-валидация загрузок и коды HTTP при недоступности брокера
+сохранены: невалидный файл не публикуется, неуспешная отправка не выдаётся за успешную.
+При потере подтверждения публикации входные файлы остаются: брокер уже мог принять
+сообщение. Такая неопределённая загрузка не повторяется автоматически; новый POST
+создаёт новый UUID. Зависшие входные каталоги автоматически не очищаются.
+
+## База данных и обновление
+
+Активная таблица — `processed_images`: UUID (PK), три пути (`original_path`,
+`normalized_path`, `result_path`), ширина/высота и четыре JSONB-поля: `models`,
+`detection`, `classification`, `annotation`. Одна строка — полностью обработанное
+изображение. БД хранит ссылки на файлы в volume и ответы моделей, а не бинарные PNG.
+В новой таблице нет заданий, статусов, ошибок, истории доставки или попыток.
+
+Новая миграция `c81f0e392ab4` только добавляет эту таблицу. Старые `images`, `jobs`
+и `model_results` остаются для сохранности прежних данных; новый поток их не
+читает и не заполняет. ORM этих таблиц оставлен для проверки исторических миграций.
+Старые результаты не перенесены и не пересчитаны. Предыдущая миграция
+`b7d91f4e20ac` остаётся необратимой: при обновлении с более ранней версии сначала
+сохранить backup БД и файлов, как и раньше. Автоматического downgrade нет.
+
+Перед обновлением существующего приложения прекратить загрузки и **завершить
+старую очередь прежним worker**: старые сообщения содержат `job_id`, новые —
+`image_id`. Без завершения очереди версии несовместимы. Затем остановить API/worker,
+сохранить backup, собрать образы и применить миграции командами раздела 2:
 
 ```bash
-python3 scripts/export_tables.py --table reports/runs/detection/my-check/comparison.csv
-python3 scripts/export_tables.py --table reports/runs/classification/my-check/comparison.csv --full
-python3 scripts/export_tables.py --table reports/runs/annotation/my-check/comparison.csv
+docker compose -p kurs4-app -f compose.app.yaml --profile processing stop backend worker
 ```
 
-`--table` можно повторить, `--full` показывает также все столбцы ресурсов.
-Word-экспорт исключён пользователем 11.10.2026. Прежние DOCX и manifests сохранены;
-новые документные зависимости и окружение экспорта не нужны.
+Новый worker проверяет доступность `processed_images` до загрузки моделей.
+Повторная доставка готового изображения не запускает инференс заново.
+Если файлы уже записаны, а commit БД не удался, после восстановления БД worker
+читает сохранённый `results.json` и повторяет только запись БД. ACK — после commit.
+Ошибка модели записывается только в логи Celery; готовой записи/комплекта не будет,
+входные файлы останутся. Автоматического продолжения отдельных этапов больше нет;
+при потере процесса до публикации комплекта вычисления могут повториться целиком.
 
-## Проверки и ограничения
+## Frontend и проверки
+
+`frontend/` — статические HTML/CSS/JavaScript и nginx. `/api/` проксируется к API;
+у nginx нет доступа к БД, image volume, моделям и секретам. Сборка JavaScript и npm
+для приложения не нужны. Тест `frontend/tests/browser.cjs` использует Playwright
+с перехваченным API: отправку в очередь, отсутствие polling, запись выбранной
+папки (mock File System Access API), ZIP и мобильную ширину.
+`FRONTEND_URL` задаёт адрес (по умолчанию теста — localhost:8098), `NODE_PATH` — путь
+к внешнему Playwright, `PLAYWRIGHT_CHROMIUM_EXECUTABLE` — уже установленный Chromium.
+Для localhost:8098 можно отдельно запустить `python3 -m http.server 8098 --bind 127.0.0.1 --directory frontend`.
 
 ```bash
-docker compose run --rm detection -m pytest tests detection/tests -q
-docker compose run --rm classification -m pytest classification/tests -q
-docker compose run --rm annotation -m pytest annotation/tests -q
-docker compose run --rm detection -m ruff check .
-docker compose run --rm detection -m ruff format --check .
-docker compose -f compose.yaml -f compose.gpu.yaml config --quiet
+.venv-backend/bin/python -m pytest -q backend/tests
+.venv-backend/bin/python -m ruff check --no-cache .
+.venv-backend/bin/python -m ruff format --check --no-cache .
 ```
 
-CPU/mock-тесты и реальные GPU-проверки — отдельные результаты. p50/p95
-исключают загрузку/прогрев; точный состав скорости указан в таблицах направления.
-RAM — RSS модельного процесса, allocated/reserved — память PyTorch,
-без всей памяти драйвера/GPU. У разных checkpoint различаются native transforms
-и обучение авторов. Внешний набор и человеческая оценка не использованы.
-Сохранённые описания и source snapshots относятся к прежней ревизии;
-исторические команды внутри них не являются текущими командами запуска.
-Исторические выводы — [итоги](Итоги%20сравнительного%20анализа%20моделей.md)
-и [описание шагов](Как%20выполнялся%20сравнительный%20анализ.md).
+Полный `pytest` всего репозитория дополнительно требует зависимости научных
+сравнений (в частности, pycocotools и nltk); backend-окружение их не содержит.
+
+Интеграционные тесты (`APP_TEST_INTEGRATION=1`) запускаются **только с отдельной
+тестовой БД и брокером**: они очищают тестовую очередь. Они проверяют настоящий
+PostgreSQL/RabbitMQ и отдельный Celery worker с синтетическими модельными процессами.
+Пример повторяемого запуска без GPU, с уже собранным тестовым образом:
+
+```bash
+docker compose -p kurs4-simple-test -f compose.app.yaml up -d --wait db rabbitmq
+docker build --target test -t kurs4-backend-test:v2 -f backend/Dockerfile .
+docker run --rm --network kurs4-simple-test_default --env-file .secrets/app.env -e APP_TEST_INTEGRATION=1 -v "$PWD/backend:/app/backend:ro" -v "$PWD/pyproject.toml:/app/pyproject.toml:ro" kurs4-backend-test:v2 sh -c 'alembic -c backend/alembic.ini upgrade head && python -m pytest -q backend/tests'
+docker compose -p kurs4-simple-test -f compose.app.yaml down
+```
+
+Mock-инференс не подтверждает работоспособность настоящих моделей. В этой переделке
+реальный GPU smoke и научные сравнения не запускались. Короткий прежний GPU smoke
+от 13.10.2026 описан в [отчёте](reports/verification/resident-models-2026-10-13.md).
+
+## Логи и остановка
+
+```bash
+docker compose -p kurs4-app -f compose.app.yaml --profile processing logs --tail 100 -f backend worker
+docker compose -p kurs4-app -f compose.app.yaml --profile processing down
+```
+
+Не добавлять `-v`: эта опция удаляет постоянные volumes.
+Научные сравнения и сохранённые отчёты не меняются:
+[детекция](detection/README.md), [классификация](classification/README.md),
+[аннотирование](annotation/README.md). Архитектура: [PROJECT_PLAN.md](PROJECT_PLAN.md).

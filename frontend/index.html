@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="description" content="Детекция объектов, классификация и описание ваших изображений.">
+  <title>Анализ изображений</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <main>
+    <section class="intro" aria-labelledby="title">
+      <h1 id="title">Что на изображении?</h1>
+      <p>Загрузите фотографию, чтобы найти объекты, уточнить их классы и получить описание.</p>
+    </section>
+    <form id="upload-form">
+      <label for="file" class="file-label">Изображение</label>
+      <div id="dropzone" class="upload-bar">
+        <div class="file-control">
+          <input id="file" type="file" accept="image/jpeg,image/png,.jpg,.jpeg,.png" required aria-describedby="file-help">
+          <p id="file-help">JPEG или PNG, до 10 МиБ. Можно перетащить файл сюда.</p>
+        </div>
+        <button id="submit" type="submit">Отправить</button>
+      </div>
+      <div class="folder-control">
+        <label for="folder" class="file-label">Дополнительная копия на компьютере</label>
+        <div class="folder-actions">
+          <input id="folder" type="text" value="Не выбрана" readonly aria-describedby="folder-help">
+          <button id="choose-folder" class="secondary" type="button">Выбрать папку</button>
+        </div>
+        <p id="folder-help" class="helper">Основная копия всегда сохраняется в volume. Папка на компьютере необязательна; готовые файлы сохраняются по кнопке ниже.</p>
+      </div>
+    </form>
+    <p id="status" class="status-row" aria-live="polite" role="status">Выберите изображение и отправьте в очередь.</p>
+    <div id="save-actions" hidden>
+      <button id="save-copy" class="secondary" type="button">Сохранить копию</button>
+      <p class="helper">После обработки нажмите «Сохранить копию». Без выбранной папки будет скачан ZIP. Если файлы ещё не готовы, повторите сохранение позже.</p>
+    </div>
+    <p class="helper">В volume сохраняются исходное изображение, нормализованный PNG, PNG с рамками и results.json с ответами трёх моделей.</p>
+  </main>
+</body>
+</html>

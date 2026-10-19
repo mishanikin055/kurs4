@@ -19,7 +19,7 @@
     ],
     "parameters": {
       "batch_size": 1,
-      "score_threshold": 0.3,
+      "score_threshold": 0.5,
       "max_detections": 100,
       "precision": "fp32"
     }
@@ -40,9 +40,9 @@
     ],
     "parameters": {
       "batch_size": 1,
-      "top_k": 5,
       "precision": "fp32",
-      "weights": "IMAGENET1K_V1"
+      "weights": "IMAGENET1K_V1",
+      "crop_padding_fraction": 0.1
     }
   },
   "annotation": {

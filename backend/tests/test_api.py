@@ -1,3 +1,10 @@
+"""Upload and explicit downloads work without accessing PostgreSQL."""
+
+from io import BytesIO
+from uuid import UUID, uuid4
+from zipfile import ZipFile
+
+import pytest
 from fastapi.testclient import TestClient
 
 from backend.main import create_app
@@ -5,33 +12,102 @@ from backend.settings import Settings
 from backend.tests.test_storage import image_bytes
 
 
-def test_file_size_is_checked_before_database_access(tmp_path):
-    app = create_app(
-        Settings(
-            database_url="postgresql+psycopg://unused:unused@127.0.0.1:1/unused",
-            broker_url="amqp://unused:unused@127.0.0.1:1/unused",
-            image_root=tmp_path,
-            max_upload_bytes=50,
-        ),
-        publisher_enabled=False,
+@pytest.fixture
+def app(tmp_path, monkeypatch):
+    settings = Settings(
+        database_url="postgresql+psycopg://unused:unused@127.0.0.1:1/unused",
+        broker_url="amqp://unused:unused@127.0.0.1:1/unused",
+        image_root=tmp_path,
     )
+    monkeypatch.setattr("backend.service.publish_image", lambda *args: None)
+    return create_app(settings)
+
+
+def test_upload_publishes_directly_without_database(app, monkeypatch):
+    published = []
+    monkeypatch.setattr("backend.service.publish_image", lambda *args: published.append(args))
+    with TestClient(app) as client:
+        response = client.post("/images", files={"file": ("photo.png", image_bytes())})
+        assert response.status_code == 202
+        accepted = response.json()
+        image_id = UUID(accepted["image_id"])
+        assert accepted == {"image_id": str(image_id), "output_folder": f"results/{image_id}"}
+        assert published == [(app.state.celery, str(image_id), 3)]
+        assert (app.state.settings.image_root / str(image_id) / "original").is_file()
+        assert not (app.state.settings.image_root / "results").exists()
+        assert client.get(f"/jobs/{image_id}").status_code == 404
+        assert client.get(f"/jobs/{image_id}/status").status_code == 404
+
+
+def test_broker_failure_retains_inputs_in_case_confirmation_was_lost(app, monkeypatch):
+    def fail(*args):
+        raise ConnectionError("confirm lost")
+
+    monkeypatch.setattr("backend.service.publish_image", fail)
+    with TestClient(app) as client:
+        response = client.post("/images", files={"file": ("photo.png", image_bytes())})
+    assert response.status_code == 503
+    assert len(list(app.state.settings.image_root.glob("*/normalized.png"))) == 1
+
+
+@pytest.mark.parametrize("data,status", [(b"bad", 422), (image_bytes("GIF"), 415)])
+def test_invalid_upload_is_not_published(app, monkeypatch, data, status):
+    def unexpected_publish(*args):
+        pytest.fail("Invalid upload was published")
+
+    monkeypatch.setattr("backend.service.publish_image", unexpected_publish)
+    with TestClient(app) as client:
+        assert client.post("/images", files={"file": ("bad.png", data)}).status_code == status
+    assert not list(app.state.settings.image_root.iterdir())
+
+
+def test_downloads_only_expose_completed_bundle_inside_volume(app, tmp_path):
+    image_id = uuid4()
+    directory = tmp_path / "results" / str(image_id)
+    directory.mkdir(parents=True)
+    files = {
+        "original": image_bytes(),
+        "normalized.png": image_bytes(),
+        "detection.png": image_bytes(),
+        "results.json": b'{"annotation":{"raw_caption":"  Caption.  "}}',
+    }
+    with TestClient(app) as client:
+        url = f"/images/{image_id}"
+        for name, content in files.items():
+            if name != "results.json":
+                (directory / name).write_bytes(content)
+        assert client.get(f"{url}/files/detection.png").status_code == 404
+        assert client.get(f"{url}/archive").status_code == 404
+        (directory / "results.json").write_bytes(files["results.json"])
+        for name, content in files.items():
+            response = client.get(f"{url}/files/{name}")
+            assert response.content == content
+            assert response.headers["cache-control"] == "no-store"
+        archive = client.get(f"{url}/archive")
+        assert archive.headers["content-type"] == "application/zip"
+        with ZipFile(BytesIO(archive.content)) as bundle:
+            assert set(bundle.namelist()) == {f"{image_id}/{name}" for name in files}
+            assert bundle.read(f"{image_id}/results.json") == files["results.json"]
+        assert client.get(f"{url}/files/secret").status_code == 404
+        assert client.get("/images/invalid/archive").status_code == 422
+        outside = tmp_path / "secret.png"
+        outside.write_bytes(b"private")
+        (directory / "detection.png").unlink()
+        (directory / "detection.png").symlink_to(outside)
+        assert client.get(f"{url}/files/detection.png").status_code == 404
+        assert client.get(f"{url}/archive").status_code == 404
+
+
+def test_file_size_is_checked_before_publication(app):
+    app.state.settings.max_upload_bytes = 50
     with TestClient(app) as client:
         response = client.post("/images", files={"file": ("large.png", image_bytes())})
     assert response.status_code == 413
-    assert response.json()["detail"] == "upload_too_large"
-    assert not list(tmp_path.iterdir())
+    assert not list(app.state.settings.image_root.iterdir())
 
 
-def test_streaming_body_limit_without_content_length(tmp_path):
-    app = create_app(
-        Settings(
-            database_url="postgresql+psycopg://unused:unused@127.0.0.1:1/unused",
-            broker_url="amqp://unused:unused@127.0.0.1:1/unused",
-            image_root=tmp_path,
-            max_upload_bytes=50,
-        ),
-        publisher_enabled=False,
-    )
+def test_streaming_body_limit_without_content_length(app):
+    application = create_app(app.state.settings.model_copy(update={"max_upload_bytes": 50}))
 
     def body():
         yield b'--test\r\nContent-Disposition: form-data; name="file"; filename="big.png"\r\n\r\n'
@@ -39,11 +115,11 @@ def test_streaming_body_limit_without_content_length(tmp_path):
             yield b"x" * 1024
         yield b"\r\n--test--\r\n"
 
-    with TestClient(app) as client:
+    with TestClient(application) as client:
         response = client.post(
             "/images",
             content=body(),
             headers={"Content-Type": "multipart/form-data; boundary=test"},
         )
     assert response.status_code == 413
-    assert not list(tmp_path.iterdir())
+    assert not list(app.state.settings.image_root.iterdir())

@@ -2,9 +2,9 @@ import logging
 
 from celery import Celery, signals
 from celery.exceptions import WorkerShutdown
+from celery.worker.request import Request
 from kombu import Exchange, Queue
 
-from backend.repository import JobRepository
 from backend.settings import Settings
 
 logger = logging.getLogger(__name__)
@@ -44,7 +44,7 @@ def make_celery(settings: Settings) -> Celery:
     return app
 
 
-def publish_job(app: Celery, job_id: str, timeout: float) -> None:
+def publish_image(app: Celery, image_id: str, timeout: float) -> None:
     # A fresh bounded connection avoids stale pooled sockets after broker restart.
     with app.connection_for_write(
         connect_timeout=timeout,
@@ -57,8 +57,8 @@ def publish_job(app: Celery, job_id: str, timeout: float) -> None:
         connection.ensure_connection(max_retries=0)
         app.send_task(
             TASK_NAME,
-            args=[job_id],
-            task_id=job_id,
+            args=[image_id],
+            task_id=image_id,
             connection=connection,
             retry=False,
             delivery_mode=2,
@@ -76,31 +76,6 @@ def check_broker(app: Celery, timeout: float) -> bool:
         return True
     except Exception:
         return False
-
-
-def publish_pending(sessions, app: Celery, timeout: float, *, tick=lambda: None) -> int:
-    # This version deliberately has one publisher (one API process).
-    with sessions() as session:
-        ids = JobRepository(session).due_publications()
-    published = 0
-    for job_id in ids:
-        tick()
-        with sessions.begin() as session:
-            if not JobRepository(session).reserve_publication(job_id):
-                continue
-        # No DB transaction remains open while waiting for RabbitMQ confirms.
-        error = None
-        try:
-            publish_job(app, str(job_id), timeout)
-        except Exception as exc:
-            error = {"code": "broker_unavailable", "type": type(exc).__name__}
-            logger.warning("Publication failed job_id=%s task_id=%s", job_id, job_id)
-        with sessions.begin() as session:
-            JobRepository(session).publication_result(job_id, error)
-            if error is None:
-                published += 1
-        tick()
-    return published
 
 
 @signals.worker_init.connect
@@ -134,7 +109,21 @@ def interrupt_active_processing(**kwargs):
             pass
 
 
-def register_processing_task(app: Celery, settings: Settings, *, runner=None):
+class ResidentRequest(Request):
+    def on_failure(self, exc_info, *args, **kwargs):
+        import os
+        import signal
+
+        from billiard.exceptions import WorkerLostError
+
+        # A killed coordinator may leave a running model or an unread IPC response.
+        exc = getattr(exc_info.exception, "exc", exc_info.exception)
+        if isinstance(exc, WorkerLostError):
+            os.kill(os.getpid(), signal.SIGTERM)
+        return super().on_failure(exc_info, *args, **kwargs)
+
+
+def register_processing_task(app: Celery, settings: Settings, *, runner=None, lock_fd=None):
     from uuid import UUID
 
     from celery.exceptions import Reject
@@ -142,9 +131,16 @@ def register_processing_task(app: Celery, settings: Settings, *, runner=None):
 
     from backend.db import make_engine, make_sessions
     from backend.processing import LockTimeout, ProcessingInterrupted, interrupt, process_image
+    from backend.runtime import ResidentModelFailed
 
-    @app.task(name=TASK_NAME, acks_late=True, reject_on_worker_lost=True, max_retries=None)
-    def task(job_id: str):
+    @app.task(
+        name=TASK_NAME,
+        acks_late=True,
+        reject_on_worker_lost=True,
+        max_retries=None,
+        Request=ResidentRequest if lock_fd is not None else Request,
+    )
+    def task(image_id: str):
         import os
         import signal
 
@@ -153,8 +149,10 @@ def register_processing_task(app: Celery, settings: Settings, *, runner=None):
         previous_interrupt = signal.signal(signal.SIGUSR2, interrupt)
         try:
             options = {"runner": runner} if runner is not None else {}
-            process_image(UUID(job_id), make_sessions(engine), settings, **options)
-        except SQLAlchemyError as exc:
+            process_image(
+                UUID(image_id), make_sessions(engine), settings, lock_fd=lock_fd, **options
+            )
+        except (SQLAlchemyError, ResidentModelFailed) as exc:
             # Warm-stop the consumer; supervisor restarts through the DB readiness gate.
             signal.signal(signal.SIGUSR2, signal.SIG_IGN)
             os.kill(os.getppid(), signal.SIGTERM)
@@ -184,28 +182,41 @@ def worker_main(settings: Settings, *, runner=None) -> None:
         while True:
             try:
                 with make_sessions(engine)() as session:
-                    JobRepository(session).ping()
+                    # Fail readiness until the new completed-results table exists.
+                    from sqlalchemy import select
+
+                    from backend.tables import ProcessedImage
+
+                    session.execute(select(ProcessedImage.id).limit(1))
                 break
             except SQLAlchemyError:
                 logger.warning("Worker waiting for database")
                 time.sleep(5)
     finally:
         engine.dispose()
-    app = make_celery(settings)
-    register_processing_task(app, settings, runner=runner)
-    app.worker_main(
-        [
-            "worker",
-            "--pool=prefork",
-            "--concurrency=1",
-            "--prefetch-multiplier=1",
-            "-Q",
-            "inference",
-            "--loglevel=INFO",
-            "--without-mingle",
-            "--without-gossip",
-        ]
-    )
+    from contextlib import nullcontext
+
+    from backend.runtime import resident_models
+
+    runtime = resident_models(settings) if runner is None else nullcontext(runner)
+    with runtime as runner:
+        app = make_celery(settings)
+        register_processing_task(
+            app, settings, runner=runner, lock_fd=getattr(runner, "lock_fd", None)
+        )
+        app.worker_main(
+            [
+                "worker",
+                "--pool=prefork",
+                "--concurrency=1",
+                "--prefetch-multiplier=1",
+                "-Q",
+                "inference",
+                "--loglevel=INFO",
+                "--without-mingle",
+                "--without-gossip",
+            ]
+        )
 
 
 if __name__ == "__main__":

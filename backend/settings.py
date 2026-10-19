@@ -12,7 +12,6 @@ class Settings(BaseSettings):
     image_root: Path = Path("/var/lib/kurs4/images")
     max_upload_bytes: int = Field(default=10 * 1024 * 1024, gt=0)
     max_image_pixels: int = Field(default=25_000_000, gt=0)
-    publisher_interval: float = Field(default=2, ge=0.1)
     broker_timeout: float = Field(default=3, gt=0, le=30)
     lock_path: Path = Path("storage/locks/inference.lock")
     model_root: Path = Path(".")

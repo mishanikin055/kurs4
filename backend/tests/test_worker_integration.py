@@ -1,22 +1,22 @@
-"""Real PostgreSQL/RabbitMQ and a separate prefork worker; models are synthetic."""
+"""Real PostgreSQL/RabbitMQ and a separate Celery consumer, with synthetic models."""
 
 import os
 import subprocess
 import sys
 import time
-from functools import partial
 from pathlib import Path
 from uuid import UUID
 
 import pytest
 from fastapi.testclient import TestClient
-from kombu import Connection
+from sqlalchemy import func, select
 
-from backend.processing import ProcessingInterrupted, process_image, run_stage
-from backend.repository import JobRepository
-from backend.tasks import publish_job
+from backend.repository import ImageRepository
+from backend.schemas import ImageResult
+from backend.tables import ProcessedImage
+from backend.tasks import publish_image
 from backend.tests.test_integration import app as app
-from backend.tests.test_integration import post_image
+from backend.tests.test_integration import clear_queue, post_image
 
 pytestmark = pytest.mark.skipif(
     os.environ.get("APP_TEST_INTEGRATION") != "1",
@@ -24,21 +24,27 @@ pytestmark = pytest.mark.skipif(
 )
 
 
-def worker(app, *, mode="success", control=None):
+def worker(app, *, mode="success", control=None, resident=False):
     settings = app.state.settings
-    env = {
+    environment = {
         **os.environ,
+        "APP_IMAGE_ROOT": str(settings.image_root),
         "APP_LOCK_PATH": str(settings.image_root / "inference.lock"),
         "MOCK_MODEL_MODE": mode,
+        "MOCK_RESIDENT": "1" if resident else "0",
     }
     if control:
-        env.update(MOCK_STARTED=str(control / "model_started"), MOCK_SLEEP="2")
-    return subprocess.Popen(
-        [sys.executable, "-m", "backend.tests.mock_worker"],
-        env=env,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-    )
+        environment.update(MOCK_STARTED=str(control / "model_started"), MOCK_SLEEP="2")
+        if resident:
+            environment["MOCK_RESIDENT_DIR"] = str(control)
+    log = settings.image_root / "worker.log"
+    with log.open("ab") as stream:
+        return subprocess.Popen(
+            [sys.executable, "-m", "backend.tests.mock_worker"],
+            env=environment,
+            stdout=stream,
+            stderr=subprocess.STDOUT,
+        )
 
 
 def stop_worker(process):
@@ -51,240 +57,104 @@ def stop_worker(process):
             process.wait()
 
 
-def wait_job(app, job_id, *, timeout=20):
-    end = time.monotonic() + timeout
-    with TestClient(app) as client:
-        while time.monotonic() < end:
-            response = client.get(f"/jobs/{job_id}")
-            assert response.status_code == 200, response.text
-            job = response.json()
-            if job["status"] in {"succeeded", "partial", "failed"}:
-                return job
-            time.sleep(0.1)
-    pytest.fail("Worker did not finish in time")
+def wait_result(app, image_id, *, timeout=30):
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        with app.state.test_sessions() as session:
+            saved = ImageRepository(session).get(UUID(str(image_id)))
+        if saved is not None:
+            return saved
+        time.sleep(0.1)
+    pytest.fail("Worker did not save a completed image; inspect the isolated worker.log")
 
 
-def clear_queue(app):
-    with Connection(app.state.celery.conf.broker_url) as connection:
-        queue = connection.SimpleQueue("inference", queue_opts={"durable": True})
-        queue.clear()
-        queue.close()
-
-
-@pytest.mark.parametrize(
-    "mode,expected",
-    [
-        ("success", "succeeded"),
-        ("empty", "succeeded"),
-        ("fail_detection", "partial"),
-        ("fail_classification", "partial"),
-        ("fail_annotation", "partial"),
-    ],
-)
-def test_real_consumer_pipeline_and_duplicate_delivery(app, mode, expected):
-    clear_queue(app)
+@pytest.mark.parametrize("resident", [False, True])
+@pytest.mark.parametrize("mode", ["success", "empty"])
+def test_separate_consumer_saves_volume_and_database_once(app, resident, mode):
     accepted = post_image(app)
-    consumer = worker(app, mode=mode)
+    image_id = UUID(accepted["image_id"])
+    consumer = worker(app, mode=mode, resident=resident)
     try:
-        publish_job(app.state.celery, accepted["job_id"], 3)
-        job = wait_job(app, accepted["job_id"])
-        assert job["status"] == expected, job
-        assert job["processing_attempts"] == 1
-        results = {r["stage"]: r for r in job["results"]}
+        saved = wait_result(app, image_id)
+        directory = Path(saved.result_path).parent
+        manifest = (directory / "results.json").read_bytes()
+        parsed = ImageResult.model_validate_json(manifest)
+        assert parsed.id == image_id
+        assert parsed.annotation.raw_caption == "  Synthetic caption.  "
+        assert saved.annotation == {"raw_caption": "  Synthetic caption.  "}
+        assert saved.detection == parsed.detection.model_dump(mode="json")
+        assert not (app.state.settings.image_root / str(image_id)).exists()
         if mode == "success":
-            obj = results["detection"]["payload"]["objects"][0]
-            classified = results["classification"]["payload"]["objects"][0]
-            assert classified["object_id"] == obj["object_id"]
-            assert classified["crop_bbox"] == [0, 0, 6, 6]
-        if mode in {"empty", "fail_detection"}:
-            assert results["classification"]["status"] == "skipped"
-        if mode != "fail_annotation":
-            assert results["annotation"]["payload"]["raw_caption"] == "  Synthetic caption.  "
-        publish_job(app.state.celery, accepted["job_id"], 3)
+            assert (
+                parsed.detection.objects[0].object_id == parsed.classification.objects[0].object_id
+            )
+        else:
+            assert parsed.detection.objects == parsed.classification.objects == []
+        publish_image(app.state.celery, str(image_id), 3)
         time.sleep(0.5)
-        assert wait_job(app, accepted["job_id"]) == job
+        assert (directory / "results.json").read_bytes() == manifest
+        with app.state.test_sessions() as session:
+            assert (
+                session.scalar(
+                    select(func.count())
+                    .select_from(ProcessedImage)
+                    .where(ProcessedImage.id == image_id)
+                )
+                == 1
+            )
+        # Explicit browser download never removes or changes the primary volume copy.
+        with TestClient(app) as client:
+            response = client.get(f"/images/{image_id}/archive")
+            assert response.status_code == 200
+        assert (directory / "results.json").read_bytes() == manifest
     finally:
         stop_worker(consumer)
         clear_queue(app)
 
 
-def test_recovery_preserves_completed_stage(app):
+@pytest.mark.parametrize("stage", ["detection", "classification", "annotation"])
+def test_model_error_is_logged_without_database_error_or_job_record(app, stage):
     accepted = post_image(app)
-    settings = app.state.settings.model_copy(
-        update={
-            "lock_path": app.state.settings.image_root / "test.lock",
-            "detection_python": sys.executable,
-            "classification_python": sys.executable,
-            "annotation_python": sys.executable,
-        }
-    )
-    called = []
-    fake = partial(run_stage, module="backend.tests.mock_model")
-
-    def crash(request, *args):
-        called.append(request["stage"])
-        if request["stage"] == "classification":
-            raise ProcessingInterrupted
-        return fake(request, *args)
-
-    job_id = UUID(accepted["job_id"])
-    with pytest.raises(ProcessingInterrupted):
-        process_image(job_id, app.state.sessions, settings, runner=crash)
-    with app.state.sessions() as session:
-        saved = JobRepository(session).get(job_id)
-        detection = next(r.payload for r in saved.results if r.stage == "detection")
-    called.clear()
-
-    def recover(request, *args):
-        called.append(request["stage"])
-        return fake(request, *args)
-
-    process_image(job_id, app.state.sessions, settings, runner=recover)
-    job = wait_job(app, job_id)
-    assert job["status"] == "succeeded"
-    assert job["processing_attempts"] == 2
-    assert called == ["classification", "annotation"]
-    assert next(r["payload"] for r in job["results"] if r["stage"] == "detection") == detection
+    image_id = UUID(accepted["image_id"])
+    consumer = worker(app, mode="fail_" + stage)
+    log = app.state.settings.image_root / "worker.log"
+    try:
+        deadline = time.monotonic() + 25
+        while time.monotonic() < deadline:
+            if log.is_file() and "synthetic_failure" in log.read_text():
+                break
+            time.sleep(0.1)
+        else:
+            pytest.fail("Synthetic model error was not logged")
+        with app.state.test_sessions() as session:
+            assert ImageRepository(session).get(image_id) is None
+        assert not (app.state.settings.image_root / "results" / str(image_id)).exists()
+        assert (app.state.settings.image_root / str(image_id) / "original").is_file()
+    finally:
+        stop_worker(consumer)
+        clear_queue(app)
 
 
-def test_exhaustion_and_legacy_checkpoints(app):
-    accepted = post_image(app)
-    job_id = UUID(accepted["job_id"])
-    settings = app.state.settings.model_copy(
-        update={"lock_path": app.state.settings.image_root / "test.lock"}
-    )
-    with app.state.sessions.begin() as session:
-        JobRepository(session).get(job_id).processing_attempts = 2
-    process_image(
-        job_id, app.state.sessions, settings, runner=lambda *args: pytest.fail("Must not run")
-    )
-    job = wait_job(app, job_id)
-    assert job["status"] == "failed"
-    assert all(r["error"]["code"] == "attempts_exhausted" for r in job["results"])
-    accepted = post_image(app)
-    job_id = UUID(accepted["job_id"])
-    with app.state.sessions.begin() as session:
-        for result in JobRepository(session).get(job_id).results:
-            result.model_name = result.model_revision = result.weights_sha256 = None
-    process_image(
-        job_id, app.state.sessions, settings, runner=lambda *args: pytest.fail("Must not run")
-    )
-    job = wait_job(app, job_id)
-    assert job["status"] == "failed"
-    assert {r["error"]["code"] for r in job["results"]} == {
-        "model_not_configured",
-        "detection_failed",
-    }
-
-
-@pytest.mark.skipif(
-    not os.environ.get("APP_TEST_OUTAGE_CONTROL"),
-    reason="Requires external DB stop/start controller",
-)
-def test_database_outage_requeues_uncommitted_result(app):
+def test_database_outage_requeues_completed_bundle(app):
+    if not os.environ.get("APP_TEST_OUTAGE_CONTROL"):
+        pytest.skip("Requires the host-side check_db_outage controller")
     control = Path(os.environ["APP_TEST_OUTAGE_CONTROL"])
-    clear_queue(app)
     accepted = post_image(app)
+    image_id = UUID(accepted["image_id"])
     consumer = worker(app, mode="slow", control=control)
     try:
-        publish_job(app.state.celery, accepted["job_id"], 3)
-        # External controller stops the real DB after mock subprocess starts.
-        consumer.wait(timeout=30)
+        consumer.wait(timeout=40)
+        manifest = app.state.settings.image_root / "results" / str(image_id) / "results.json"
+        before = manifest.read_bytes()
+        marker_time = (control / "model_started").stat().st_mtime_ns
         (control / "worker_stopped").touch()
-        end = time.monotonic() + 45
+        deadline = time.monotonic() + 30
         while not (control / "db_restored").exists():
-            assert time.monotonic() < end
+            assert time.monotonic() < deadline
             time.sleep(0.1)
-        with app.state.sessions() as session:
-            job = JobRepository(session).get(UUID(accepted["job_id"]))
-            assert job.status == "running"
-            assert next(r for r in job.results if r.stage == "detection").payload is None
-        consumer = worker(app)
-        job = wait_job(app, accepted["job_id"])
-        assert job["status"] == "succeeded", job
-        assert job["processing_attempts"] == 2
+        consumer = worker(app, mode="slow", control=control)
+        wait_result(app, image_id)
+        assert manifest.read_bytes() == before
+        assert (control / "model_started").stat().st_mtime_ns == marker_time
     finally:
         stop_worker(consumer)
-        clear_queue(app)
-
-
-def test_worker_shutdown_requeues_and_cleans_model(app, tmp_path):
-    from backend.processing import inference_lock
-
-    clear_queue(app)
-    accepted = post_image(app)
-    consumer = worker(app, mode="slow", control=tmp_path)
-    try:
-        publish_job(app.state.celery, accepted["job_id"], 3)
-        marker = tmp_path / "model_started"
-        deadline = time.monotonic() + 15
-        while not marker.exists():
-            assert time.monotonic() < deadline
-            time.sleep(0.05)
-        model_pid = int(marker.read_text())
-        consumer.terminate()
-        consumer.wait(timeout=10)
-        with pytest.raises(ProcessLookupError):
-            os.kill(model_pid, 0)
-        with inference_lock(app.state.settings.image_root / "inference.lock", time.monotonic() + 1):
-            pass
-        consumer = worker(app)
-        job = wait_job(app, accepted["job_id"])
-        assert job["status"] == "succeeded", job
-        assert job["processing_attempts"] == 2
-    finally:
-        stop_worker(consumer)
-        clear_queue(app)
-
-
-def test_killed_coordinator_retains_child_lock_and_recovers(app, tmp_path):
-    from backend.processing import LockTimeout, inference_lock
-
-    clear_queue(app)
-    accepted = post_image(app)
-    consumer = worker(app, mode="slow", control=tmp_path)
-    try:
-        publish_job(app.state.celery, accepted["job_id"], 3)
-        marker = tmp_path / "model_started"
-        deadline = time.monotonic() + 15
-        while not marker.exists():
-            assert time.monotonic() < deadline
-            time.sleep(0.05)
-        model_pid = int(marker.read_text())
-        # The model's parent is the prefork task coordinator, not the main consumer.
-        parent_pid = int(Path(f"/proc/{model_pid}/stat").read_text().split()[3])
-        os.kill(parent_pid, 9)
-        with (
-            pytest.raises(LockTimeout),
-            inference_lock(
-                app.state.settings.image_root / "inference.lock", time.monotonic() + 0.1
-            ),
-        ):
-            pytest.fail("Surviving model lost its lock")
-        job = wait_job(app, accepted["job_id"])
-        assert job["status"] == "succeeded", job
-        assert job["processing_attempts"] == 2
-    finally:
-        stop_worker(consumer)
-        clear_queue(app)
-
-
-def test_unexpected_coordinator_error_is_persisted(app, monkeypatch):
-    accepted = post_image(app)
-    settings = app.state.settings.model_copy(
-        update={"lock_path": app.state.settings.image_root / "test.lock"}
-    )
-
-    def broken_specs(*args):
-        raise RuntimeError("Synthetic coordinator error")
-
-    monkeypatch.setattr("backend.processing.model_specs", broken_specs)
-    process_image(
-        UUID(accepted["job_id"]),
-        app.state.sessions,
-        settings,
-        runner=lambda *args: pytest.fail("Must not run"),
-    )
-    job = wait_job(app, accepted["job_id"])
-    assert job["status"] == "failed"
-    assert all(result["error"] == {"code": "internal_error"} for result in job["results"])

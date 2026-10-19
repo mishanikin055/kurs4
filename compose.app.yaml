@@ -14,6 +14,17 @@ x-app: &app
       condition: service_healthy
 
 services:
+  frontend:
+    image: kurs4-frontend:v1
+    build:
+      context: ./frontend
+    restart: unless-stopped
+    mem_limit: 64m
+    ports:
+      - "127.0.0.1:${APP_FRONTEND_PORT:-8080}:80"
+    depends_on:
+      backend:
+        condition: service_started
   db:
     image: postgres:18-alpine@sha256:96d56f7f57c6aacd1fcb908bc83b345ec5f83231ee486dd66a1baadce274db88
     env_file: .secrets/app.env
@@ -48,6 +59,9 @@ services:
       dockerfile: backend/Dockerfile
       target: api
     mem_limit: 512m
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
     ports:
       - "127.0.0.1:${APP_HTTP_PORT:-8000}:8000"
   worker:
@@ -61,8 +75,9 @@ services:
     profiles: ["processing"]
     restart: unless-stopped
     mem_limit: 5g
+    # Three resident models; startup checks headroom before consuming images.
     volumes:
-      - image_data:/var/lib/kurs4/images:ro
+      - image_data:/var/lib/kurs4/images
       - ./storage/locks:/var/lib/kurs4/locks
       - ./detection/models/rf_detr_small:/models/detection/models/rf_detr_small:ro
       - ./classification/models/vit_b_16:/models/classification/models/vit_b_16:ro

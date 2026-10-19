@@ -7,7 +7,7 @@ import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-COMPOSE = ["docker", "compose", "-p", "kurs4-backend-test", "-f", "compose.app.yaml"]
+COMPOSE = ["docker", "compose", "-p", "kurs4-simple-test", "-f", "compose.app.yaml"]
 
 
 def wait_marker(path: Path, process: subprocess.Popen, timeout: float = 35) -> None:
@@ -32,7 +32,7 @@ def main():
             "kurs4-db-outage-check",
             "--init",
             "--network",
-            "kurs4-backend-test_default",
+            "kurs4-simple-test_default",
             "--env-file",
             ".secrets/app.env",
             "-e",
@@ -48,7 +48,7 @@ def main():
             "-m",
             "pytest",
             "-q",
-            "backend/tests/test_worker_integration.py::test_database_outage_requeues_uncommitted_result",
+            "backend/tests/test_worker_integration.py::test_database_outage_requeues_completed_bundle",
         ]
         process = subprocess.Popen(command, cwd=ROOT)
         try:

@@ -1,26 +1,26 @@
-"""HTTP contracts and dependency injection."""
+"""Uploads and explicit downloads; database writes belong to the worker."""
 
+import shutil
+import tempfile
+from pathlib import Path
 from typing import Annotated
 from uuid import UUID
+from zipfile import ZipFile
 
 from fastapi import APIRouter, Depends, File, HTTPException, Request, UploadFile
-from fastapi.responses import JSONResponse
-from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.orm import Session
+from fastapi.responses import FileResponse, JSONResponse
+from starlette.background import BackgroundTask
 
-from backend.db import get_session
-from backend.repository import JobRepository
-from backend.schemas import AcceptedImage, JobInfo
-from backend.service import ImageService, JobNotFound
+from backend.schemas import AcceptedImage
+from backend.service import BrokerUnavailable, ImageService
 from backend.storage import UploadError
+from backend.tasks import check_broker
 
 router = APIRouter()
 
 
-def get_service(
-    request: Request, session: Annotated[Session, Depends(get_session)]
-) -> ImageService:
-    return ImageService(JobRepository(session), request.app.state.settings)
+def get_service(request: Request) -> ImageService:
+    return ImageService(request.app.state.settings, request.app.state.celery)
 
 
 Service = Annotated[ImageService, Depends(get_service)]
@@ -32,24 +32,56 @@ def upload_image(service: Service, file: UploadFile = File(...)):
         return service.upload(file)
     except UploadError as exc:
         raise HTTPException(exc.status_code, exc.code) from exc
-    except SQLAlchemyError as exc:
-        raise HTTPException(503, "database_unavailable") from exc
+    except BrokerUnavailable as exc:
+        raise HTTPException(503, "broker_unavailable") from exc
     except OSError as exc:
         raise HTTPException(503, "storage_unavailable") from exc
 
 
-@router.get("/jobs/{job_id}", response_model=JobInfo)
-def get_job(job_id: UUID, service: Service):
-    try:
-        return service.get_job(job_id)
-    except JobNotFound as exc:
-        raise HTTPException(404, "job_not_found") from exc
-    except SQLAlchemyError as exc:
-        raise HTTPException(503, "database_unavailable") from exc
-
-
 @router.get("/health")
-def health(request: Request, service: Service):
+def health(request: Request):
     state = request.app.state
-    content = service.health(state.celery, state.publisher, state.publisher_enabled)
-    return JSONResponse(status_code=200 if content["status"] == "ok" else 503, content=content)
+    ready = check_broker(state.celery, state.settings.broker_timeout)
+    return JSONResponse(status_code=200 if ready else 503, content={"rabbitmq": ready})
+
+
+@router.get("/images/{image_id}/files/{filename}")
+def download_file(image_id: UUID, filename: str, service: Service):
+    try:
+        path = service.result_file(image_id, filename)
+    except FileNotFoundError as exc:
+        raise HTTPException(404, "result_not_found") from exc
+    media_type = {".png": "image/png", ".json": "application/json"}.get(path.suffix)
+    return FileResponse(
+        path,
+        media_type=media_type or "application/octet-stream",
+        filename=filename,
+        headers={"Cache-Control": "no-store", "X-Content-Type-Options": "nosniff"},
+    )
+
+
+@router.get("/images/{image_id}/archive")
+def download_archive(image_id: UUID, service: Service):
+    try:
+        paths = [
+            service.result_file(image_id, name)
+            for name in ("original", "normalized.png", "detection.png", "results.json")
+        ]
+    except FileNotFoundError as exc:
+        raise HTTPException(404, "result_not_found") from exc
+    temporary = Path(tempfile.mkdtemp(prefix="kurs4-download-"))
+    try:
+        archive = temporary / "result.zip"
+        with ZipFile(archive, "w") as bundle:
+            for path in paths:
+                bundle.write(path, arcname=f"{image_id}/{path.name}")
+        return FileResponse(
+            archive,
+            media_type="application/zip",
+            filename=f"{image_id}.zip",
+            headers={"Cache-Control": "no-store", "X-Content-Type-Options": "nosniff"},
+            background=BackgroundTask(shutil.rmtree, temporary),
+        )
+    except BaseException:
+        shutil.rmtree(temporary)
+        raise
