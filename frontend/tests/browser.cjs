@@ -59,6 +59,19 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
     });
     await page.goto(baseURL);
     await page.locator("#file").setInputFiles({ name: "dog.png", mimeType: "image/png", buffer: png });
+    await page.waitForFunction(() => document.getElementById("preview").naturalWidth > 0);
+    assert(await page.locator("#preview").isVisible());
+    assert(await page.locator("#preview-empty").isHidden());
+    assert.equal(await page.locator("#file-name").textContent(), "dog.png");
+    assert.equal(requests.length, 0, "Preview must stay local until the user submits");
+    const previousPreview = await page.locator("#preview").getAttribute("src");
+    await page.locator("#dropzone").evaluate((element, bytes) => {
+      const data = new DataTransfer();
+      data.items.add(new File([new Uint8Array(bytes)], "dropped.png", { type: "image/png" }));
+      element.dispatchEvent(new DragEvent("drop", { dataTransfer: data, bubbles: true }));
+    }, Array.from(png));
+    assert.equal(await page.locator("#file-name").textContent(), "dropped.png");
+    assert.notEqual(await page.locator("#preview").getAttribute("src"), previousPreview);
     await page.locator("#submit").click();
     await page.waitForFunction(() => !document.getElementById("save-actions").hidden);
     assert.equal(requests.length, 1, "Only an upload should happen until the user requests a copy");
@@ -84,6 +97,9 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
     assert(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth));
     assert.equal(requests.length, countBeforeResize);
     if (process.env.SCREENSHOT_DIR) await page.screenshot({ path: `${process.env.SCREENSHOT_DIR}/simple-mobile.png`, fullPage: true });
+    await page.locator("#file").setInputFiles({ name: "next.png", mimeType: "image/png", buffer: png });
+    assert(await page.locator("#save-actions").isHidden(), "Selecting a new image must clear the previous result");
+    assert.equal(await page.locator("#status").textContent(), "");
     uploadError = true;
     await page.locator("#submit").click();
     await page.waitForFunction(() => document.getElementById("status").textContent.includes("не подтверждена"));
@@ -94,7 +110,7 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
     await fallback.goto(baseURL);
     assert(await fallback.locator("#choose-folder").isHidden());
     assert.match(await fallback.locator("#folder").inputValue(), /ZIP/);
-    console.log("Browser checks passed: no polling, explicit copy, four local files, ZIP, early download, upload failure, unsupported browser, mobile width.");
+    console.log("Browser checks passed: local preview, drag-and-drop, no polling, explicit copy, four local files, ZIP, early download, upload failure, unsupported browser, mobile width.");
   } finally {
     await browser.close();
   }
