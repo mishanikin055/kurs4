@@ -1,31 +1,6 @@
 const $ = (id) => document.getElementById(id);
 let folderHandle;
 let imageId;
-let previewUrl;
-
-$("file").addEventListener("change", () => {
-  if (previewUrl) URL.revokeObjectURL(previewUrl);
-  const file = $("file").files[0];
-  imageId = null;
-  $("save-actions").hidden = true;
-  $("status").textContent = "";
-  $("file-name").textContent = file ? file.name : "Изображение не выбрано";
-  $("preview-empty").hidden = Boolean(file);
-  $("preview").hidden = !file;
-  $("preview-error").hidden = true;
-  if (file) {
-    previewUrl = URL.createObjectURL(file);
-    $("preview").src = previewUrl;
-  } else {
-    previewUrl = null;
-    $("preview").removeAttribute("src");
-  }
-});
-
-$("preview").addEventListener("error", () => {
-  $("preview").hidden = true;
-  $("preview-error").hidden = false;
-});
 
 if (!("showDirectoryPicker" in window)) {
   $("choose-folder").hidden = true;
@@ -46,7 +21,6 @@ $("upload-form").addEventListener("submit", async (event) => {
   const file = $("file").files[0];
   if (!file || $("submit").disabled) return;
   $("submit").disabled = true;
-  $("file").disabled = true;
   $("save-actions").hidden = true;
   imageId = null;
   $("status").textContent = "Отправка изображения…";
@@ -66,7 +40,6 @@ $("upload-form").addEventListener("submit", async (event) => {
     $("status").textContent = "Не удалось подтвердить отправку. Проверьте подключение к серверу.";
   } finally {
     $("submit").disabled = false;
-    $("file").disabled = false;
   }
 });
 
@@ -124,10 +97,8 @@ $("dropzone").addEventListener("dragleave", () => $("dropzone").classList.remove
 $("dropzone").addEventListener("drop", (event) => {
   event.preventDefault();
   $("dropzone").classList.remove("dragging");
-  if ($("submit").disabled) return;
   if (!event.dataTransfer.files.length) return;
   const transfer = new DataTransfer();
   transfer.items.add(event.dataTransfer.files[0]);
   $("file").files = transfer.files;
-  $("file").dispatchEvent(new Event("change"));
 });
