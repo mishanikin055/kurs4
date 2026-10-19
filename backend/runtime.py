@@ -10,6 +10,7 @@ import subprocess
 import time
 from contextlib import contextmanager
 from pathlib import Path
+from threading import Event
 
 from backend.processing import ProcessingInterrupted, inference_lock, stop_process_group
 from backend.settings import Settings, model_specs
@@ -126,14 +127,28 @@ class ResidentModels:
                 "Resident model ready stage=%s startup_s=%.3f", stage, response.get("startup_s", 0)
             )
 
-    def __call__(self, request: dict, settings: Settings, lock_fd: int, timeout: float) -> dict:
+    def __call__(
+        self,
+        request: dict,
+        settings: Settings,
+        lock_fd: int,
+        timeout: float,
+        *,
+        cancelled: Event | None = None,
+    ) -> dict:
+        def check() -> None:
+            if cancelled is not None and cancelled.is_set():
+                # An interrupted reply cannot be reused by the next image.
+                raise ResidentModelFailed
+            check_memory()
+
         channel = self.channels[request["stage"]]
         try:
-            check_memory()
+            check()
             channel.settimeout(max(0.01, timeout))
             deadline = time.monotonic() + timeout
             send(channel, request)
-            response = receive(channel, deadline=deadline, check=check_memory)
+            response = receive(channel, deadline=deadline, check=check)
             if response.get("error", {}).get("code") == "cuda_oom":
                 raise MemoryError("CUDA out of memory")
             return response

@@ -2,7 +2,9 @@ import os
 import subprocess
 import sys
 import time
+from concurrent.futures import ThreadPoolExecutor
 from contextlib import nullcontext
+from threading import Event
 from types import SimpleNamespace
 from unittest.mock import MagicMock
 from uuid import uuid4
@@ -10,7 +12,13 @@ from uuid import uuid4
 import pytest
 
 from backend.models import classify, detect
-from backend.processing import LockTimeout, inference_lock, run_stage, validate_payload
+from backend.processing import (
+    LockTimeout,
+    ProcessingInterrupted,
+    inference_lock,
+    run_stage,
+    validate_payload,
+)
 from backend.settings import Settings
 
 
@@ -271,3 +279,32 @@ def test_timeout_stops_child_before_releasing_lock(settings, tmp_path, monkeypat
             os.kill(int(marker.read_text()), 0)
     with inference_lock(settings.lock_path, time.monotonic() + 1):
         pass
+
+
+def test_cancellation_stops_single_use_model(settings, tmp_path, monkeypatch):
+    marker = tmp_path / "started"
+    monkeypatch.setenv("MOCK_MODEL_MODE", "slow")
+    monkeypatch.setenv("MOCK_STARTED", str(marker))
+    cancelled = Event()
+    with inference_lock(settings.lock_path, time.monotonic() + 1) as fd:
+        with ThreadPoolExecutor(max_workers=1) as executor:
+            future = executor.submit(
+                run_stage,
+                {"stage": "detection"},
+                settings,
+                fd,
+                5,
+                module="backend.tests.mock_model",
+                cancelled=cancelled,
+            )
+            try:
+                deadline = time.monotonic() + 3
+                while not marker.exists():
+                    assert time.monotonic() < deadline
+                    time.sleep(0.01)
+            finally:
+                cancelled.set()
+            with pytest.raises(ProcessingInterrupted):
+                future.result(timeout=3)
+        with pytest.raises(ProcessLookupError):
+            os.kill(int(marker.read_text()), 0)

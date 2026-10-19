@@ -1,4 +1,4 @@
-"""Sequential inference, a complete file bundle, then a single database write."""
+"""Parallel annotation and detection/classification, then files and one DB write."""
 
 import fcntl
 import json
@@ -8,8 +8,10 @@ import signal
 import subprocess
 import tempfile
 import time
+from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
 from contextlib import contextmanager, nullcontext
 from pathlib import Path
+from threading import Event
 from uuid import UUID
 
 from PIL import Image
@@ -73,6 +75,7 @@ def run_stage(
     timeout: float,
     *,
     module: str = "backend.models",
+    cancelled: Event | None = None,
 ) -> dict:
     executable = getattr(settings, request["stage"] + "_python")
     with tempfile.TemporaryDirectory(prefix="kurs4-inference-") as directory:
@@ -94,14 +97,23 @@ def run_stage(
             stderr=subprocess.DEVNULL,
         )
         try:
-            process.wait(timeout=max(0.01, timeout))
+            deadline = time.monotonic() + timeout
+            while True:
+                if cancelled is not None and cancelled.is_set():
+                    raise ProcessingInterrupted
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    return {"error": {"code": "stage_timeout"}}
+                try:
+                    process.wait(timeout=min(0.1, remaining))
+                    break
+                except subprocess.TimeoutExpired:
+                    continue
             if process.returncode != 0:
                 return {"error": {"code": "model_process_failed", "exit_code": process.returncode}}
             if output_path.stat().st_size > 5 * 1024 * 1024:
                 return {"error": {"code": "model_output_too_large"}}
             return json.loads(output_path.read_text())
-        except subprocess.TimeoutExpired:
-            return {"error": {"code": "stage_timeout"}}
         finally:
             stop_process_group(process)
 
@@ -163,15 +175,14 @@ def process_image(
             specs = model_specs(settings)
             with Image.open(source / "normalized.png") as image:
                 size = image.size
-            payloads = {}
-            for stage in STAGES:
+            cancelled = Event()
+
+            def infer(stage: str, detection: dict | None = None) -> dict:
+                if cancelled.is_set():
+                    raise ProcessingInterrupted
                 remaining = deadline - time.monotonic()
                 if remaining <= 0:
                     raise TimeoutError("Inference deadline exceeded")
-                detection = payloads.get("detection")
-                if stage == "classification" and not detection["objects"]:
-                    payloads[stage] = {"objects": []}
-                    continue
                 request = dict(
                     stage=stage,
                     image_path=str(source / "normalized.png"),
@@ -181,14 +192,54 @@ def process_image(
                 if stage == "classification":
                     request["detection"] = detection
                 response = runner(
-                    request, settings, lock_fd, min(settings.stage_timeout, remaining)
+                    request,
+                    settings,
+                    lock_fd,
+                    min(settings.stage_timeout, remaining),
+                    cancelled=cancelled,
                 )
                 if response.get("error"):
                     raise RuntimeError(f"{stage}: {response['error'].get('code', 'model_error')}")
                 status, payload = validate_payload(stage, response["payload"], size, detection)
                 if status != "succeeded":
                     raise RuntimeError(f"{stage}: incomplete result")
-                payloads[stage] = payload
+                return payload
+
+            def detect_and_classify() -> dict:
+                detection = infer("detection")
+                classification = (
+                    infer("classification", detection) if detection["objects"] else {"objects": []}
+                )
+                return {"detection": detection, "classification": classification}
+
+            payloads = {}
+            errors = []
+            # Threads only coordinate IPC; CUDA stays in the three model processes.
+            with ThreadPoolExecutor(max_workers=2, thread_name_prefix="inference") as executor:
+                try:
+                    pending = {
+                        executor.submit(detect_and_classify): None,
+                        executor.submit(infer, "annotation"): "annotation",
+                    }
+                    while pending:
+                        done, _ = wait(pending, timeout=0.1, return_when=FIRST_COMPLETED)
+                        for future in done:
+                            stage = pending.pop(future)
+                            try:
+                                payload = future.result()
+                            except Exception as exc:
+                                # Drain the other branch before reusing resident IPC channels.
+                                errors.append(exc)
+                            else:
+                                if stage is None:
+                                    payloads.update(payload)
+                                else:
+                                    payloads[stage] = payload
+                finally:
+                    # Interrupt/IPC failure must unblock both branches before releasing the lock.
+                    cancelled.set()
+            if errors:
+                raise errors[0]
             result = ImageResult(
                 id=image_id,
                 width=size[0],

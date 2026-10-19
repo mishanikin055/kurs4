@@ -2,6 +2,7 @@ import socket
 import sys
 import threading
 import time
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from unittest.mock import Mock
 
@@ -60,6 +61,54 @@ def test_resident_processes_reused_and_stopped(settings):
     assert all(p.poll() is not None for p in runtime.processes.values())
     with inference_lock(settings.lock_path, time.monotonic() + 1):
         pass
+
+
+def test_resident_annotation_overlaps_detection_and_classification(settings, tmp_path, monkeypatch):
+    monkeypatch.setenv("MOCK_MODEL_MODE", "parallel")
+    monkeypatch.setenv("MOCK_PARALLEL_DIR", str(tmp_path))
+    with resident_models(settings, module="backend.tests.mock_model") as runtime:
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            annotation = executor.submit(
+                runtime, request(settings, "annotation"), settings, runtime.lock_fd, 3
+            )
+            detection = runtime(request(settings, "detection"), settings, runtime.lock_fd, 3)
+            assert not annotation.done()
+            classification = runtime(
+                dict(request(settings, "classification"), detection=detection["payload"]),
+                settings,
+                runtime.lock_fd,
+                3,
+            )
+            assert "payload" in classification
+            assert annotation.result(timeout=3)["payload"]["raw_caption"].strip()
+    assert all(p.poll() is not None for p in runtime.processes.values())
+
+
+def test_cancelled_resident_request_requires_restart(settings, tmp_path, monkeypatch):
+    monkeypatch.setenv("MOCK_MODEL_MODE", "slow")
+    marker = tmp_path / "started"
+    monkeypatch.setenv("MOCK_STARTED", str(marker))
+    cancelled = threading.Event()
+    with resident_models(settings, module="backend.tests.mock_model") as runtime:
+        with ThreadPoolExecutor(max_workers=1) as executor:
+            future = executor.submit(
+                runtime,
+                request(settings, "detection"),
+                settings,
+                runtime.lock_fd,
+                5,
+                cancelled=cancelled,
+            )
+            try:
+                deadline = time.monotonic() + 3
+                while not marker.exists():
+                    assert time.monotonic() < deadline
+                    time.sleep(0.01)
+            finally:
+                cancelled.set()
+            with pytest.raises(ResidentModelFailed):
+                future.result(timeout=3)
+    assert all(p.poll() is not None for p in runtime.processes.values())
 
 
 def test_startup_failure_cleans_partial_runtime(settings, monkeypatch):

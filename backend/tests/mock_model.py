@@ -12,7 +12,20 @@ from uuid import uuid4
 def predict(request):
     stage = request["stage"]
     mode = os.environ.get("MOCK_MODEL_MODE", "success")
-    if stage == "detection" and mode == "slow":
+    if mode == "parallel":
+        directory = Path(os.environ["MOCK_PARALLEL_DIR"])
+        (directory / (stage + ".started")).write_text(str(os.getpid()))
+        # Fail a sequential pipeline instead of relying on elapsed-time comparisons.
+        dependency = {"detection": "annotation", "annotation": "classification"}.get(stage)
+        if dependency is not None:
+            deadline = time.monotonic() + 5
+            while not (directory / (dependency + ".started")).exists():
+                if time.monotonic() >= deadline:
+                    return {"error": {"code": "parallel_branch_not_started"}}
+                time.sleep(0.01)
+    if (stage == "detection" and mode == "slow") or (
+        stage == "annotation" and mode == "slow_annotation"
+    ):
         Path(os.environ["MOCK_STARTED"]).write_text(str(os.getpid()))
         time.sleep(float(os.environ.get("MOCK_SLEEP", "30")))
     if mode == "fail_" + stage:

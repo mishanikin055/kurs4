@@ -131,7 +131,6 @@ def register_processing_task(app: Celery, settings: Settings, *, runner=None, lo
 
     from backend.db import make_engine, make_sessions
     from backend.processing import LockTimeout, ProcessingInterrupted, interrupt, process_image
-    from backend.runtime import ResidentModelFailed
 
     @app.task(
         name=TASK_NAME,
@@ -152,12 +151,10 @@ def register_processing_task(app: Celery, settings: Settings, *, runner=None, lo
             process_image(
                 UUID(image_id), make_sessions(engine), settings, lock_fd=lock_fd, **options
             )
-        except (SQLAlchemyError, ResidentModelFailed) as exc:
-            # Warm-stop the consumer; supervisor restarts through the DB readiness gate.
+        except (SQLAlchemyError, ProcessingInterrupted) as exc:
+            # Interrupted parallel requests leave unread IPC: restart before the next image.
             signal.signal(signal.SIGUSR2, signal.SIG_IGN)
             os.kill(os.getppid(), signal.SIGTERM)
-            raise Reject("processing_interrupted", requeue=True) from exc
-        except ProcessingInterrupted as exc:
             raise Reject("processing_interrupted", requeue=True) from exc
         except LockTimeout as exc:
             raise task.retry(exc=exc, countdown=30, max_retries=None)
