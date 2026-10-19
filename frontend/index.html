@@ -11,11 +11,30 @@
 </head>
 <body>
   <main>
+    <header class="page-header">
+      <div class="brand">
+        <svg class="brand-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/>
+          <rect x="7" y="7" width="10" height="10" rx="2"/>
+        </svg>
+        <span>Анализ изображений</span>
+      </div>
+      <span class="header-note">Компьютерное зрение</span>
+    </header>
     <section class="intro" aria-labelledby="title">
-      <h1 id="title">Что на изображении?</h1>
+      <h1 id="title">Программное средство для детекции, классификации и аннотирования изображений</h1>
       <p>Загрузите фотографию, чтобы найти объекты, уточнить их классы и получить описание.</p>
+      <ol class="pipeline" aria-label="Этапы обработки">
+        <li><span class="step-number" aria-hidden="true">01</span> Детекция</li>
+        <li><span class="step-number" aria-hidden="true">02</span> Классификация</li>
+        <li><span class="step-number" aria-hidden="true">03</span> Аннотирование</li>
+      </ol>
     </section>
     <form id="upload-form">
+      <div class="form-heading">
+        <h2>Новое изображение</h2>
+        <span>JPEG / PNG</span>
+      </div>
       <label for="file" class="file-label">Изображение</label>
       <div id="dropzone" class="upload-bar">
         <div class="file-control">
@@ -27,18 +46,15 @@
       <div class="folder-control">
         <label for="folder" class="file-label">Дополнительная копия на компьютере</label>
         <div class="folder-actions">
-          <input id="folder" type="text" value="Не выбрана" readonly aria-describedby="folder-help">
+          <input id="folder" type="text" value="Не выбрана" readonly>
           <button id="choose-folder" class="secondary" type="button">Выбрать папку</button>
         </div>
-        <p id="folder-help" class="helper">Основная копия всегда сохраняется в volume. Папка на компьютере необязательна; готовые файлы сохраняются по кнопке ниже.</p>
       </div>
     </form>
-    <p id="status" class="status-row" aria-live="polite" role="status">Выберите изображение и отправьте в очередь.</p>
+    <p id="status" class="status-row" aria-live="polite" role="status"></p>
     <div id="save-actions" hidden>
       <button id="save-copy" class="secondary" type="button">Сохранить копию</button>
-      <p class="helper">После обработки нажмите «Сохранить копию». Без выбранной папки будет скачан ZIP. Если файлы ещё не готовы, повторите сохранение позже.</p>
     </div>
-    <p class="helper">В volume сохраняются исходное изображение, нормализованный PNG, PNG с рамками и results.json с ответами трёх моделей.</p>
   </main>
 </body>
 </html>

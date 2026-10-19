@@ -159,8 +159,12 @@ docker compose -p kurs4-app -f compose.app.yaml --profile processing stop backen
 ## Frontend и проверки
 
 `frontend/` — статические HTML/CSS/JavaScript и nginx. `/api/` проксируется к API;
-у nginx нет доступа к БД, image volume, моделям и секретам. Сборка JavaScript и npm
-для приложения не нужны. Тест `frontend/tests/browser.cjs` использует Playwright
+у nginx нет доступа к БД, image volume, моделям и секретам. Интерфейс оформлен
+в тёплой палитре со сплошными боковыми полосами и строкой трёх
+этапов обработки. Под выбором папки нет постоянных пояснений; сообщения появляются
+после действий пользователя.
+Сборка JavaScript и npm для приложения не нужны.
+Тест `frontend/tests/browser.cjs` использует Playwright
 с перехваченным API: отправку в очередь, отсутствие polling, запись выбранной
 папки (mock File System Access API), ZIP и мобильную ширину.
 `FRONTEND_URL` задаёт адрес (по умолчанию теста — localhost:8098), `NODE_PATH` — путь
