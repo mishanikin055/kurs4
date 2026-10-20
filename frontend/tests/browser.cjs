@@ -94,11 +94,17 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
     await page.waitForFunction(() => document.getElementById("result-image").naturalWidth > 0);
     assert.equal(await page.locator("#caption").textContent(), result.annotation.raw_caption);
     assert.equal(await page.locator("#caption b").count(), 0, "Model text must never become HTML");
+    assert.equal(await page.locator(".page-header, .brand, #object-help").count(), 0, "Project header and selection hint are removed");
+    assert(await page.locator("#caption").evaluate((caption) => Boolean(caption.closest(".annotation-panel"))), "Caption has its own annotation panel");
+    assert.equal(await page.locator(".result-panel #caption").count(), 0, "Object results no longer contain the caption");
+    assert.equal(await page.locator("#annotation-title").textContent(), "Результат аннотирования");
+    assert(await page.locator("#annotation-placeholder").isHidden());
     assert.deepEqual(await page.locator("#objects tr").allTextContents(), ["1dogLabrador retriever", "2cat"]);
     assert.deepEqual(await page.locator(".object-marker").allTextContents(), ["dog", "cat"], "Image labels contain classes without object numbers");
     assert.equal(await page.locator("#object-overlays button").count(), 0, "Object numbers are clickable only in the table");
     assert.equal(await page.locator(".object-box:visible").count(), 2, "All boxes are shown by default");
     assert.equal(await page.locator("[aria-pressed=true]").count(), 0);
+    assert.deepEqual(await page.locator(".object-outline").first().evaluate((box) => [getComputedStyle(box).borderColor, getComputedStyle(box).borderWidth]), ["rgb(255, 0, 0)", "2px"], "Default frames are bright red and more visible");
     assert(requests.includes(`/api/images/${imageId}/files/normalized.png`), "Old and new results use clean source pixels with the same numbered overlay");
     await page.locator("#objects tr").nth(1).locator("td").nth(1).click();
     assert(await page.locator(".object-box").nth(1).evaluate((box) => box.classList.contains("is-selected")), "Clicking a row selects its box");
@@ -134,7 +140,7 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
       await page.setViewportSize(viewport);
       await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
       assert(await page.evaluate(() => document.documentElement.scrollHeight <= innerHeight && document.documentElement.scrollWidth <= innerWidth), `No page scrolling at ${viewport.width}x${viewport.height}`);
-      for (const selector of ["#submit", ".result-panel", ".preview"]) {
+      for (const selector of ["#submit", ".result-panel", ".preview", ".annotation-panel"]) {
         const box = await page.locator(selector).boundingBox();
         assert(box.y >= 0 && box.y + box.height <= viewport.height, `${selector} fits the laptop viewport`);
       }
@@ -143,9 +149,13 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
       const frame = await page.locator(".preview").boundingBox();
       const table = await page.locator("#objects-table").boundingBox();
       const results = await page.locator(".result-panel").boundingBox();
-      const help = await page.locator("#object-help").boundingBox();
+      const annotation = await page.locator(".annotation-panel").boundingBox();
+      const upload = await page.locator("#upload-form").boundingBox();
+      assert(upload.y <= 20 && frame.y <= 20, "Controls and image move up into the former header space");
       assert(picture.y - (title.y + title.height) <= 20, "Image starts directly below its title");
-      assert(frame.y + frame.height - (help.y + help.height) <= 20, "Image frame ends at its selection hint");
+      assert(frame.y + frame.height - (picture.y + picture.height) <= 20, "Image frame ends at the image");
+      assert(annotation.y >= frame.y + frame.height && annotation.y - (frame.y + frame.height) <= 20, "Annotation panel is directly below the image");
+      assert(Math.abs(annotation.x - frame.x) < 1 && Math.abs(annotation.width - frame.width) < 1 && annotation.height >= 140, "Annotation has a large separate block aligned with the image");
       assert(results.y + results.height - (table.y + table.height) <= 16, "Object frame ends at the table");
       for (let index = 0; index < result.detection.objects.length; index++) {
         const [x1, y1, x2, y2] = result.detection.objects[index].bbox;
@@ -170,6 +180,10 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
       const rows = document.getElementById("objects");
       while (rows.children.length > 2) rows.lastElementChild.remove();
     });
+    await page.locator("#caption").evaluate((caption) => { caption.textContent = "Long annotation. ".repeat(500); });
+    assert(await page.locator("#caption").evaluate((caption) => caption.scrollHeight > caption.clientHeight), "Long annotations scroll inside their own panel");
+    assert(await page.evaluate(() => document.documentElement.scrollHeight <= innerHeight), "Long annotation does not make the laptop page scroll");
+    await page.locator("#caption").evaluate((caption, text) => { caption.textContent = text; }, result.annotation.raw_caption);
     await page.setViewportSize({ width: 1440, height: 1000 });
     const countAfterResult = requests.length;
     await page.waitForTimeout(2200);
@@ -213,7 +227,7 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
     await page.waitForFunction(() => !document.getElementById("no-objects").hidden);
     assert(await page.locator("#objects-table").isHidden());
     assert.equal(await page.locator(".object-marker").count(), 0, "New empty result clears all old boxes");
-    assert(await page.locator("#object-help").isHidden());
+    assert.equal(await page.locator("#object-help").count(), 0);
     resultError = true;
     await page.locator("#submit").click();
     await page.locator("#retry-result").waitFor({ state: "visible" });
@@ -235,6 +249,9 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
     await page.waitForFunction(() => document.getElementById("status").textContent.includes("не подтверждена"));
     assert(await page.locator("#save-actions").isHidden());
     assert(await page.locator("#result").isHidden(), "New upload clears the old result");
+    assert(await page.locator("#caption").isHidden(), "New upload clears the old annotation");
+    assert.equal(await page.locator("#caption").textContent(), "");
+    assert(await page.locator("#annotation-placeholder").isVisible());
     const countAfterReset = requests.length;
     await page.waitForTimeout(2200);
     assert.equal(requests.length, countAfterReset, "New upload cancels the previous timer");
@@ -285,7 +302,7 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
     assert.equal(new URL(docs.url()).pathname, "/api/docs");
     assert.deepEqual(await docs.evaluate(() => window.swaggerConfig.spec.servers), [{ url: "/api" }]);
     assert.deepEqual(docsErrors, []);
-    console.log("Browser checks passed: class text inside boxes without backgrounds, numbers only in table, blue frame/row selection by image click/table/keyboard, smallest overlapping box selected, background click and Escape clear selection, box alignment on resize, automatic preview, compatible/blank refinements, literal caption, pending/error/retry/empty results, wait/request timeouts, polling stops on success/error/reset, automatic folder copy with crops, permission/write failure fallback, ZIP, compact laptop/mobile layout, contained long-table scrolling, external submit, Swagger proxy and CSP.");
+    console.log("Browser checks passed: separate large annotation panel below image, removed header/hint, bright-red frames, long caption/table contained scrolling, caption reset on upload, class text inside boxes without backgrounds, numbers only in table, blue frame/row selection by image click/table/keyboard, smallest overlapping box selected, background click and Escape clear selection, box alignment on resize, automatic preview, compatible/blank refinements, literal caption, pending/error/retry/empty results, wait/request timeouts, polling stops on success/error/reset, automatic folder copy with crops, permission/write failure fallback, ZIP, compact laptop/mobile layout, external submit, Swagger proxy and CSP.");
   } finally {
     await browser.close();
   }

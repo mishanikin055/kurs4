@@ -11,19 +11,7 @@
 </head>
 <body>
   <main>
-    <header class="page-header">
-      <div class="brand">
-        <svg class="brand-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-          <path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/>
-          <rect x="7" y="7" width="10" height="10" rx="2"/>
-        </svg>
-        <div>
-          <h1>Анализ изображений</h1>
-          <p>Детекция · Классификация · Аннотирование</p>
-        </div>
-      </div>
-      <a class="api-link" href="/api/docs" target="_blank" rel="noopener">Документация API</a>
-    </header>
+    <h1 class="sr-only">Анализ изображений</h1>
     <div class="workspace">
       <div class="controls">
         <form id="upload-form">
@@ -43,6 +31,7 @@
         <div class="submit-actions">
           <button id="submit" type="submit" form="upload-form">Отправить</button>
           <button id="retry-result" class="secondary" type="button" hidden>Повторить ожидание</button>
+          <a class="api-link" href="/api/docs" target="_blank" rel="noopener">Документация API</a>
         </div>
         <p id="status" class="status-row" aria-live="polite" role="status"></p>
         <section class="result-panel" aria-labelledby="result-title">
@@ -52,10 +41,8 @@
               <button id="download-zip" class="secondary" type="button">Скачать ZIP</button>
             </div>
           </div>
-          <p id="result-placeholder" class="placeholder">После обработки здесь появятся описание и классы объектов.</p>
+          <p id="result-placeholder" class="placeholder">После обработки здесь появятся классы объектов.</p>
           <div id="result" hidden>
-            <h3 class="sr-only">Описание</h3>
-            <p id="caption"></p>
             <h3 class="sr-only">Объекты</h3>
             <p id="no-objects" hidden>Объекты не обнаружены.</p>
             <div id="objects-table" class="table-scroll" role="region" aria-label="Классы объектов" tabindex="0" hidden>
@@ -68,18 +55,24 @@
           </div>
         </section>
       </div>
-      <section class="preview" aria-labelledby="preview-title">
-        <h2 id="preview-title">Изображение</h2>
-        <p id="preview-placeholder" class="placeholder">Загрузите изображение — здесь появится результат с рамками объектов.</p>
-        <div id="result-preview" hidden>
-          <div id="image-stage">
-            <img id="result-image" alt="Обнаруженные объекты с красными рамками и названиями классов" aria-describedby="object-help">
-            <div id="object-overlays"></div>
+      <div class="outputs">
+        <section class="preview" aria-labelledby="preview-title">
+          <h2 id="preview-title">Изображение</h2>
+          <p id="preview-placeholder" class="placeholder">Загрузите изображение — здесь появится результат с рамками объектов.</p>
+          <div id="result-preview" hidden>
+            <div id="image-stage">
+              <img id="result-image" alt="Обнаруженные объекты с красными рамками и названиями классов">
+              <div id="object-overlays"></div>
+            </div>
+            <p id="selection-status" class="sr-only" role="status" aria-live="polite"></p>
           </div>
-          <p id="object-help">Нажмите на объект на картинке или номер в таблице — рамка и строка выделятся синим. Повторное нажатие или Escape — снять выделение.</p>
-          <p id="selection-status" class="sr-only" role="status" aria-live="polite"></p>
-        </div>
-      </section>
+        </section>
+        <section class="annotation-panel" aria-labelledby="annotation-title">
+          <h2 id="annotation-title">Результат аннотирования</h2>
+          <p id="annotation-placeholder" class="placeholder">После обработки здесь появится описание изображения.</p>
+          <p id="caption" hidden></p>
+        </section>
+      </div>
     </div>
   </main>
 </body>

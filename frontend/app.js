@@ -98,7 +98,6 @@ function renderObjects(result) {
     });
     selectObject(hit, true);
   };
-  $("object-help").hidden = result.detection.objects.length === 0;
 }
 
 document.addEventListener("keydown", (event) => {
@@ -142,6 +141,9 @@ $("upload-form").addEventListener("submit", async (event) => {
   $("result").hidden = true;
   $("result-placeholder").hidden = false;
   $("result-preview").hidden = true;
+  $("caption").hidden = true;
+  $("caption").textContent = "";
+  $("annotation-placeholder").hidden = false;
   $("preview-placeholder").hidden = false;
   $("preview-placeholder").textContent = "После обработки здесь появится изображение с рамками.";
   $("result-image").removeAttribute("src");
@@ -205,6 +207,8 @@ async function waitForResult(id, deadline = Date.now() + 40 * 60 * 1000) {
     $("result-image").width = result.width;
     $("result-image").height = result.height;
     $("caption").textContent = result.annotation.raw_caption;
+    $("caption").hidden = false;
+    $("annotation-placeholder").hidden = true;
     renderObjects(result);
     $("no-objects").hidden = result.detection.objects.length > 0;
     $("objects-table").hidden = result.detection.objects.length === 0;
