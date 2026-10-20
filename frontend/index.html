@@ -19,7 +19,7 @@
         </svg>
         <span>Анализ изображений</span>
       </div>
-      <span class="header-note">Компьютерное зрение</span>
+      <a class="api-link" href="/api/docs" target="_blank" rel="noopener">Документация API</a>
     </header>
     <section class="intro" aria-labelledby="title">
       <h1 id="title">Программное средство для детекции, классификации и аннотирования изображений</h1>
@@ -53,8 +53,24 @@
     </form>
     <p id="status" class="status-row" aria-live="polite" role="status"></p>
     <div id="save-actions" hidden>
+      <button id="show-result" type="button">Показать результат</button>
       <button id="save-copy" class="secondary" type="button">Сохранить копию</button>
     </div>
+    <section id="result" class="result" aria-labelledby="result-title" hidden>
+      <h2 id="result-title" tabindex="-1">Результат обработки</h2>
+      <img id="result-image" alt="Обнаруженные объекты с рамками и классами COCO">
+      <h3>Описание изображения</h3>
+      <p id="caption"></p>
+      <h3>Объекты и классификация</h3>
+      <p id="no-objects" hidden>Объекты не обнаружены.</p>
+      <div id="objects-table" class="table-scroll" role="region" aria-label="Классы объектов" tabindex="0" hidden>
+        <table>
+          <caption class="sr-only">Классы детектора и классификатора для каждого объекта</caption>
+          <thead><tr><th scope="col">Объект</th><th scope="col">Детектор · COCO</th><th scope="col">Классификатор · ImageNet</th></tr></thead>
+          <tbody id="objects"></tbody>
+        </table>
+      </div>
+    </section>
   </main>
 </body>
 </html>

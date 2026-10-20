@@ -1,6 +1,7 @@
 const $ = (id) => document.getElementById(id);
 let folderHandle;
 let imageId;
+let previewUrl;
 
 if (!("showDirectoryPicker" in window)) {
   $("choose-folder").hidden = true;
@@ -22,6 +23,10 @@ $("upload-form").addEventListener("submit", async (event) => {
   if (!file || $("submit").disabled) return;
   $("submit").disabled = true;
   $("save-actions").hidden = true;
+  $("result").hidden = true;
+  $("result-image").removeAttribute("src");
+  if (previewUrl) URL.revokeObjectURL(previewUrl);
+  previewUrl = null;
   imageId = null;
   $("status").textContent = "Отправка изображения…";
   const data = new FormData();
@@ -34,7 +39,7 @@ $("upload-form").addEventListener("submit", async (event) => {
     }
     const accepted = await response.json();
     imageId = accepted.image_id;
-    $("status").textContent = `Отправлено в очередь. Папка в volume: ${accepted.output_folder}`;
+    $("status").textContent = "Изображение отправлено на обработку. Нажмите «Показать результат», чтобы открыть готовый результат.";
     $("save-actions").hidden = false;
   } catch {
     $("status").textContent = "Не удалось подтвердить отправку. Проверьте подключение к серверу.";
@@ -45,15 +50,61 @@ $("upload-form").addEventListener("submit", async (event) => {
 
 async function resultFile(id, name) {
   const response = await fetch(`/api/images/${id}/files/${name}`);
-  if (!response.ok) throw new Error("result_unavailable");
+  if (!response.ok) throw new Error(response.status === 404 ? "result_pending" : "result_unavailable");
   return response;
 }
+
+$("show-result").addEventListener("click", async () => {
+  if (!imageId) return;
+  const id = imageId;
+  $("show-result").disabled = true;
+  $("show-result").textContent = "Загрузка…";
+  $("save-copy").disabled = true;
+  $("submit").disabled = true;
+  $("status").textContent = "Загрузка результата…";
+  try {
+    const result = await (await resultFile(id, "results.json")).json();
+    const image = await (await resultFile(id, "detection.png")).blob();
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    previewUrl = URL.createObjectURL(image);
+    $("result-image").src = previewUrl;
+    $("result-image").width = result.width;
+    $("result-image").height = result.height;
+    $("caption").textContent = result.annotation.raw_caption;
+    const classes = new Map(result.classification.objects.map((object) => [object.object_id, object.label]));
+    $("objects").replaceChildren();
+    result.detection.objects.forEach((object, index) => {
+      const row = document.createElement("tr");
+      for (const value of [index + 1, object.label, classes.get(object.object_id) ?? "Не определён"]) {
+        const cell = document.createElement("td");
+        cell.textContent = value;
+        row.append(cell);
+      }
+      $("objects").append(row);
+    });
+    $("no-objects").hidden = result.detection.objects.length > 0;
+    $("objects-table").hidden = result.detection.objects.length === 0;
+    $("result").hidden = false;
+    $("status").textContent = "Результат готов.";
+    $("result-title").focus();
+  } catch (error) {
+    $("status").textContent = error.message === "result_pending"
+      ? "Результат ещё не готов. Нажмите «Показать результат» немного позже."
+      : "Не удалось загрузить результат. Попробуйте ещё раз.";
+  } finally {
+    $("show-result").disabled = false;
+    $("show-result").textContent = "Показать результат";
+    $("save-copy").disabled = false;
+    $("submit").disabled = false;
+  }
+});
 
 $("save-copy").addEventListener("click", async () => {
   if (!imageId) return;
   const id = imageId;
   const selectedFolder = folderHandle;
   $("save-copy").disabled = true;
+  $("show-result").disabled = true;
   $("submit").disabled = true;
   try {
     if (selectedFolder) {
@@ -69,7 +120,7 @@ $("save-copy").addEventListener("click", async () => {
       const stream = await file.createWritable();
       await stream.write(manifest);
       await stream.close();
-      $("status").textContent = `Копия сохранена: ${selectedFolder.name}/${id}. Основная копия остаётся в volume.`;
+      $("status").textContent = `Копия сохранена в папке «${selectedFolder.name}».`;
     } else {
       const response = await fetch(`/api/images/${id}/archive`);
       if (!response.ok) throw new Error("result_unavailable");
@@ -79,12 +130,13 @@ $("save-copy").addEventListener("click", async () => {
       link.download = `${id}.zip`;
       link.click();
       setTimeout(() => URL.revokeObjectURL(url), 60000);
-      $("status").textContent = "ZIP передан браузеру для сохранения. Основная копия остаётся в volume.";
+      $("status").textContent = "ZIP передан браузеру для сохранения.";
     }
   } catch {
     $("status").textContent = "Копия не сохранена: файлы ещё не готовы или папка недоступна. Повторите сохранение позже.";
   } finally {
     $("save-copy").disabled = false;
+    $("show-result").disabled = false;
     $("submit").disabled = false;
   }
 });
