@@ -9,6 +9,9 @@
   --on-accent: #29231d;
   --tint: #f0e5d8;
   --focus: #786146;
+  --object: #b42318;
+  --selected: #075985;
+  --selected-tint: #e0f2fe;
   font-family: "Segoe UI", system-ui, sans-serif;
   background: var(--bg);
   color: var(--text);
@@ -60,12 +63,29 @@ button:disabled { opacity: .6; cursor: wait; }
 #result h3 { font-size: 14px; margin: 0 0 8px; flex-shrink: 0; }
 #caption { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 14px; line-height: 1.6; margin: 0 0 12px; max-height: 35%; overflow-y: auto; flex-shrink: 0; }
 #no-objects { font-size: 14px; }
-.table-scroll { overflow: auto; min-height: 0; }
+.table-scroll { overflow: auto; min-height: 0; scroll-padding-top: 40px; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
 th, td { padding: 8px; text-align: left; border-bottom: 1px solid var(--border); overflow-wrap: anywhere; }
 th { position: sticky; top: 0; font-weight: 600; background: var(--tint); }
 #result-preview { min-height: 0; }
-#result-image { display: block; width: 100%; height: auto; max-height: calc(100dvh - 190px); object-fit: contain; object-position: top; border-radius: 6px; }
+#image-stage { position: relative; width: min(100%, calc((100dvh - 240px) * var(--image-ratio))); margin-inline: auto; }
+#result-image { display: block; width: 100%; height: 100%; border-radius: 6px; }
+#object-overlays, .object-box { position: absolute; inset: 0; pointer-events: none; }
+.object-box { color: var(--object); }
+.object-outline { position: absolute; border: 2px solid currentColor; }
+.object-marker { position: absolute; pointer-events: auto; width: max-content; min-width: 28px; min-height: 28px; padding: 3px 6px; border: 1px solid white; border-radius: 4px; background: var(--object); color: white; font-size: 13px; line-height: 20px; }
+.object-marker:active, .object-number:active { transform: none; }
+.object-marker:focus-visible { outline-color: white; box-shadow: 0 0 0 5px var(--selected); }
+.object-box.is-selected { z-index: 1; color: var(--selected); }
+.object-box.is-selected .object-outline { border-width: 3px; box-shadow: 0 0 0 1px white; background: rgb(7 89 133 / 10%); }
+.object-box.is-selected .object-marker { background: var(--selected); }
+#objects tr { cursor: pointer; }
+#objects tr:hover { background: var(--tint); }
+#objects tr.is-selected { background: var(--selected-tint); box-shadow: inset 3px 0 var(--selected); }
+#objects td:first-child { width: 56px; padding: 0 4px; }
+.object-number { min-width: 44px; padding: 4px 8px; background: transparent; color: var(--text); }
+.is-selected .object-number { color: var(--selected); }
+#object-help { margin: 10px 0 0; font-size: 12px; line-height: 1.5; color: var(--muted); }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 @media (max-width: 999px) {
   main { height: auto; min-height: 100dvh; padding: 16px; gap: 16px; }
@@ -73,7 +93,7 @@ th { position: sticky; top: 0; font-weight: 600; background: var(--tint); }
   .controls { display: block; }
   .preview { min-height: 300px; }
   .placeholder { min-height: 160px; }
-  #result-image { height: auto; max-height: 70dvh; }
+  #image-stage { width: min(100%, calc(70dvh * var(--image-ratio))); }
   #caption { max-height: none; }
   .table-scroll { max-height: 360px; }
 }

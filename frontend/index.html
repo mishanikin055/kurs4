@@ -72,7 +72,12 @@
         <h2 id="preview-title">Изображение</h2>
         <p id="preview-placeholder" class="placeholder">Загрузите изображение — здесь появится результат с рамками объектов.</p>
         <div id="result-preview" hidden>
-          <img id="result-image" alt="Обнаруженные объекты с рамками и классами COCO">
+          <div id="image-stage">
+            <img id="result-image" alt="Обнаруженные объекты; номера рамок совпадают с номерами в таблице" aria-describedby="object-help">
+            <div id="object-overlays"></div>
+          </div>
+          <p id="object-help">Номера рамок совпадают с таблицей. Нажмите на номер или строку, чтобы выделить объект.</p>
+          <p id="selection-status" class="sr-only" role="status" aria-live="polite"></p>
         </div>
       </section>
     </div>

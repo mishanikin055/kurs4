@@ -5,6 +5,106 @@ let readyImageId;
 let previewUrl;
 let resultController;
 let resultTimer;
+let selectedObject;
+
+function positionMarkers() {
+  const image = $("image-stage").getBoundingClientRect();
+  if (!image.width) return;
+  const placed = [];
+  for (const box of $("object-overlays").children) {
+    const outline = box.querySelector(".object-outline").getBoundingClientRect();
+    const marker = box.querySelector("button");
+    const width = marker.offsetWidth;
+    const height = marker.offsetHeight;
+    const candidates = [
+      [outline.left, outline.top], [outline.right - width, outline.top],
+      [outline.left, outline.bottom - height], [outline.right - width, outline.bottom - height],
+    ].map(([x, y]) => ({
+      x: Math.max(0, Math.min(x - image.left, image.width - width)),
+      y: Math.max(0, Math.min(y - image.top, image.height - height)),
+      width, height,
+    }));
+    const position = candidates.find((candidate) => placed.every((other) =>
+      candidate.x >= other.x + other.width || candidate.x + width <= other.x ||
+      candidate.y >= other.y + other.height || candidate.y + height <= other.y
+    )) || candidates[0];
+    marker.style.left = `clamp(0px, ${position.x / image.width * 100}%, calc(100% - ${width}px))`;
+    marker.style.top = `clamp(0px, ${position.y / image.height * 100}%, calc(100% - ${height}px))`;
+    placed.push(position);
+  }
+}
+
+new ResizeObserver(positionMarkers).observe($("image-stage"));
+
+function selectObject(index, revealRow = false) {
+  selectedObject = selectedObject === index ? null : index;
+  const rows = [...$("objects").children];
+  for (const container of [$("objects"), $("object-overlays")]) {
+    [...container.children].forEach((element, i) => {
+      const selected = i === selectedObject;
+      element.classList.toggle("is-selected", selected);
+      element.querySelector("button").setAttribute("aria-pressed", String(selected));
+    });
+  }
+  const row = rows[selectedObject];
+  $("selection-status").textContent = row
+    ? `Выбран объект №${selectedObject + 1}: ${[...row.cells].slice(1).map((cell) => cell.textContent).filter(Boolean).join(", ")}.`
+    : "Выделение снято.";
+  if (revealRow && row) row.scrollIntoView({ block: "nearest" });
+}
+
+function renderObjects(result) {
+  selectedObject = null;
+  $("selection-status").textContent = "";
+  $("objects").replaceChildren();
+  $("object-overlays").replaceChildren();
+  $("image-stage").style.setProperty("--image-ratio", result.width / result.height);
+  $("image-stage").style.aspectRatio = `${result.width} / ${result.height}`;
+  const classes = new Map(result.classification.objects.map((object) => [object.object_id, object.refinement]));
+  result.detection.objects.forEach((object, index) => {
+    const row = document.createElement("tr");
+    const number = document.createElement("button");
+    number.type = "button";
+    number.className = "object-number";
+    number.textContent = index + 1;
+    number.setAttribute("aria-label", `Выделить объект №${index + 1}: ${object.label}`);
+    number.setAttribute("aria-pressed", "false");
+    const cell = document.createElement("td");
+    cell.append(number);
+    row.append(cell);
+    for (const value of [object.label, classes.get(object.object_id) ?? ""]) {
+      const cell = document.createElement("td");
+      cell.textContent = value;
+      row.append(cell);
+    }
+    row.addEventListener("click", () => selectObject(index));
+    $("objects").append(row);
+
+    const [x1, y1, x2, y2] = object.bbox;
+    const box = document.createElement("div");
+    box.className = "object-box";
+    const outline = document.createElement("span");
+    outline.className = "object-outline";
+    outline.style.left = `${x1 / result.width * 100}%`;
+    outline.style.top = `${y1 / result.height * 100}%`;
+    outline.style.width = `${(x2 - x1) / result.width * 100}%`;
+    outline.style.height = `${(y2 - y1) / result.height * 100}%`;
+    const marker = number.cloneNode(true);
+    marker.className = "object-marker";
+    marker.textContent = index + 1;
+    marker.title = marker.getAttribute("aria-label");
+    marker.addEventListener("click", () => selectObject(index, true));
+    box.append(outline, marker);
+    $("object-overlays").append(box);
+  });
+  $("object-help").hidden = result.detection.objects.length === 0;
+}
+
+for (const id of ["objects", "object-overlays"]) {
+  $(id).addEventListener("keydown", (event) => {
+    if (event.key === "Escape") selectObject(null);
+  });
+}
 
 function stopWaiting() {
   clearTimeout(resultTimer);
@@ -46,6 +146,8 @@ $("upload-form").addEventListener("submit", async (event) => {
   $("preview-placeholder").hidden = false;
   $("preview-placeholder").textContent = "После обработки здесь появится изображение с рамками.";
   $("result-image").removeAttribute("src");
+  $("object-overlays").replaceChildren();
+  $("selection-status").textContent = "";
   if (previewUrl) URL.revokeObjectURL(previewUrl);
   previewUrl = null;
   imageId = null;
@@ -94,7 +196,7 @@ async function waitForResult(id, deadline = Date.now() + 40 * 60 * 1000) {
     }
     if (!response.ok) throw new Error("result_unavailable");
     const result = await response.json();
-    const imageResponse = await fetch(`/api/images/${id}/files/detection.png`, { signal: controller.signal });
+    const imageResponse = await fetch(`/api/images/${id}/files/normalized.png`, { signal: controller.signal });
     if (!imageResponse.ok) throw new Error("result_unavailable");
     const image = await imageResponse.blob();
     if (id !== imageId) return;
@@ -104,23 +206,14 @@ async function waitForResult(id, deadline = Date.now() + 40 * 60 * 1000) {
     $("result-image").width = result.width;
     $("result-image").height = result.height;
     $("caption").textContent = result.annotation.raw_caption;
-    const classes = new Map(result.classification.objects.map((object) => [object.object_id, object.refinement]));
-    $("objects").replaceChildren();
-    result.detection.objects.forEach((object, index) => {
-      const row = document.createElement("tr");
-      for (const value of [index + 1, object.label, classes.get(object.object_id) ?? ""]) {
-        const cell = document.createElement("td");
-        cell.textContent = value;
-        row.append(cell);
-      }
-      $("objects").append(row);
-    });
+    renderObjects(result);
     $("no-objects").hidden = result.detection.objects.length > 0;
     $("objects-table").hidden = result.detection.objects.length === 0;
     $("result").hidden = false;
     $("result-placeholder").hidden = true;
     $("result-preview").hidden = false;
     $("preview-placeholder").hidden = true;
+    positionMarkers();
     readyImageId = id;
     $("save-actions").hidden = Boolean(folderHandle);
     $("status").textContent = "Результат готов.";

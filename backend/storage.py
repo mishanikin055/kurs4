@@ -6,7 +6,7 @@ import warnings
 from pathlib import Path
 from uuid import UUID
 
-from PIL import Image, ImageDraw, ImageOps, UnidentifiedImageError
+from PIL import Image, ImageDraw, ImageFont, ImageOps, UnidentifiedImageError
 from starlette.datastructures import UploadFile
 
 from backend.models import crop_object
@@ -22,17 +22,24 @@ class UploadError(Exception):
 
 
 def save_detection_image(normalized_path: str, destination: Path, detection: dict) -> Path:
-    """Draw COCO boxes without changing source pixels or the saved model responses."""
+    """Number COCO boxes in detection order without changing inputs or model responses."""
     directory = destination.parent
     directory.mkdir(parents=True, exist_ok=True)
     with Image.open(normalized_path) as source:
         image = source.convert("RGB")
     draw = ImageDraw.Draw(image)
-    for obj in detection["objects"]:
+    font = ImageFont.load_default(size=max(16, round(max(image.size) / 45)))
+    for index, obj in enumerate(detection["objects"], start=1):
         x1, y1, x2, y2 = obj["bbox"]
         box = (int(x1), int(y1), min(image.width - 1, int(x2)), min(image.height - 1, int(y2)))
         draw.rectangle(box, outline="red", width=2)
-        draw.text((box[0], box[1]), obj["label"], fill="white", stroke_width=1, stroke_fill="black")
+        text = f"#{index} {obj['label']}"
+        left, top, right, bottom = draw.textbbox((0, 0), text, font=font)
+        label_width, label_height = right - left + 8, bottom - top + 8
+        x = max(0, min(box[0], image.width - label_width))
+        y = max(0, min(box[1], image.height - label_height))
+        draw.rectangle((x, y, x + label_width, y + label_height), fill="#b42318")
+        draw.text((x + 4 - left, y + 4 - top), text, font=font, fill="white")
     descriptor, temporary = tempfile.mkstemp(prefix=".detection-", dir=directory)
     try:
         with os.fdopen(descriptor, "wb") as stream:

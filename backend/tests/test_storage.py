@@ -1,4 +1,5 @@
 from io import BytesIO
+from pathlib import Path
 from uuid import uuid4
 
 import pytest
@@ -112,6 +113,47 @@ def test_detection_image_disk_failure_cleans_temporary_file(settings, monkeypatc
             result["normalized_path"], settings.image_root / "detection.png", {"objects": []}
         )
     assert not list(settings.image_root.rglob(".detection-*"))
+
+
+@pytest.mark.parametrize("size", [(960, 720), (720, 960), (24, 16)])
+def test_detection_labels_number_identical_classes_in_detection_order(settings, monkeypatch, size):
+    from copy import deepcopy
+
+    from PIL import ImageDraw
+
+    result = save_image(upload(image_bytes(size=size)), uuid4(), settings)
+    source = Path(result["normalized_path"])
+    before = source.read_bytes()
+    payload = {
+        "objects": [
+            {"object_id": "second", "bbox": [0, 0, size[0], size[1]], "label": "car"},
+            {
+                "object_id": "first",
+                "bbox": [size[0] - 3, size[1] - 3, size[0], size[1]],
+                "label": "car",
+            },
+        ]
+    }
+    original_payload = deepcopy(payload)
+    labels = []
+    draw_text = ImageDraw.ImageDraw.text
+
+    def record_text(self, xy, text, **kwargs):
+        labels.append(text)
+        left, top, right, bottom = self.textbbox(xy, text, font=kwargs["font"])
+        assert 0 <= left < size[0] and 0 <= top < size[1]
+        if min(size) > 100:
+            assert right <= size[0] and bottom <= size[1]
+        return draw_text(self, xy, text, **kwargs)
+
+    monkeypatch.setattr(ImageDraw.ImageDraw, "text", record_text)
+    destination = source.parent / "detection.png"
+    save_detection_image(str(source), destination, payload)
+    assert labels == ["#1 car", "#2 car"]
+    assert payload == original_payload
+    assert source.read_bytes() == before
+    with Image.open(destination) as image:
+        assert image.size == size
 
 
 def test_exif_orientation_changes_normalized_dimensions(settings):
