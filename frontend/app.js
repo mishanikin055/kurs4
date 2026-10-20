@@ -7,6 +7,10 @@ let resultController;
 let resultTimer;
 let selectedObject;
 
+function displayCaption(caption) {
+  return caption.trim().toLowerCase() === "unanswerable" ? "" : caption;
+}
+
 function fitLabels() {
   if (!$("image-stage").clientWidth) return;
   for (const box of $("object-overlays").children) {
@@ -57,7 +61,7 @@ function renderObjects(result) {
     const cell = document.createElement("td");
     cell.append(number);
     row.append(cell);
-    for (const value of [object.label, captions.get(object.object_id) ?? ""]) {
+    for (const value of [object.label, displayCaption(captions.get(object.object_id) ?? "")]) {
       const cell = document.createElement("td");
       cell.textContent = value;
       row.append(cell);
@@ -206,7 +210,7 @@ async function waitForResult(id, deadline = Date.now() + 40 * 60 * 1000) {
     $("result-image").src = previewUrl;
     $("result-image").width = result.width;
     $("result-image").height = result.height;
-    $("caption").textContent = result.annotation.raw_caption;
+    $("caption").textContent = displayCaption(result.annotation.raw_caption);
     $("caption").hidden = false;
     $("annotation-placeholder").hidden = true;
     renderObjects(result);

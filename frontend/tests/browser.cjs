@@ -229,6 +229,14 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
     if (process.env.SCREENSHOT_DIR) await page.screenshot({ path: `${process.env.SCREENSHOT_DIR}/simple-mobile.png`, fullPage: true });
     await page.locator(".object-number").nth(1).click();
     assert.equal(await page.locator(".object-number").nth(1).getAttribute("aria-pressed"), "true");
+    preview = { ...result,
+      classification: { objects: [{ object_id: "dog", object_caption: "unanswerable" }, { object_id: "cat", object_caption: "  UNANSWERABLE  " }] },
+      annotation: { raw_caption: "  Unanswerable  " },
+    };
+    await page.locator("#submit").click();
+    await page.locator("#result").waitFor({ state: "visible" });
+    assert.deepEqual(await page.locator("#objects tr").allTextContents(), ["1dog", "2cat"], "Unanswerable object captions leave empty cells");
+    assert.equal(await page.locator("#caption").textContent(), "", "Unanswerable scene caption is blank");
     preview = { ...result, classification: { objects: result.classification.objects.map(({ object_id }) => ({ object_id, label: "tabby", refinement: "tabby" })) } };
     delete preview.crops;
     await page.locator("#submit").click();
