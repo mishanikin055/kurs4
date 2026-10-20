@@ -68,7 +68,7 @@ table { width: 100%; border-collapse: collapse; font-size: 13px; }
 th, td { padding: 8px; text-align: left; border-bottom: 1px solid var(--border); overflow-wrap: anywhere; }
 th { position: sticky; top: 0; font-weight: 600; background: var(--tint); }
 #result-preview { min-height: 0; }
-#image-stage { position: relative; width: min(100%, calc((100dvh - 240px) * var(--image-ratio))); margin-inline: auto; cursor: crosshair; }
+#image-stage { position: relative; width: min(100%, calc((100dvh - 240px) * var(--image-ratio))); margin-inline: auto; cursor: default; }
 #result-image { display: block; width: 100%; height: 100%; border-radius: 6px; }
 #object-overlays, .object-box { position: absolute; inset: 0; pointer-events: none; }
 .object-box { color: var(--object); }
