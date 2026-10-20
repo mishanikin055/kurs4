@@ -21,56 +21,66 @@
       </div>
       <a class="api-link" href="/api/docs" target="_blank" rel="noopener">Документация API</a>
     </header>
-    <section class="intro" aria-labelledby="title">
-      <h1 id="title">Программное средство для детекции, классификации и аннотирования изображений</h1>
-      <p>Загрузите фотографию, чтобы найти объекты, уточнить их классы и получить описание.</p>
-      <ol class="pipeline" aria-label="Этапы обработки">
-        <li><span class="step-number" aria-hidden="true">01</span> Детекция</li>
-        <li><span class="step-number" aria-hidden="true">02</span> Классификация</li>
-        <li><span class="step-number" aria-hidden="true">03</span> Аннотирование</li>
-      </ol>
-    </section>
-    <form id="upload-form">
-      <div class="form-heading">
-        <h2>Новое изображение</h2>
-        <span>JPEG / PNG</span>
-      </div>
-      <label for="file" class="file-label">Изображение</label>
-      <div id="dropzone" class="upload-bar">
-        <div class="file-control">
-          <input id="file" type="file" accept="image/jpeg,image/png,.jpg,.jpeg,.png" required aria-describedby="file-help">
-          <p id="file-help">JPEG или PNG, до 10 МиБ. Можно перетащить файл сюда.</p>
+    <div class="workspace">
+      <div class="controls">
+        <section class="intro" aria-labelledby="title">
+          <h1 id="title">Программное средство для детекции, классификации и аннотирования изображений</h1>
+          <p>Загрузите фотографию, чтобы найти объекты, уточнить их классы и получить описание.</p>
+          <ol class="pipeline" aria-label="Этапы обработки">
+            <li><span class="step-number" aria-hidden="true">01</span> Детекция</li>
+            <li><span class="step-number" aria-hidden="true">02</span> Классификация</li>
+            <li><span class="step-number" aria-hidden="true">03</span> Аннотирование</li>
+          </ol>
+        </section>
+        <form id="upload-form">
+          <div class="form-heading">
+            <h2>Новое изображение</h2>
+            <span>JPEG / PNG</span>
+          </div>
+          <label for="file" class="file-label">Изображение</label>
+          <div id="dropzone" class="upload-bar">
+            <div class="file-control">
+              <input id="file" type="file" accept="image/jpeg,image/png,.jpg,.jpeg,.png" required aria-describedby="file-help">
+              <p id="file-help">JPEG или PNG, до 10 МиБ. Можно перетащить файл сюда.</p>
+            </div>
+            <button id="submit" type="submit">Отправить</button>
+          </div>
+          <div class="folder-control">
+            <label for="folder" class="file-label">Дополнительная копия на компьютере</label>
+            <div class="folder-actions">
+              <input id="folder" type="text" value="Не выбрана" readonly>
+              <button id="choose-folder" class="secondary" type="button">Выбрать папку</button>
+            </div>
+          </div>
+        </form>
+        <p id="status" class="status-row" aria-live="polite" role="status"></p>
+        <button id="retry-result" class="secondary" type="button" hidden>Повторить ожидание</button>
+        <div id="save-actions" hidden>
+          <button id="download-zip" class="secondary" type="button">Скачать ZIP</button>
         </div>
-        <button id="submit" type="submit">Отправить</button>
+        <section id="result" class="result" aria-labelledby="result-title" hidden>
+          <h2 id="result-title" tabindex="-1">Результат обработки</h2>
+          <h3>Описание изображения</h3>
+          <p id="caption"></p>
+          <h3>Объекты и классификация</h3>
+          <p id="no-objects" hidden>Объекты не обнаружены.</p>
+          <div id="objects-table" class="table-scroll" role="region" aria-label="Классы объектов" tabindex="0" hidden>
+            <table>
+              <caption class="sr-only">Классы детектора и классификатора для каждого объекта</caption>
+              <thead><tr><th scope="col">Объект</th><th scope="col">Детектор · COCO</th><th scope="col">Уточнение · ImageNet</th></tr></thead>
+              <tbody id="objects"></tbody>
+            </table>
+          </div>
+        </section>
       </div>
-      <div class="folder-control">
-        <label for="folder" class="file-label">Дополнительная копия на компьютере</label>
-        <div class="folder-actions">
-          <input id="folder" type="text" value="Не выбрана" readonly>
-          <button id="choose-folder" class="secondary" type="button">Выбрать папку</button>
+      <section class="preview" aria-labelledby="preview-title">
+        <h2 id="preview-title">Изображение</h2>
+        <p id="preview-placeholder">Загрузите изображение — здесь появится результат с рамками объектов.</p>
+        <div id="result-preview" hidden>
+          <img id="result-image" alt="Обнаруженные объекты с рамками и классами COCO">
         </div>
-      </div>
-    </form>
-    <p id="status" class="status-row" aria-live="polite" role="status"></p>
-    <div id="save-actions" hidden>
-      <button id="show-result" type="button">Показать результат</button>
-      <button id="save-copy" class="secondary" type="button">Сохранить копию</button>
+      </section>
     </div>
-    <section id="result" class="result" aria-labelledby="result-title" hidden>
-      <h2 id="result-title" tabindex="-1">Результат обработки</h2>
-      <img id="result-image" alt="Обнаруженные объекты с рамками и классами COCO">
-      <h3>Описание изображения</h3>
-      <p id="caption"></p>
-      <h3>Объекты и классификация</h3>
-      <p id="no-objects" hidden>Объекты не обнаружены.</p>
-      <div id="objects-table" class="table-scroll" role="region" aria-label="Классы объектов" tabindex="0" hidden>
-        <table>
-          <caption class="sr-only">Классы детектора и классификатора для каждого объекта</caption>
-          <thead><tr><th scope="col">Объект</th><th scope="col">Детектор · COCO</th><th scope="col">Классификатор · ImageNet</th></tr></thead>
-          <tbody id="objects"></tbody>
-        </table>
-      </div>
-    </section>
   </main>
 </body>
 </html>

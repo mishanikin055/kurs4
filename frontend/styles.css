@@ -18,13 +18,18 @@
 body { margin: 0; min-height: 100dvh; }
 button, input { font: inherit; -webkit-tap-highlight-color: transparent; }
 button:focus-visible, input:focus-visible, a:focus-visible, .table-scroll:focus-visible { outline: 3px solid var(--focus); outline-offset: 5px; }
-main { max-width: 1180px; margin: auto; padding: 36px 48px 64px; }
-.page-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 24px; border-bottom: 1px solid var(--border); margin-bottom: 48px; }
+main { max-width: 1680px; margin: auto; padding: 32px 40px 56px; }
+.workspace { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 32px; align-items: start; }
+.controls { min-width: 0; }
+.preview { position: sticky; top: 24px; min-width: 0; padding: 24px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; }
+.preview h2 { font-size: 20px; margin: 0 0 20px; }
+#preview-placeholder { display: grid; place-items: center; min-height: 420px; margin: 0; padding: 24px; color: var(--muted); text-align: center; line-height: 1.6; background: var(--bg); border-radius: 6px; }
+.page-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 24px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
 .brand { display: flex; align-items: center; gap: 12px; font-size: 15px; font-weight: 600; }
 .brand-mark { width: 36px; height: 36px; padding: 6px; color: var(--focus); background: var(--tint); border-radius: 8px; flex-shrink: 0; }
 .api-link { color: var(--focus); font-size: 14px; padding: 12px 0; text-underline-offset: 4px; }
 .intro { margin-bottom: 36px; }
-h1 { font-size: clamp(28px, 3.2vw, 42px); font-weight: 600; margin: 0 0 20px; line-height: 1.2; letter-spacing: -.025em; text-wrap: balance; }
+h1 { font-size: clamp(26px, 2.5vw, 36px); font-weight: 600; margin: 0 0 20px; line-height: 1.2; letter-spacing: -.025em; text-wrap: balance; }
 .intro p { color: var(--muted); margin: 0; line-height: 1.6; max-width: 65ch; }
 .pipeline { display: flex; flex-wrap: wrap; gap: 12px 28px; list-style: none; padding: 0; margin: 26px 0 0; }
 .pipeline li { display: flex; align-items: center; gap: 9px; font-size: 14px; font-weight: 500; }
@@ -34,9 +39,10 @@ h1 { font-size: clamp(28px, 3.2vw, 42px); font-weight: 600; margin: 0 0 20px; li
 .form-heading h2 { font-size: 20px; font-weight: 600; margin: 0; }
 .form-heading > span { color: var(--muted); font-size: 12px; white-space: nowrap; }
 .file-label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 8px; }
-.upload-bar { display: flex; align-items: center; justify-content: space-between; gap: 24px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 22px 24px; }
+.upload-bar { display: flex; flex-direction: column; align-items: stretch; gap: 16px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 22px 24px; }
 .upload-bar.dragging { outline: 3px solid var(--focus); background: var(--tint); }
 .file-control { min-width: 0; }
+#submit { align-self: flex-start; }
 input[type=file] { width: 100%; color: var(--text); font-size: 14px; }
 input::file-selector-button { font: inherit; color: var(--text); background: var(--tint); border: 1px solid var(--border); border-radius: 6px; min-height: 44px; padding: 9px 13px; margin-right: 14px; cursor: pointer; }
 #file-help { font-size: 12px; line-height: 1.5; color: var(--muted); margin: 9px 0 0; }
@@ -61,12 +67,17 @@ table { width: 100%; border-collapse: collapse; font-size: 14px; }
 th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); overflow-wrap: anywhere; }
 th { font-weight: 600; background: var(--tint); }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+@media (max-width: 1050px) {
+  .workspace { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  .preview { position: static; }
+  #preview-placeholder { min-height: 220px; }
+}
 @media (max-width: 767px) {
   main { padding: 24px 20px 36px; }
   .page-header { margin-bottom: 32px; padding-bottom: 20px; }
   .page-header { flex-wrap: wrap; }
   .pipeline { gap: 12px 16px; }
-  #upload-form, .result { padding: 20px; }
+  #upload-form, .result, .preview { padding: 20px; }
   .form-heading { flex-wrap: wrap; }
   .upload-bar { flex-direction: column; align-items: stretch; gap: 18px; padding: 16px; }
   .folder-actions { flex-direction: column; }

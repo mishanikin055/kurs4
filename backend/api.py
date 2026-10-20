@@ -1,4 +1,4 @@
-"""Uploads and explicit downloads; database writes belong to the worker."""
+"""Uploads, result previews and downloads; database writes belong to the worker."""
 
 import shutil
 import tempfile
@@ -43,6 +43,15 @@ def health(request: Request):
     state = request.app.state
     ready = check_broker(state.celery, state.settings.broker_timeout)
     return JSONResponse(status_code=200 if ready else 503, content={"rabbitmq": ready})
+
+
+@router.get("/images/{image_id}")
+def preview_result(image_id: UUID, service: Service):
+    try:
+        result = service.result(image_id)
+    except FileNotFoundError as exc:
+        raise HTTPException(404, "result_not_found", headers={"Cache-Control": "no-store"}) from exc
+    return JSONResponse(result, headers={"Cache-Control": "no-store"})
 
 
 @router.get("/images/{image_id}/files/{filename}")

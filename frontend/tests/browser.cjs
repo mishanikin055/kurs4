@@ -13,10 +13,11 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
       window.savedFiles = {};
       window.showDirectoryPicker = async () => ({
         name: "Local results",
-        requestPermission: async () => "granted",
+        queryPermission: async () => window.folderPermission || "granted",
         getDirectoryHandle: async (directory) => ({
           getFileHandle: async (name) => ({
             createWritable: async () => {
+              if (window.folderWriteError) throw new Error("write failed");
               const chunks = [];
               const record = () => { window.savedFiles[`${directory}/${name}`] = chunks.flat(); };
               const stream = new WritableStream({
@@ -41,14 +42,18 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
     const result = {
       id: imageId, width: 640, height: 480,
       detection: { objects: [{ object_id: "dog", label: "dog" }, { object_id: "cat", label: "cat" }] },
-      classification: { objects: [{ object_id: "cat", label: "tabby" }, { object_id: "dog", label: "Labrador retriever" }] },
+      classification: { objects: [{ object_id: "cat", label: "unicycle", refinement: null }, { object_id: "dog", label: "Labrador retriever", refinement: "Labrador retriever" }] },
       annotation: { raw_caption: "  A dog and <b>a cat</b>.  " },
     };
+    let preview = result;
     const files = {
       original: png,
       "normalized.png": png,
       "detection.png": png,
-      "results.json": Buffer.from(JSON.stringify(result)),
+      "results.json": Buffer.from(JSON.stringify({
+        ...result,
+        classification: { objects: result.classification.objects.map(({ refinement, ...object }) => object) },
+      })),
     };
     await page.route("**/api/**", async (route) => {
       const path = new URL(route.request().url()).pathname;
@@ -57,9 +62,10 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
         assert.match(route.request().headers()["content-type"], /multipart\/form-data/);
         return route.fulfill({ status: uploadError ? 503 : 202, json: { image_id: imageId, output_folder: `results/${imageId}` } });
       }
-      assert(!path.includes("/jobs/"), "No polling or job API is allowed");
+      assert(!path.includes("/jobs/"), "No job API is allowed");
       if (resultError) return route.fulfill({ status: 503, json: { detail: "unavailable" } });
       if (!ready) return route.fulfill({ status: 404, json: { detail: "result_not_found" } });
+      if (path === `/api/images/${imageId}`) return route.fulfill({ json: preview });
       if (path.endsWith("/archive")) return route.fulfill({ contentType: "application/zip", body: Buffer.from("archive") });
       const name = path.split("/").pop();
       assert(name in files, `Unexpected API path ${path}`);
@@ -68,57 +74,115 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
     await page.goto(baseURL);
     await page.locator("#file").setInputFiles({ name: "dog.png", mimeType: "image/png", buffer: png });
     await page.locator("#submit").click();
-    await page.waitForFunction(() => !document.getElementById("save-actions").hidden);
-    assert.equal(requests.length, 1, "Only upload until the user requests a result or copy");
+    await page.waitForFunction(() => document.getElementById("status").textContent.includes("автоматически"));
+    assert.equal(await page.locator("#show-result").count(), 0);
+    assert.equal(await page.locator("#save-copy").count(), 0);
     assert(!/volume|results\//.test(await page.locator("#status").textContent()));
-    await page.locator("#show-result").click();
-    await page.waitForFunction(() => document.getElementById("status").textContent.includes("ещё не готов"));
+    await page.waitForResponse((response) => response.url().endsWith(`/api/images/${imageId}`));
+    assert(requests.filter((path) => path === `/api/images/${imageId}`).length >= 2, "Pending results are retried automatically");
     assert(await page.locator("#result").isHidden());
-    await page.locator("#save-copy").click();
-    await page.waitForFunction(() => document.getElementById("status").textContent.includes("ещё не готовы"));
+    assert(await page.locator("#save-actions").isHidden());
     ready = true;
-    await page.locator("#show-result").click();
-    await page.waitForFunction(() => !document.getElementById("result").hidden);
+    await page.locator("#result").waitFor({ state: "visible" });
     await page.waitForFunction(() => document.getElementById("result-image").naturalWidth > 0);
     assert.equal(await page.locator("#caption").textContent(), result.annotation.raw_caption);
     assert.equal(await page.locator("#caption b").count(), 0, "Model text must never become HTML");
-    assert.deepEqual(await page.locator("#objects tr").allTextContents(), ["1dogLabrador retriever", "2cattabby"]);
+    assert.deepEqual(await page.locator("#objects tr").allTextContents(), ["1dogLabrador retriever", "2cat"]);
+    const controls = await page.locator(".controls").boundingBox();
+    const image = await page.locator("#result-image").boundingBox();
+    assert(image.x >= controls.x + controls.width, "Image is to the right of the controls and table");
     const countAfterResult = requests.length;
-    await page.waitForTimeout(350);
-    assert.equal(requests.length, countAfterResult, "Showing results must not start polling");
-    resultError = true;
-    await page.locator("#show-result").click();
-    await page.waitForFunction(() => document.getElementById("status").textContent.includes("Не удалось загрузить"));
-    assert(await page.locator("#result").isVisible(), "A failed refresh keeps the previous result");
-    resultError = false;
+    await page.waitForTimeout(2200);
+    assert.equal(requests.length, countAfterResult, "Polling stops after the result is shown");
     const downloadPromise = page.waitForEvent("download");
-    await page.locator("#save-copy").click();
+    await page.locator("#download-zip").click();
     const download = await downloadPromise;
     assert.equal(download.suggestedFilename(), `${imageId}.zip`);
     await page.locator("#choose-folder").click();
     assert.equal(await page.locator("#folder").inputValue(), "Local results");
-    await page.locator("#save-copy").click();
-    await page.waitForFunction(() => document.getElementById("status").textContent.startsWith("Копия сохранена"));
+    await page.waitForFunction(() => document.getElementById("status").textContent.includes("Копия сохранена"));
     const saved = await page.evaluate(() => window.savedFiles);
     assert.deepEqual(Object.keys(saved).sort(), Object.keys(files).map((name) => `${imageId}/${name}`).sort());
     for (const [name, content] of Object.entries(files)) assert.deepEqual(Buffer.from(saved[`${imageId}/${name}`]), content);
     assert(!/volume/.test(await page.locator("#status").textContent()));
+    assert(await page.locator("#save-actions").isHidden(), "Selected folder is saved automatically without a save button");
+    await page.evaluate(() => { window.savedFiles = {}; });
+    await page.locator("#submit").click();
+    await page.waitForFunction(() => document.getElementById("status").textContent.includes("Копия сохранена"));
+    assert.equal(await page.evaluate(() => Object.keys(window.savedFiles).length), 4, "Folder selected before upload receives all four files automatically");
+    for (const flag of ["folderPermission", "folderWriteError"]) {
+      await page.evaluate((key) => { window[key] = key === "folderPermission" ? "denied" : true; }, flag);
+      await page.locator("#choose-folder").click();
+      await page.waitForFunction(() => document.getElementById("status").textContent.includes("сохранить полный комплект не удалось"));
+      assert(await page.locator("#result").isVisible(), "Saving failure keeps the result visible");
+      assert(await page.locator("#download-zip").isVisible(), "Saving failure offers ZIP");
+      await page.evaluate((key) => { delete window[key]; }, flag);
+    }
+    await page.locator("#choose-folder").click();
+    await page.waitForFunction(() => document.getElementById("status").textContent.includes("Копия сохранена"));
     if (process.env.SCREENSHOT_DIR) await page.screenshot({ path: `${process.env.SCREENSHOT_DIR}/simple-desktop.png`, fullPage: true });
     const countBeforeResize = requests.length;
     await page.setViewportSize({ width: 375, height: 812 });
     assert(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth));
     assert.equal(requests.length, countBeforeResize);
     if (process.env.SCREENSHOT_DIR) await page.screenshot({ path: `${process.env.SCREENSHOT_DIR}/simple-mobile.png`, fullPage: true });
-    files["results.json"] = Buffer.from(JSON.stringify({ ...result, detection: { objects: [] }, classification: { objects: [] } }));
-    await page.locator("#show-result").click();
+    preview = { ...result, detection: { objects: [] }, classification: { objects: [] } };
+    await page.locator("#submit").click();
     await page.waitForFunction(() => !document.getElementById("no-objects").hidden);
     assert(await page.locator("#objects-table").isHidden());
+    resultError = true;
+    await page.locator("#submit").click();
+    await page.locator("#retry-result").waitFor({ state: "visible" });
+    assert.match(await page.locator("#status").textContent(), /Не удалось загрузить/);
+    assert(await page.locator("#result").isHidden());
+    const countAfterError = requests.length;
+    await page.waitForTimeout(2200);
+    assert.equal(requests.length, countAfterError, "Network/server error stops automatic requests");
+    resultError = false;
+    await page.locator("#retry-result").click();
+    await page.locator("#result").waitFor({ state: "visible" });
+    assert(await page.locator("#retry-result").isHidden());
+    // A new upload cancels pending polling even if that upload fails.
+    ready = false;
+    await page.locator("#submit").click();
+    await page.waitForResponse((response) => response.url().endsWith(`/api/images/${imageId}`));
     uploadError = true;
     await page.locator("#submit").click();
     await page.waitForFunction(() => document.getElementById("status").textContent.includes("не подтверждена"));
     assert(await page.locator("#save-actions").isHidden());
     assert(await page.locator("#result").isHidden(), "New upload clears the old result");
+    const countAfterReset = requests.length;
+    await page.waitForTimeout(2200);
+    assert.equal(requests.length, countAfterReset, "New upload cancels the previous timer");
     assert.deepEqual(errors, []);
+    const timed = await browser.newPage();
+    await timed.clock.install();
+    let releaseRequest;
+    let stall = false;
+    await timed.route("**/api/**", async (route) => {
+      if (route.request().method() === "POST") return route.fulfill({ status: 202, json: { image_id: imageId } });
+      if (stall) await new Promise((resolve) => { releaseRequest = resolve; });
+      await route.fulfill({ status: 404 }).catch(() => {}); // Request may have been aborted by its timeout.
+    });
+    await timed.goto(baseURL);
+    await timed.locator("#file").setInputFiles({ name: "dog.png", mimeType: "image/png", buffer: png });
+    await Promise.all([
+      timed.waitForResponse((response) => response.status() === 404),
+      timed.locator("#submit").click(),
+    ]);
+    await timed.clock.fastForward(40 * 60 * 1000 + 1);
+    await timed.locator("#retry-result").waitFor({ state: "visible" });
+    assert.match(await timed.locator("#status").textContent(), /Ожидание завершено/);
+    stall = true;
+    await Promise.all([
+      timed.waitForRequest((request) => request.url().endsWith(`/api/images/${imageId}`)),
+      timed.locator("#retry-result").click(),
+    ]);
+    await timed.clock.fastForward(15001);
+    await timed.locator("#retry-result").waitFor({ state: "visible" });
+    assert.match(await timed.locator("#status").textContent(), /Не удалось загрузить/);
+    releaseRequest();
+    await timed.close();
     const fallback = await browser.newPage();
     await fallback.addInitScript(() => { delete window.showDirectoryPicker; });
     await fallback.goto(baseURL);
@@ -137,7 +201,7 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
     assert.equal(new URL(docs.url()).pathname, "/api/docs");
     assert.deepEqual(await docs.evaluate(() => window.swaggerConfig.spec.servers), [{ url: "/api" }]);
     assert.deepEqual(docsErrors, []);
-    console.log("Browser checks passed: manual preview, object matching, literal caption, pending/error/empty results, no polling, local copy/ZIP, reset, mobile layout, Swagger proxy and CSP.");
+    console.log("Browser checks passed: automatic preview, compatible/blank refinements, literal caption, pending/error/retry/empty results, wait/request timeouts, polling stops on success/error/reset, automatic folder copy, permission/write failure fallback, ZIP, split/mobile layout, Swagger proxy and CSP.");
   } finally {
     await browser.close();
   }

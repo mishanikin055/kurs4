@@ -1,5 +1,6 @@
-"""Upload and explicit downloads work without accessing PostgreSQL."""
+"""Uploads, previews and downloads work without accessing PostgreSQL."""
 
+import json
 from io import BytesIO
 from uuid import UUID, uuid4
 from zipfile import ZipFile
@@ -37,6 +38,9 @@ def test_upload_publishes_directly_without_database(app, monkeypatch):
         assert not (app.state.settings.image_root / "results").exists()
         assert client.get(f"/jobs/{image_id}").status_code == 404
         assert client.get(f"/jobs/{image_id}/status").status_code == 404
+        pending = client.get(f"/images/{image_id}")
+        assert pending.status_code == 404
+        assert pending.headers["cache-control"] == "no-store"
 
 
 def test_broker_failure_retains_inputs_in_case_confirmation_was_lost(app, monkeypatch):
@@ -104,6 +108,51 @@ def test_file_size_is_checked_before_publication(app):
         response = client.post("/images", files={"file": ("large.png", image_bytes())})
     assert response.status_code == 413
     assert not list(app.state.settings.image_root.iterdir())
+
+
+def test_preview_only_shows_compatible_refinements_and_preserves_raw_bundle(app, tmp_path):
+    image_id = uuid4()
+    directory = tmp_path / "results" / str(image_id)
+    directory.mkdir(parents=True)
+    pairs = [
+        ("person", "unicycle", None),
+        ("skateboard", "Loafer", None),
+        ("person", "whiskey jug", None),
+        ("cat", "tabby", "tabby"),
+        ("dog", "Labrador retriever", "Labrador retriever"),
+        ("dog", "tabby", None),
+        ("zebra", "zebra", None),
+        ("dog", "unknown", None),
+        ("dog", None, None),
+    ]
+    result = {
+        "detection": {
+            "objects": [
+                {"object_id": str(i), "label": coco} for i, (coco, _, _) in enumerate(pairs)
+            ]
+        },
+        "classification": {
+            "objects": [
+                {"object_id": str(i), "label": label} for i, (_, label, _) in enumerate(pairs)
+            ][::-1]
+        },
+        "annotation": {"raw_caption": "  A person on a skateboard.  "},
+    }
+    raw = json.dumps(result).encode()
+    (directory / "results.json").write_bytes(raw)
+    with TestClient(app) as client:
+        response = client.get(f"/images/{image_id}")
+        assert response.status_code == 200
+        assert response.headers["cache-control"] == "no-store"
+        preview = response.json()
+        assert preview["annotation"] == result["annotation"]
+        assert preview["detection"] == result["detection"]
+        for obj in preview["classification"]["objects"]:
+            i = int(obj["object_id"])
+            assert obj["label"] == pairs[i][1]
+            assert obj["refinement"] == pairs[i][2]
+        assert client.get(f"/images/{image_id}/files/results.json").content == raw
+    assert (directory / "results.json").read_bytes() == raw
 
 
 def test_streaming_body_limit_without_content_length(app):
