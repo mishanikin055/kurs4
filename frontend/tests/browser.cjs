@@ -99,6 +99,12 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
     assert.equal(await page.locator(".result-panel #caption").count(), 0, "Object results no longer contain the caption");
     assert.equal(await page.locator("#annotation-title").textContent(), "Результат аннотирования");
     assert(await page.locator("#annotation-placeholder").isHidden());
+    assert(await page.locator("#caption").evaluate((caption) => {
+      const panel = caption.closest(".annotation-panel");
+      const style = getComputedStyle(panel);
+      const bottomSpace = panel.getBoundingClientRect().bottom - caption.getBoundingClientRect().bottom;
+      return bottomSpace <= parseFloat(style.paddingBottom) + parseFloat(style.borderBottomWidth) + 1;
+    }), "Short annotation panel ends after the text and normal padding");
     assert.deepEqual(await page.locator("#objects tr").allTextContents(), ["1dogLabrador retriever", "2cat"]);
     assert.deepEqual(await page.locator(".object-marker").allTextContents(), ["dog", "cat"], "Image labels contain classes without object numbers");
     assert.equal(await page.locator("#object-overlays button").count(), 0, "Object numbers are clickable only in the table");
@@ -155,7 +161,9 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
       assert(picture.y - (title.y + title.height) <= 20, "Image starts directly below its title");
       assert(frame.y + frame.height - (picture.y + picture.height) <= 20, "Image frame ends at the image");
       assert(annotation.y >= frame.y + frame.height && annotation.y - (frame.y + frame.height) <= 20, "Annotation panel is directly below the image");
-      assert(Math.abs(annotation.x - frame.x) < 1 && Math.abs(annotation.width - frame.width) < 1 && annotation.height >= 140, "Annotation has a large separate block aligned with the image");
+      assert(Math.abs(annotation.x - frame.x) < 1 && Math.abs(annotation.width - frame.width) < 1, "Annotation panel is aligned with the image");
+      const caption = await page.locator("#caption").boundingBox();
+      assert(annotation.y + annotation.height - (caption.y + caption.height) <= 20, "Annotation frame ends at the text");
       assert(results.y + results.height - (table.y + table.height) <= 16, "Object frame ends at the table");
       for (let index = 0; index < result.detection.objects.length; index++) {
         const [x1, y1, x2, y2] = result.detection.objects[index].bbox;

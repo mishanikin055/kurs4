@@ -51,7 +51,7 @@ button:disabled { opacity: .6; cursor: wait; }
 .result-panel, .preview, .annotation-panel { min-width: 0; min-height: 0; display: flex; flex-direction: column; }
 .result-panel { flex: 0 1 auto; margin-top: 12px; padding: 14px; }
 .preview { flex-shrink: 0; }
-.annotation-panel { flex: 1; min-height: 144px; overflow: hidden; }
+.annotation-panel { flex: 0 1 auto; overflow: hidden; }
 .annotation-panel h2 { flex-shrink: 0; }
 .panel-heading { display: flex; align-items: center; flex-wrap: wrap; justify-content: space-between; gap: 8px; margin-bottom: 12px; flex-shrink: 0; }
 .panel-heading h2 { margin: 0; }
@@ -88,7 +88,7 @@ th { position: sticky; top: 0; font-weight: 600; background: var(--tint); }
   .workspace { grid-template-columns: minmax(0, 1fr); }
   .controls { display: block; }
   .preview { min-height: 300px; }
-  .annotation-panel { flex: initial; min-height: 160px; }
+  .annotation-panel { flex: initial; }
   .placeholder { min-height: 160px; }
   #image-stage { width: min(100%, calc(70dvh * var(--image-ratio))); }
   #caption { max-height: 360px; }
