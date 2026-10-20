@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light">
-  <meta name="description" content="Детекция объектов, классификация и описание ваших изображений.">
+  <meta name="description" content="Детекция и описание объектов и сцены на ваших изображениях.">
   <title>Анализ изображений</title>
   <link rel="stylesheet" href="/styles.css">
   <script type="module" src="/app.js"></script>
@@ -47,8 +47,8 @@
             <p id="no-objects" hidden>Объекты не обнаружены.</p>
             <div id="objects-table" class="table-scroll" role="region" aria-label="Классы объектов" tabindex="0" hidden>
               <table>
-                <caption class="sr-only">Классы детектора и классификатора для каждого объекта</caption>
-                <thead><tr><th scope="col">№</th><th scope="col">COCO</th><th scope="col">Уточнение · ImageNet</th></tr></thead>
+                <caption class="sr-only">COCO-классы детектора и описания объектов Florence</caption>
+                <thead><tr><th scope="col">№</th><th scope="col">COCO</th><th scope="col">Описание объекта</th></tr></thead>
                 <tbody id="objects"></tbody>
               </table>
             </div>

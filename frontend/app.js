@@ -45,7 +45,7 @@ function renderObjects(result) {
   $("object-overlays").replaceChildren();
   $("image-stage").style.setProperty("--image-ratio", result.width / result.height);
   $("image-stage").style.aspectRatio = `${result.width} / ${result.height}`;
-  const classes = new Map(result.classification.objects.map((object) => [object.object_id, object.refinement]));
+  const captions = new Map(result.classification.objects.map((object) => [object.object_id, object.object_caption]));
   result.detection.objects.forEach((object, index) => {
     const row = document.createElement("tr");
     const number = document.createElement("button");
@@ -57,7 +57,7 @@ function renderObjects(result) {
     const cell = document.createElement("td");
     cell.append(number);
     row.append(cell);
-    for (const value of [object.label, classes.get(object.object_id) ?? ""]) {
+    for (const value of [object.label, captions.get(object.object_id) ?? ""]) {
       const cell = document.createElement("td");
       cell.textContent = value;
       row.append(cell);

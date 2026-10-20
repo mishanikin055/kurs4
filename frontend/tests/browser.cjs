@@ -47,7 +47,7 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
       id: imageId, width: 640, height: 480,
       crops: ["dog.png", "cat.png"],
       detection: { objects: [{ object_id: "dog", label: "dog", bbox: [32, 24, 240, 432] }, { object_id: "cat", label: "cat", bbox: [40, 30, 640, 480] }] },
-      classification: { objects: [{ object_id: "cat", label: "unicycle", refinement: null }, { object_id: "dog", label: "Labrador retriever", refinement: "Labrador retriever" }] },
+      classification: { objects: [{ object_id: "cat", object_caption: "  <b>A spotted cat</b>.  " }, { object_id: "dog", object_caption: "A brown dog." }] },
       annotation: { raw_caption: "  A dog and <b>a cat</b>.  " },
     };
     let preview = result;
@@ -57,10 +57,7 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
       "crops/cat.png": png,
       "normalized.png": png,
       "detection.png": png,
-      "results.json": Buffer.from(JSON.stringify({
-        ...result,
-        classification: { objects: result.classification.objects.map(({ refinement, ...object }) => object) },
-      })),
+      "results.json": Buffer.from(JSON.stringify(result)),
     };
     await page.route("**/api/**", async (route) => {
       const path = new URL(route.request().url()).pathname;
@@ -105,7 +102,9 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
       const bottomSpace = panel.getBoundingClientRect().bottom - caption.getBoundingClientRect().bottom;
       return bottomSpace <= parseFloat(style.paddingBottom) + parseFloat(style.borderBottomWidth) + 1;
     }), "Short annotation panel ends after the text and normal padding");
-    assert.deepEqual(await page.locator("#objects tr").allTextContents(), ["1dogLabrador retriever", "2cat"]);
+    assert.deepEqual(await page.locator("#objects tr").allTextContents(), ["1dogA brown dog.", "2cat  <b>A spotted cat</b>.  "]);
+    assert.equal(await page.locator("#objects b").count(), 0, "Object captions are literal text");
+    assert.equal(await page.locator("thead th").last().textContent(), "Описание объекта");
     assert.deepEqual(await page.locator(".object-marker").allTextContents(), ["dog", "cat"], "Image labels contain classes without object numbers");
     assert.equal(await page.locator("#object-overlays button").count(), 0, "Object numbers are clickable only in the table");
     assert.equal(await page.locator(".object-box:visible").count(), 2, "All boxes are shown by default");
@@ -230,6 +229,11 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
     if (process.env.SCREENSHOT_DIR) await page.screenshot({ path: `${process.env.SCREENSHOT_DIR}/simple-mobile.png`, fullPage: true });
     await page.locator(".object-number").nth(1).click();
     assert.equal(await page.locator(".object-number").nth(1).getAttribute("aria-pressed"), "true");
+    preview = { ...result, classification: { objects: result.classification.objects.map(({ object_id }) => ({ object_id, label: "tabby", refinement: "tabby" })) } };
+    delete preview.crops;
+    await page.locator("#submit").click();
+    await page.locator("#result").waitFor({ state: "visible" });
+    assert.deepEqual(await page.locator("#objects tr").allTextContents(), ["1dog", "2cat"], "Legacy labels are readable but never presented as object captions");
     preview = { ...result, detection: { objects: [] }, classification: { objects: [] } };
     await page.locator("#submit").click();
     await page.waitForFunction(() => !document.getElementById("no-objects").hidden);
@@ -310,7 +314,7 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
     assert.equal(new URL(docs.url()).pathname, "/api/docs");
     assert.deepEqual(await docs.evaluate(() => window.swaggerConfig.spec.servers), [{ url: "/api" }]);
     assert.deepEqual(docsErrors, []);
-    console.log("Browser checks passed: separate large annotation panel below image, removed header/hint, bright-red frames, long caption/table contained scrolling, caption reset on upload, class text inside boxes without backgrounds, numbers only in table, blue frame/row selection by image click/table/keyboard, smallest overlapping box selected, background click and Escape clear selection, box alignment on resize, automatic preview, compatible/blank refinements, literal caption, pending/error/retry/empty results, wait/request timeouts, polling stops on success/error/reset, automatic folder copy with crops, permission/write failure fallback, ZIP, compact laptop/mobile layout, external submit, Swagger proxy and CSP.");
+    console.log("Browser checks passed: separate large annotation panel below image, removed header/hint, bright-red frames, long caption/table contained scrolling, caption reset on upload, class text inside boxes without backgrounds, numbers only in table, blue frame/row selection by image click/table/keyboard, smallest overlapping box selected, background click and Escape clear selection, box alignment on resize, automatic preview, object captions by ID, literal object text, legacy bundles with empty description, literal caption, pending/error/retry/empty results, wait/request timeouts, polling stops on success/error/reset, automatic folder copy with crops, permission/write failure fallback, ZIP, compact laptop/mobile layout, external submit, Swagger proxy and CSP.");
   } finally {
     await browser.close();
   }
