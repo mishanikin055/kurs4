@@ -18,7 +18,7 @@ pytestmark = pytest.mark.skipif(
 )
 
 
-def test_compact_migration_preserves_results_and_matches_orm(monkeypatch):
+def test_historical_migrations_and_legacy_removal_preserve_completed_images(monkeypatch):
     url = Settings().database_url.get_secret_value()
     engine = create_engine(url)
     schema = "migration_" + uuid4().hex
@@ -96,8 +96,7 @@ def test_compact_migration_preserves_results_and_matches_orm(monkeypatch):
                         "payload": json.dumps(payload),
                     },
                 )
-        command.upgrade(config, "head")
-        command.check(config)
+        command.upgrade(config, "c81f0e392ab4")
         with private.connect() as connection:
             image = connection.execute(
                 text("SELECT id, original_path, normalized_path, width, height FROM images")
@@ -127,6 +126,29 @@ def test_compact_migration_preserves_results_and_matches_orm(monkeypatch):
                 "job_id",
                 "stage",
             ]
+        with private.begin() as connection:
+            connection.execute(
+                text("""
+                INSERT INTO processed_images (
+                    id, original_path, normalized_path, result_path, width, height,
+                    models, detection, classification, annotation
+                ) VALUES (
+                    :id, '/original', '/normalized.png', '/detection.png', 16, 12,
+                    '{}', '{"objects": []}', '{"objects": []}', CAST(:caption AS jsonb)
+                )
+                """),
+                {"id": image_id, "caption": json.dumps(caption)},
+            )
+        command.upgrade(config, "head")
+        command.check(config)
+        with private.connect() as connection:
+            assert set(inspect(connection).get_table_names()) == {
+                "processed_images",
+                "alembic_version",
+            }
+            row = connection.execute(text("SELECT id, annotation FROM processed_images")).one()
+            assert str(row.id) == image_id
+            assert row.annotation == caption
         with pytest.raises(RuntimeError, match="irreversible"):
             command.downgrade(config, "a2f004752f43")
     finally:

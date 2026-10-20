@@ -12,7 +12,7 @@ from sqlalchemy import delete, func, select
 from backend.db import make_engine, make_sessions
 from backend.main import create_app
 from backend.settings import Settings
-from backend.tables import Image, Job, ModelResult, ProcessedImage
+from backend.tables import ProcessedImage
 from backend.tasks import TASK_NAME, require_processing_task
 from backend.tests.test_storage import image_bytes
 
@@ -61,12 +61,11 @@ def post_image(app):
 
 def test_upload_writes_no_database_records_and_confirms_queue_message(app):
     sessions = app.state.test_sessions
-    tables = (Image, Job, ModelResult, ProcessedImage)
     with sessions() as session:
-        before = [session.scalar(select(func.count()).select_from(table)) for table in tables]
+        before = session.scalar(select(func.count()).select_from(ProcessedImage))
     accepted = post_image(app)
     with sessions() as session:
-        after = [session.scalar(select(func.count()).select_from(table)) for table in tables]
+        after = session.scalar(select(func.count()).select_from(ProcessedImage))
     assert before == after
     image_id = UUID(accepted["image_id"])
     assert (app.state.settings.image_root / str(image_id) / "original").is_file()
