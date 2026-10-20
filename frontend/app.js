@@ -41,6 +41,7 @@ $("upload-form").addEventListener("submit", async (event) => {
   $("submit").disabled = true;
   $("save-actions").hidden = true;
   $("result").hidden = true;
+  $("result-placeholder").hidden = false;
   $("result-preview").hidden = true;
   $("preview-placeholder").hidden = false;
   $("preview-placeholder").textContent = "После обработки здесь появится изображение с рамками.";
@@ -117,6 +118,7 @@ async function waitForResult(id, deadline = Date.now() + 40 * 60 * 1000) {
     $("no-objects").hidden = result.detection.objects.length > 0;
     $("objects-table").hidden = result.detection.objects.length === 0;
     $("result").hidden = false;
+    $("result-placeholder").hidden = true;
     $("result-preview").hidden = false;
     $("preview-placeholder").hidden = true;
     readyImageId = id;

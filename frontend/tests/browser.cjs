@@ -91,6 +91,27 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
     const controls = await page.locator(".controls").boundingBox();
     const image = await page.locator("#result-image").boundingBox();
     assert(image.x >= controls.x + controls.width, "Image is to the right of the controls and table");
+    assert(await page.locator("#submit").evaluate((button) => button.form.id === "upload-form" && !button.closest("#upload-form") && !button.closest("#dropzone")), "Submit is outside both upload blocks and still submits the form");
+    assert(await page.locator("#result").evaluate((result) => !result.closest(".controls")), "Results have their own panel");
+    for (const viewport of [{ width: 1366, height: 650 }, { width: 1280, height: 600 }, { width: 1536, height: 730 }, { width: 1024, height: 600 }]) {
+      await page.setViewportSize(viewport);
+      assert(await page.evaluate(() => document.documentElement.scrollHeight <= innerHeight && document.documentElement.scrollWidth <= innerWidth), `No page scrolling at ${viewport.width}x${viewport.height}`);
+      for (const selector of ["#submit", ".result-panel", ".preview"]) {
+        const box = await page.locator(selector).boundingBox();
+        assert(box.y >= 0 && box.y + box.height <= viewport.height, `${selector} fits the laptop viewport`);
+      }
+    }
+    await page.evaluate(() => {
+      const rows = document.getElementById("objects");
+      for (let i = 0; i < 60; i++) rows.append(rows.firstElementChild.cloneNode(true));
+    });
+    assert(await page.locator("#objects-table").evaluate((table) => table.scrollHeight > table.clientHeight), "Long tables scroll within the result panel");
+    assert(await page.evaluate(() => document.documentElement.scrollHeight <= innerHeight), "Long tables do not make the page scroll");
+    await page.evaluate(() => {
+      const rows = document.getElementById("objects");
+      while (rows.children.length > 2) rows.lastElementChild.remove();
+    });
+    await page.setViewportSize({ width: 1440, height: 1000 });
     const countAfterResult = requests.length;
     await page.waitForTimeout(2200);
     assert.equal(requests.length, countAfterResult, "Polling stops after the result is shown");
@@ -201,7 +222,7 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
     assert.equal(new URL(docs.url()).pathname, "/api/docs");
     assert.deepEqual(await docs.evaluate(() => window.swaggerConfig.spec.servers), [{ url: "/api" }]);
     assert.deepEqual(docsErrors, []);
-    console.log("Browser checks passed: automatic preview, compatible/blank refinements, literal caption, pending/error/retry/empty results, wait/request timeouts, polling stops on success/error/reset, automatic folder copy, permission/write failure fallback, ZIP, split/mobile layout, Swagger proxy and CSP.");
+    console.log("Browser checks passed: automatic preview, compatible/blank refinements, literal caption, pending/error/retry/empty results, wait/request timeouts, polling stops on success/error/reset, automatic folder copy, permission/write failure fallback, ZIP, compact laptop/mobile layout, contained long-table scrolling, external submit, Swagger proxy and CSP.");
   } finally {
     await browser.close();
   }
