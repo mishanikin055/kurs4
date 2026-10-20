@@ -104,7 +104,7 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
     }), "Short annotation panel ends after the text and normal padding");
     assert.deepEqual(await page.locator("#objects tr").allTextContents(), ["1dogA brown dog.", "2cat  <b>A spotted cat</b>.  "]);
     assert.equal(await page.locator("#objects b").count(), 0, "Object captions are literal text");
-    assert.equal(await page.locator("thead th").last().textContent(), "Описание объекта");
+    assert.deepEqual(await page.locator("thead th").allTextContents(), ["Номер", "Класс", "Описание объекта"]);
     assert.deepEqual(await page.locator(".object-marker").allTextContents(), ["dog", "cat"], "Image labels contain classes without object numbers");
     assert.equal(await page.locator("#object-overlays button").count(), 0, "Object numbers are clickable only in the table");
     assert.equal(await page.locator(".object-box:visible").count(), 2, "All boxes are shown by default");
@@ -141,7 +141,7 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
     assert(image.x >= controls.x + controls.width, "Image is to the right of the controls and table");
     assert(await page.locator("#submit").evaluate((button) => button.form.id === "upload-form" && !button.closest("#upload-form") && !button.closest("#dropzone")), "Submit is outside both upload blocks and still submits the form");
     assert(await page.locator("#result").evaluate((result) => Boolean(result.closest(".controls"))), "Results are below the form in the left column");
-    for (const viewport of [{ width: 1366, height: 650 }, { width: 1280, height: 600 }, { width: 1536, height: 730 }, { width: 1024, height: 600 }]) {
+    for (const viewport of [{ width: 1920, height: 1080 }, { width: 1920, height: 920 }, { width: 1536, height: 800 }, { width: 1366, height: 650 }, { width: 1280, height: 600 }, { width: 1536, height: 730 }, { width: 1024, height: 600 }]) {
       await page.setViewportSize(viewport);
       await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
       assert(await page.evaluate(() => document.documentElement.scrollHeight <= innerHeight && document.documentElement.scrollWidth <= innerWidth), `No page scrolling at ${viewport.width}x${viewport.height}`);

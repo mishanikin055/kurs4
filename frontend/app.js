@@ -12,9 +12,9 @@ function fitLabels() {
   for (const box of $("object-overlays").children) {
     const outline = box.querySelector(".object-outline");
     const marker = box.querySelector(".object-marker");
-    marker.style.fontSize = "12px";
+    marker.style.fontSize = "20px";
     const scale = Math.min(1, (outline.clientWidth - 4) / marker.offsetWidth, (outline.clientHeight - 2) / marker.offsetHeight);
-    marker.style.fontSize = `${Math.max(1, 12 * scale)}px`;
+    marker.style.fontSize = `${Math.max(1, 20 * scale)}px`;
   }
 }
 
