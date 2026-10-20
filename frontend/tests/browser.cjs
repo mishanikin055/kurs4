@@ -107,6 +107,14 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
         const box = await page.locator(selector).boundingBox();
         assert(box.y >= 0 && box.y + box.height <= viewport.height, `${selector} fits the laptop viewport`);
       }
+      const picture = await page.locator("#result-image").boundingBox();
+      const title = await page.locator("#preview-title").boundingBox();
+      const frame = await page.locator(".preview").boundingBox();
+      const table = await page.locator("#objects-table").boundingBox();
+      const results = await page.locator(".result-panel").boundingBox();
+      assert(picture.y - (title.y + title.height) <= 20, "Image starts directly below its title");
+      assert(frame.y + frame.height - (picture.y + picture.height) <= 20, "Image frame ends at the image");
+      assert(results.y + results.height - (table.y + table.height) <= 16, "Object frame ends at the table");
     }
     await page.evaluate(() => {
       const rows = document.getElementById("objects");

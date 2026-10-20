@@ -50,12 +50,13 @@ button:disabled { opacity: .6; cursor: wait; }
 .status-row { color: var(--muted); font-size: 13px; margin: 8px 0 0; flex-shrink: 0; overflow-wrap: anywhere; line-height: 1.5; }
 .status-row:empty { margin: 0; }
 .result-panel, .preview { min-width: 0; min-height: 0; display: flex; flex-direction: column; }
-.result-panel { flex: 1; margin-top: 12px; padding: 14px; }
+.result-panel { flex: 0 1 auto; margin-top: 12px; padding: 14px; }
+.preview { align-self: start; max-height: 100%; }
 .panel-heading { display: flex; align-items: center; flex-wrap: wrap; justify-content: space-between; gap: 8px; margin-bottom: 12px; flex-shrink: 0; }
 .panel-heading h2 { margin: 0; }
 #download-zip { font-size: 12px; }
 .placeholder { display: grid; place-items: center; flex: 1; margin: 0; padding: 16px; color: var(--muted); font-size: 14px; text-align: center; line-height: 1.6; background: var(--bg); border-radius: 6px; }
-#result { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+#result { display: flex; flex-direction: column; flex: 0 1 auto; min-height: 0; }
 #result h3 { font-size: 14px; margin: 0 0 8px; flex-shrink: 0; }
 #caption { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 14px; line-height: 1.6; margin: 0 0 12px; max-height: 35%; overflow-y: auto; flex-shrink: 0; }
 #no-objects { font-size: 14px; }
@@ -63,8 +64,8 @@ button:disabled { opacity: .6; cursor: wait; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
 th, td { padding: 8px; text-align: left; border-bottom: 1px solid var(--border); overflow-wrap: anywhere; }
 th { position: sticky; top: 0; font-weight: 600; background: var(--tint); }
-#result-preview { flex: 1; min-height: 0; }
-#result-image { display: block; width: 100%; height: 100%; object-fit: contain; border-radius: 6px; }
+#result-preview { min-height: 0; }
+#result-image { display: block; width: 100%; height: auto; max-height: calc(100dvh - 190px); object-fit: contain; object-position: top; border-radius: 6px; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 @media (max-width: 999px) {
   main { height: auto; min-height: 100dvh; padding: 16px; gap: 16px; }
