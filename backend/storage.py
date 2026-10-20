@@ -35,11 +35,23 @@ def save_detection_image(normalized_path: str, destination: Path, detection: dic
         draw.rectangle(box, outline="red", width=2)
         text = obj["label"]
         left, top, right, bottom = draw.textbbox((0, 0), text, font=font)
-        label_width, label_height = right - left + 8, bottom - top + 8
-        x = max(0, min(box[0], image.width - label_width))
-        y = max(0, min(box[1], image.height - label_height))
-        draw.rectangle((x, y, x + label_width, y + label_height), fill="#b42318")
-        draw.text((x + 4 - left, y + 4 - top), text, font=font, fill="white")
+        scale = min(
+            1,
+            max(1, box[2] - box[0] - 4) / max(1, right - left),
+            max(1, box[3] - box[1] - 4) / max(1, bottom - top),
+        )
+        label_font = ImageFont.load_default(size=max(1, int(font.size * scale)))
+        left, top, right, bottom = draw.textbbox((0, 0), text, font=label_font)
+        x = max(0, min(box[0] + 1, image.width - (right - left)))
+        y = max(0, min(box[1] + 1, image.height - (bottom - top)))
+        draw.text(
+            (x - left, y - top),
+            text,
+            font=label_font,
+            fill="white",
+            stroke_width=1 if label_font.size >= 8 else 0,
+            stroke_fill="black",
+        )
     descriptor, temporary = tempfile.mkstemp(prefix=".detection-", dir=directory)
     try:
         with os.fdopen(descriptor, "wb") as stream:

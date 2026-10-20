@@ -137,6 +137,11 @@ def test_detection_labels_keep_class_names_without_numbers(settings, monkeypatch
     original_payload = deepcopy(payload)
     labels = []
     draw_text = ImageDraw.ImageDraw.text
+    draw_rectangle = ImageDraw.ImageDraw.rectangle
+
+    def record_rectangle(self, xy, **kwargs):
+        assert kwargs.get("fill") is None, "Class labels must not have a filled background"
+        return draw_rectangle(self, xy, **kwargs)
 
     def record_text(self, xy, text, **kwargs):
         labels.append(text)
@@ -147,6 +152,7 @@ def test_detection_labels_keep_class_names_without_numbers(settings, monkeypatch
         return draw_text(self, xy, text, **kwargs)
 
     monkeypatch.setattr(ImageDraw.ImageDraw, "text", record_text)
+    monkeypatch.setattr(ImageDraw.ImageDraw, "rectangle", record_rectangle)
     destination = source.parent / "detection.png"
     save_detection_image(str(source), destination, payload)
     assert labels == ["car", "car"]

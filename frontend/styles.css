@@ -68,15 +68,15 @@ table { width: 100%; border-collapse: collapse; font-size: 13px; }
 th, td { padding: 8px; text-align: left; border-bottom: 1px solid var(--border); overflow-wrap: anywhere; }
 th { position: sticky; top: 0; font-weight: 600; background: var(--tint); }
 #result-preview { min-height: 0; }
-#image-stage { position: relative; width: min(100%, calc((100dvh - 240px) * var(--image-ratio))); margin-inline: auto; }
+#image-stage { position: relative; width: min(100%, calc((100dvh - 240px) * var(--image-ratio))); margin-inline: auto; cursor: crosshair; }
 #result-image { display: block; width: 100%; height: 100%; border-radius: 6px; }
 #object-overlays, .object-box { position: absolute; inset: 0; pointer-events: none; }
 .object-box { color: var(--object); }
-.object-outline { position: absolute; border: 1px solid currentColor; }
-.object-marker { position: absolute; width: max-content; max-width: 100%; padding: 1px 4px; border: 1px solid white; border-radius: 2px; background: var(--object); color: white; font-size: 12px; line-height: 16px; }
+.object-outline { position: absolute; border: 1px solid currentColor; overflow: hidden; }
+.object-marker { position: absolute; left: 2px; top: 1px; width: max-content; color: white; font-size: 12px; line-height: 1; white-space: nowrap; text-shadow: -1px 0 1px black, 1px 0 1px black, 0 -1px 1px black, 0 1px 1px black; }
 .object-number:active { transform: none; }
-.object-box.is-selected { z-index: 1; }
-.object-box.is-selected .object-outline { border-width: 3px; box-shadow: 0 0 0 1px white; }
+.object-box.is-selected { z-index: 1; color: var(--selected); }
+.object-box.is-selected .object-outline { border-width: 2px; box-shadow: 0 0 0 1px white; }
 .object-box.is-selected .object-marker { font-weight: 700; }
 #objects tr { cursor: pointer; }
 #objects tr:hover { background: var(--tint); }

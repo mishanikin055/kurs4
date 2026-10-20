@@ -7,24 +7,20 @@ let resultController;
 let resultTimer;
 let selectedObject;
 
-function positionMarkers() {
-  const image = $("image-stage").getBoundingClientRect();
-  if (!image.width) return;
+function fitLabels() {
+  if (!$("image-stage").clientWidth) return;
   for (const box of $("object-overlays").children) {
-    const outline = box.querySelector(".object-outline").getBoundingClientRect();
+    const outline = box.querySelector(".object-outline");
     const marker = box.querySelector(".object-marker");
-    const width = marker.offsetWidth;
-    const height = marker.offsetHeight;
-    const x = Math.max(0, Math.min(outline.left - image.left, image.width - width));
-    const y = Math.max(0, outline.top - image.top - height);
-    marker.style.left = `clamp(0px, ${x / image.width * 100}%, calc(100% - ${width}px))`;
-    marker.style.top = `clamp(0px, ${y / image.height * 100}%, calc(100% - ${height}px))`;
+    marker.style.fontSize = "12px";
+    const scale = Math.min(1, (outline.clientWidth - 4) / marker.offsetWidth, (outline.clientHeight - 2) / marker.offsetHeight);
+    marker.style.fontSize = `${Math.max(1, 12 * scale)}px`;
   }
 }
 
-new ResizeObserver(positionMarkers).observe($("image-stage"));
+new ResizeObserver(fitLabels).observe($("image-stage"));
 
-function selectObject(index) {
+function selectObject(index, revealRow = false) {
   selectedObject = selectedObject === index ? null : index;
   const rows = [...$("objects").children];
   for (const container of [$("objects"), $("object-overlays")]) {
@@ -38,7 +34,8 @@ function selectObject(index) {
   $("selection-status").textContent = row
     ? `Выбран объект №${selectedObject + 1}: ${[...row.cells].slice(1).map((cell) => cell.textContent).filter(Boolean).join(", ")}.`
     : "Выделение снято.";
-  positionMarkers();
+  if (revealRow && row) row.scrollIntoView({ block: "nearest" });
+  fitLabels();
 }
 
 function renderObjects(result) {
@@ -81,13 +78,30 @@ function renderObjects(result) {
     marker.className = "object-marker";
     marker.textContent = object.label;
     marker.setAttribute("aria-hidden", "true");
-    box.append(outline, marker);
+    outline.append(marker);
+    box.append(outline);
     $("object-overlays").append(box);
   });
+  $("image-stage").onclick = (event) => {
+    const image = $("image-stage").getBoundingClientRect();
+    const x = (event.clientX - image.left) / image.width * result.width;
+    const y = (event.clientY - image.top) / image.height * result.height;
+    let hit = null;
+    let smallestArea = Infinity;
+    result.detection.objects.forEach((object, index) => {
+      const [x1, y1, x2, y2] = object.bbox;
+      const area = (x2 - x1) * (y2 - y1);
+      if (x >= x1 && x <= x2 && y >= y1 && y <= y2 && area < smallestArea) {
+        hit = index;
+        smallestArea = area;
+      }
+    });
+    selectObject(hit, true);
+  };
   $("object-help").hidden = result.detection.objects.length === 0;
 }
 
-$("objects").addEventListener("keydown", (event) => {
+document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") selectObject(null);
 });
 
@@ -198,7 +212,7 @@ async function waitForResult(id, deadline = Date.now() + 40 * 60 * 1000) {
     $("result-placeholder").hidden = true;
     $("result-preview").hidden = false;
     $("preview-placeholder").hidden = true;
-    positionMarkers();
+    fitLabels();
     readyImageId = id;
     $("save-actions").hidden = Boolean(folderHandle);
     $("status").textContent = "Результат готов.";

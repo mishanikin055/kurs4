@@ -103,7 +103,7 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
     await page.locator("#objects tr").nth(1).locator("td").nth(1).click();
     assert(await page.locator(".object-box").nth(1).evaluate((box) => box.classList.contains("is-selected")), "Clicking a row selects its box");
     assert.equal(await page.locator(".object-box:visible").count(), 2, "Selection keeps all boxes and class names visible");
-    assert.deepEqual(await page.locator(".object-outline").nth(1).evaluate((box) => [getComputedStyle(box).borderColor, getComputedStyle(box).borderWidth]), ["rgb(180, 35, 24)", "3px"], "Selected box remains red and gets thicker");
+    assert.deepEqual(await page.locator(".object-outline").nth(1).evaluate((box) => [getComputedStyle(box).borderColor, getComputedStyle(box).borderWidth]), ["rgb(7, 89, 133)", "2px"], "Selected frame turns blue");
     await page.locator(".object-number").first().focus();
     await page.keyboard.press("Enter");
     assert(await page.locator(".object-box").first().evaluate((box) => box.classList.contains("is-selected")), "Object selection works from the keyboard");
@@ -115,6 +115,16 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
     assert.equal(await page.locator("#objects tr.is-selected").count(), 1);
     await page.keyboard.press("Escape");
     assert.equal(await page.locator("[aria-pressed=true]").count(), 0, "Escape clears both selections");
+    const stage = await page.locator("#image-stage").boundingBox();
+    await page.locator("#image-stage").click({ position: { x: stage.width * 100 / result.width, y: stage.height * 100 / result.height } });
+    assert.equal(await page.locator(".object-number").first().getAttribute("aria-pressed"), "true", "Clicking overlapping objects selects the smallest containing box and matching row");
+    await page.locator("#image-stage").click({ position: { x: stage.width * 600 / result.width, y: stage.height * 450 / result.height } });
+    assert.equal(await page.locator(".object-number").nth(1).getAttribute("aria-pressed"), "true", "Clicking the second object updates the selected row");
+    await page.keyboard.press("Escape");
+    assert.equal(await page.locator(".object-box.is-selected").count(), 0, "Escape also works after image clicks");
+    await page.locator("#image-stage").click({ position: { x: stage.width * 100 / result.width, y: stage.height * 100 / result.height } });
+    await page.locator("#image-stage").click({ position: { x: 2, y: 2 } });
+    assert.equal(await page.locator(".object-box.is-selected").count(), 0, "Clicking outside all objects clears the selection");
     const controls = await page.locator(".controls").boundingBox();
     const image = await page.locator("#result-image").boundingBox();
     assert(image.x >= controls.x + controls.width, "Image is to the right of the controls and table");
@@ -146,8 +156,8 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
         assert(Math.abs(box.height - (y2 - y1) / result.height * picture.height) < 1);
         const marker = await page.locator(".object-marker").nth(index).boundingBox();
         assert(marker.x >= picture.x - 1 && marker.y >= picture.y - 1 && marker.x + marker.width <= picture.x + picture.width + 1 && marker.y + marker.height <= picture.y + picture.height + 1, "Edge labels stay inside the image");
-        assert(marker.y + marker.height <= box.y + 1 || box.y - picture.y < marker.height, "Labels stay above their box instead of covering the object");
-        assert(marker.x <= box.x + 1, "Labels remain attached to the top-left edge");
+        assert(marker.x >= box.x && marker.y >= box.y && marker.x + marker.width <= box.x + box.width + 1 && marker.y + marker.height <= box.y + box.height + 1, "Class text fits inside its own frame");
+        assert.equal(await page.locator(".object-marker").nth(index).evaluate((label) => getComputedStyle(label).backgroundColor), "rgba(0, 0, 0, 0)", "Class text has no background");
       }
     }
     await page.evaluate(() => {
@@ -275,7 +285,7 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
     assert.equal(new URL(docs.url()).pathname, "/api/docs");
     assert.deepEqual(await docs.evaluate(() => window.swaggerConfig.spec.servers), [{ url: "/api" }]);
     assert.deepEqual(docsErrors, []);
-    console.log("Browser checks passed: all red boxes and class labels stay visible, numbers only in table, thicker red frame selected by table number or keyboard, Escape, box alignment on resize, automatic preview, compatible/blank refinements, literal caption, pending/error/retry/empty results, wait/request timeouts, polling stops on success/error/reset, automatic folder copy with crops, permission/write failure fallback, ZIP, compact laptop/mobile layout, contained long-table scrolling, external submit, Swagger proxy and CSP.");
+    console.log("Browser checks passed: class text inside boxes without backgrounds, numbers only in table, blue frame/row selection by image click/table/keyboard, smallest overlapping box selected, background click and Escape clear selection, box alignment on resize, automatic preview, compatible/blank refinements, literal caption, pending/error/retry/empty results, wait/request timeouts, polling stops on success/error/reset, automatic folder copy with crops, permission/write failure fallback, ZIP, compact laptop/mobile layout, contained long-table scrolling, external submit, Swagger proxy and CSP.");
   } finally {
     await browser.close();
   }
