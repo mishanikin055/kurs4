@@ -27,11 +27,12 @@
     <div class="workspace">
       <div class="controls">
         <form id="upload-form">
-          <h2>Новое изображение</h2>
-          <label for="file" class="file-label">Изображение</label>
-          <div id="dropzone" class="upload-bar">
-            <input id="file" type="file" accept="image/jpeg,image/png,.jpg,.jpeg,.png" required aria-describedby="file-help">
-            <p id="file-help">JPEG / PNG, до 10 МиБ. Можно перетащить файл.</p>
+          <div class="image-control">
+            <label for="file" class="file-label">Изображение</label>
+            <div id="dropzone" class="upload-bar">
+              <input id="file" type="file" accept="image/jpeg,image/png,.jpg,.jpeg,.png" required aria-describedby="file-help">
+              <p id="file-help">JPEG / PNG, до 10 МиБ. Можно перетащить файл.</p>
+            </div>
           </div>
           <div class="folder-control">
             <label for="folder" class="file-label">Папка для автосохранения</label>
@@ -44,29 +45,29 @@
           <button id="retry-result" class="secondary" type="button" hidden>Повторить ожидание</button>
         </div>
         <p id="status" class="status-row" aria-live="polite" role="status"></p>
+        <section class="result-panel" aria-labelledby="result-title">
+          <div class="panel-heading">
+            <h2 id="result-title">Результат обработки</h2>
+            <div id="save-actions" hidden>
+              <button id="download-zip" class="secondary" type="button">Скачать ZIP</button>
+            </div>
+          </div>
+          <p id="result-placeholder" class="placeholder">После обработки здесь появятся описание и классы объектов.</p>
+          <div id="result" hidden>
+            <h3 class="sr-only">Описание</h3>
+            <p id="caption"></p>
+            <h3 class="sr-only">Объекты</h3>
+            <p id="no-objects" hidden>Объекты не обнаружены.</p>
+            <div id="objects-table" class="table-scroll" role="region" aria-label="Классы объектов" tabindex="0" hidden>
+              <table>
+                <caption class="sr-only">Классы детектора и классификатора для каждого объекта</caption>
+                <thead><tr><th scope="col">№</th><th scope="col">COCO</th><th scope="col">Уточнение · ImageNet</th></tr></thead>
+                <tbody id="objects"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
       </div>
-      <section class="result-panel" aria-labelledby="result-title">
-        <div class="panel-heading">
-          <h2 id="result-title">Результат обработки</h2>
-          <div id="save-actions" hidden>
-            <button id="download-zip" class="secondary" type="button">Скачать ZIP</button>
-          </div>
-        </div>
-        <p id="result-placeholder" class="placeholder">После обработки здесь появятся описание и классы объектов.</p>
-        <div id="result" hidden>
-          <h3>Описание</h3>
-          <p id="caption"></p>
-          <h3>Объекты</h3>
-          <p id="no-objects" hidden>Объекты не обнаружены.</p>
-          <div id="objects-table" class="table-scroll" role="region" aria-label="Классы объектов" tabindex="0" hidden>
-            <table>
-              <caption class="sr-only">Классы детектора и классификатора для каждого объекта</caption>
-              <thead><tr><th scope="col">№</th><th scope="col">COCO</th><th scope="col">Уточнение · ImageNet</th></tr></thead>
-              <tbody id="objects"></tbody>
-            </table>
-          </div>
-        </div>
-      </section>
       <section class="preview" aria-labelledby="preview-title">
         <h2 id="preview-title">Изображение</h2>
         <p id="preview-placeholder" class="placeholder">Загрузите изображение — здесь появится результат с рамками объектов.</p>

@@ -92,7 +92,7 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
     const image = await page.locator("#result-image").boundingBox();
     assert(image.x >= controls.x + controls.width, "Image is to the right of the controls and table");
     assert(await page.locator("#submit").evaluate((button) => button.form.id === "upload-form" && !button.closest("#upload-form") && !button.closest("#dropzone")), "Submit is outside both upload blocks and still submits the form");
-    assert(await page.locator("#result").evaluate((result) => !result.closest(".controls")), "Results have their own panel");
+    assert(await page.locator("#result").evaluate((result) => Boolean(result.closest(".controls"))), "Results are below the form in the left column");
     for (const viewport of [{ width: 1366, height: 650 }, { width: 1280, height: 600 }, { width: 1536, height: 730 }, { width: 1024, height: 600 }]) {
       await page.setViewportSize(viewport);
       assert(await page.evaluate(() => document.documentElement.scrollHeight <= innerHeight && document.documentElement.scrollWidth <= innerWidth), `No page scrolling at ${viewport.width}x${viewport.height}`);
