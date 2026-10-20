@@ -14,7 +14,11 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
       window.showDirectoryPicker = async () => ({
         name: "Local results",
         queryPermission: async () => window.folderPermission || "granted",
-        getDirectoryHandle: async (directory) => ({
+        getDirectoryHandle: async (directory) => makeDirectory(directory),
+      });
+      function makeDirectory(directory) {
+        return {
+          getDirectoryHandle: async (name) => makeDirectory(`${directory}/${name}`),
           getFileHandle: async (name) => ({
             createWritable: async () => {
               if (window.folderWriteError) throw new Error("write failed");
@@ -30,8 +34,8 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
               return stream;
             },
           }),
-        }),
-      });
+        };
+      }
     });
     const errors = [];
     page.on("pageerror", (error) => errors.push(error.message));
@@ -41,6 +45,7 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
     let resultError = false;
     const result = {
       id: imageId, width: 640, height: 480,
+      crops: ["dog.png", "cat.png"],
       detection: { objects: [{ object_id: "dog", label: "dog" }, { object_id: "cat", label: "cat" }] },
       classification: { objects: [{ object_id: "cat", label: "unicycle", refinement: null }, { object_id: "dog", label: "Labrador retriever", refinement: "Labrador retriever" }] },
       annotation: { raw_caption: "  A dog and <b>a cat</b>.  " },
@@ -48,6 +53,8 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
     let preview = result;
     const files = {
       original: png,
+      "crops/dog.png": png,
+      "crops/cat.png": png,
       "normalized.png": png,
       "detection.png": png,
       "results.json": Buffer.from(JSON.stringify({
@@ -67,7 +74,7 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
       if (!ready) return route.fulfill({ status: 404, json: { detail: "result_not_found" } });
       if (path === `/api/images/${imageId}`) return route.fulfill({ json: preview });
       if (path.endsWith("/archive")) return route.fulfill({ contentType: "application/zip", body: Buffer.from("archive") });
-      const name = path.split("/").pop();
+      const name = path.split("/files/")[1];
       assert(name in files, `Unexpected API path ${path}`);
       return route.fulfill({ contentType: name.endsWith("json") ? "application/json" : "application/octet-stream", body: files[name] });
     });
@@ -130,7 +137,7 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
     await page.evaluate(() => { window.savedFiles = {}; });
     await page.locator("#submit").click();
     await page.waitForFunction(() => document.getElementById("status").textContent.includes("Копия сохранена"));
-    assert.equal(await page.evaluate(() => Object.keys(window.savedFiles).length), 4, "Folder selected before upload receives all four files automatically");
+    assert.equal(await page.evaluate(() => Object.keys(window.savedFiles).length), 6, "Folder selected before upload receives all files and crops automatically");
     for (const flag of ["folderPermission", "folderWriteError"]) {
       await page.evaluate((key) => { window[key] = key === "folderPermission" ? "denied" : true; }, flag);
       await page.locator("#choose-folder").click();
@@ -222,7 +229,7 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
     assert.equal(new URL(docs.url()).pathname, "/api/docs");
     assert.deepEqual(await docs.evaluate(() => window.swaggerConfig.spec.servers), [{ url: "/api" }]);
     assert.deepEqual(docsErrors, []);
-    console.log("Browser checks passed: automatic preview, compatible/blank refinements, literal caption, pending/error/retry/empty results, wait/request timeouts, polling stops on success/error/reset, automatic folder copy, permission/write failure fallback, ZIP, compact laptop/mobile layout, contained long-table scrolling, external submit, Swagger proxy and CSP.");
+    console.log("Browser checks passed: automatic preview, compatible/blank refinements, literal caption, pending/error/retry/empty results, wait/request timeouts, polling stops on success/error/reset, automatic folder copy with crops, permission/write failure fallback, ZIP, compact laptop/mobile layout, contained long-table scrolling, external submit, Swagger proxy and CSP.");
   } finally {
     await browser.close();
   }

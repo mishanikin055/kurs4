@@ -1,5 +1,6 @@
 """Uploads, result previews and downloads; database writes belong to the worker."""
 
+import json
 import shutil
 import tempfile
 from pathlib import Path
@@ -54,7 +55,7 @@ def preview_result(image_id: UUID, service: Service):
     return JSONResponse(result, headers={"Cache-Control": "no-store"})
 
 
-@router.get("/images/{image_id}/files/{filename}")
+@router.get("/images/{image_id}/files/{filename:path}")
 def download_file(image_id: UUID, filename: str, service: Service):
     try:
         path = service.result_file(image_id, filename)
@@ -64,7 +65,7 @@ def download_file(image_id: UUID, filename: str, service: Service):
     return FileResponse(
         path,
         media_type=media_type or "application/octet-stream",
-        filename=filename,
+        filename=path.name,
         headers={"Cache-Control": "no-store", "X-Content-Type-Options": "nosniff"},
     )
 
@@ -76,6 +77,9 @@ def download_archive(image_id: UUID, service: Service):
             service.result_file(image_id, name)
             for name in ("original", "normalized.png", "detection.png", "results.json")
         ]
+        manifest = service.result_file(image_id, "results.json")
+        crops = json.loads(manifest.read_text(encoding="utf-8")).get("crops", [])
+        paths.extend(service.result_file(image_id, f"crops/{name}") for name in crops)
     except FileNotFoundError as exc:
         raise HTTPException(404, "result_not_found") from exc
     temporary = Path(tempfile.mkdtemp(prefix="kurs4-download-"))
@@ -83,7 +87,9 @@ def download_archive(image_id: UUID, service: Service):
         archive = temporary / "result.zip"
         with ZipFile(archive, "w") as bundle:
             for path in paths:
-                bundle.write(path, arcname=f"{image_id}/{path.name}")
+                bundle.write(path, arcname=f"{image_id}/{path.relative_to(manifest.parent)}")
+            if crops == [] and (manifest.parent / "crops").is_dir():
+                bundle.mkdir(f"{image_id}/crops/")
         return FileResponse(
             archive,
             media_type="application/zip",

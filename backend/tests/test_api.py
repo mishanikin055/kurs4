@@ -110,6 +110,35 @@ def test_file_size_is_checked_before_publication(app):
     assert not list(app.state.settings.image_root.iterdir())
 
 
+def test_crops_are_downloadable_and_included_in_zip(app, tmp_path):
+    image_id, object_id = uuid4(), uuid4()
+    directory = tmp_path / "results" / str(image_id)
+    (directory / "crops").mkdir(parents=True)
+    name = f"{object_id}.png"
+    crop = image_bytes(size=(5, 6))
+    (directory / "crops" / name).write_bytes(crop)
+    for filename in ("original", "normalized.png", "detection.png"):
+        (directory / filename).write_bytes(image_bytes())
+    manifest = directory / "results.json"
+    manifest.write_text(json.dumps({"crops": [name]}))
+    with TestClient(app) as client:
+        url = f"/images/{image_id}"
+        assert client.get(f"{url}/files/crops/{name}").content == crop
+        with ZipFile(BytesIO(client.get(f"{url}/archive").content)) as archive:
+            assert archive.read(f"{image_id}/crops/{name}") == crop
+        assert client.get(f"{url}/files/crops/not-a-crop.png").status_code == 404
+        outside = tmp_path / "private.png"
+        outside.write_bytes(b"private")
+        (directory / "crops" / name).unlink()
+        (directory / "crops" / name).symlink_to(outside)
+        assert client.get(f"{url}/files/crops/{name}").status_code == 404
+        assert client.get(f"{url}/archive").status_code == 404
+        (directory / "crops" / name).unlink()
+        manifest.write_text(json.dumps({"crops": []}))
+        with ZipFile(BytesIO(client.get(f"{url}/archive").content)) as archive:
+            assert f"{image_id}/crops/" in archive.namelist()
+
+
 def test_preview_only_shows_compatible_refinements_and_preserves_raw_bundle(app, tmp_path):
     image_id = uuid4()
     directory = tmp_path / "results" / str(image_id)

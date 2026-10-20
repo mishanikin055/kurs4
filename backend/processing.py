@@ -165,12 +165,20 @@ def process_image(
         manifest = destination / "results.json"
         if manifest.is_file():
             # If the DB was unavailable after file publication, retry only its write.
-            result = ImageResult.model_validate_json(manifest.read_text(encoding="utf-8"))
+            cached_manifest = json.loads(manifest.read_text(encoding="utf-8"))
+            result = ImageResult.model_validate(cached_manifest)
             if result.id != image_id or not all(
                 (destination / name).is_file()
                 for name in ("original", "normalized.png", "detection.png")
             ):
                 raise ValueError("Incomplete result bundle")
+            cached_crops = cached_manifest.get("crops", [])
+            expected_crops = [f"{obj.object_id}.png" for obj in result.detection.objects]
+            if "crops" in cached_manifest and (
+                cached_crops != expected_crops
+                or not all((destination / "crops" / name).is_file() for name in cached_crops)
+            ):
+                raise ValueError("Incomplete crop bundle")
         else:
             specs = model_specs(settings)
             with Image.open(source / "normalized.png") as image:
@@ -250,7 +258,14 @@ def process_image(
                 },
                 **payloads,
             )
-            save_result(result, source, destination)
+            save_result(
+                result,
+                source,
+                destination,
+                crop_padding=specs["classification"]["parameters"].get(
+                    "crop_padding_fraction", 0.1
+                ),
+            )
         # No image, job, status, error or intermediate stage is written before this point.
         with sessions.begin() as session:
             ImageRepository(session).save(result, destination)

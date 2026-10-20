@@ -9,6 +9,7 @@ from uuid import UUID
 from PIL import Image, ImageDraw, ImageOps, UnidentifiedImageError
 from starlette.datastructures import UploadFile
 
+from backend.models import crop_object
 from backend.schemas import ImageResult
 from backend.settings import Settings
 
@@ -120,7 +121,9 @@ def result_directory(settings: Settings, image_id: UUID) -> Path:
     return destination
 
 
-def save_result(result: ImageResult, source: Path, destination: Path) -> None:
+def save_result(
+    result: ImageResult, source: Path, destination: Path, *, crop_padding: float = 0.1
+) -> None:
     """Publish the complete bundle by one directory rename, before the DB commit."""
     destination.parent.mkdir(parents=True, exist_ok=True)
     temporary = Path(tempfile.mkdtemp(prefix=".result-", dir=destination.parent))
@@ -135,9 +138,27 @@ def save_result(result: ImageResult, source: Path, destination: Path) -> None:
             temporary / "detection.png",
             result.detection.model_dump(mode="json"),
         )
+        crops = temporary / "crops"
+        crops.mkdir()
+        manifest = result.model_dump(mode="json", exclude_none=True)
+        manifest["crops"] = []
+        with Image.open(temporary / "normalized.png") as source_image:
+            image = source_image.convert("RGB")
+            for obj in result.detection.objects:
+                name = f"{obj.object_id}.png"
+                with (crops / name).open("xb") as stream:
+                    crop_object(image, obj.bbox, crop_padding).save(stream, format="PNG")
+                    stream.flush()
+                    os.fsync(stream.fileno())
+                manifest["crops"].append(name)
+        directory_fd = os.open(crops, os.O_RDONLY | os.O_DIRECTORY)
+        try:
+            os.fsync(directory_fd)
+        finally:
+            os.close(directory_fd)
         with (temporary / "results.json").open("x", encoding="utf-8") as stream:
             json.dump(
-                result.model_dump(mode="json", exclude_none=True),
+                manifest,
                 stream,
                 ensure_ascii=False,
                 indent=2,

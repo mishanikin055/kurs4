@@ -100,6 +100,21 @@ def load_classifier(directory: Path, device: str):
     return model, transform, labels
 
 
+def crop_object(image: Image.Image, bbox, padding: float) -> Image.Image:
+    if not math.isfinite(padding) or not 0 <= padding <= 1:
+        raise ValueError("Invalid crop padding")
+    x1, y1, x2, y2 = bbox
+    dx, dy = (x2 - x1) * padding, (y2 - y1) * padding
+    return image.crop(
+        [
+            max(0, math.floor(x1 - dx)),
+            max(0, math.floor(y1 - dy)),
+            min(image.width, math.ceil(x2 + dx)),
+            min(image.height, math.ceil(y2 + dy)),
+        ]
+    )
+
+
 def classify(
     image: Image.Image, directory: Path, parameters: dict, detection: dict, *, loaded=None
 ) -> dict:
@@ -113,18 +128,11 @@ def classify(
     )
     objects = []
     for obj in detection["objects"]:
-        x1, y1, x2, y2 = obj["bbox"]
-        dx, dy = (x2 - x1) * padding, (y2 - y1) * padding
-        box = [
-            max(0, math.floor(x1 - dx)),
-            max(0, math.floor(y1 - dy)),
-            min(image.width, math.ceil(x2 + dx)),
-            min(image.height, math.ceil(y2 + dy)),
-        ]
         record = {"object_id": obj["object_id"]}
         try:
             with torch.inference_mode():
-                logits = model(transform(image.crop(box)).unsqueeze(0).to(parameters["device"]))
+                crop = crop_object(image, obj["bbox"], padding)
+                logits = model(transform(crop).unsqueeze(0).to(parameters["device"]))
                 if logits.shape != (1, 1000) or not torch.isfinite(logits).all():
                     raise ValueError("Invalid classifier output")
                 index = logits.argmax(-1).item()

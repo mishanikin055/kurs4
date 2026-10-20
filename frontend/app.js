@@ -154,11 +154,20 @@ async function saveToFolder(id, selectedFolder) {
       throw new Error("folder_permission_required");
     }
     const manifest = await (await resultFile(id, "results.json")).blob();
+    const result = JSON.parse(await manifest.text());
     const directory = await selectedFolder.getDirectoryHandle(id, { create: true });
     for (const name of ["original", "normalized.png", "detection.png"]) {
       const response = await resultFile(id, name);
       const file = await directory.getFileHandle(name, { create: true });
       await response.body.pipeTo(await file.createWritable());
+    }
+    if (result.crops) {
+      const crops = await directory.getDirectoryHandle("crops", { create: true });
+      for (const name of result.crops) {
+        const response = await resultFile(id, `crops/${name}`);
+        const file = await crops.getFileHandle(name, { create: true });
+        await response.body.pipeTo(await file.createWritable());
+      }
     }
     const file = await directory.getFileHandle("results.json", { create: true });
     const stream = await file.createWritable();

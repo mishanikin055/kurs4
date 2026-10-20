@@ -3,6 +3,7 @@
 import json
 from functools import cache
 from pathlib import Path
+from re import fullmatch
 from uuid import UUID, uuid4
 
 from starlette.datastructures import UploadFile
@@ -46,7 +47,7 @@ class ImageService:
 
     def result_file(self, image_id: UUID, filename: str) -> Path:
         names = {"original", "normalized.png", "detection.png", "results.json"}
-        if filename not in names:
+        if filename not in names and not fullmatch(r"crops/[0-9a-f-]{36}\.png", filename):
             raise FileNotFoundError
         directory = result_directory(self.settings, image_id)
         path = (directory / filename).resolve()

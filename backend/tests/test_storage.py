@@ -5,8 +5,49 @@ import pytest
 from PIL import Image
 from starlette.datastructures import UploadFile
 
+from backend.schemas import ImageResult
 from backend.settings import Settings
-from backend.storage import UploadError, save_detection_image, save_image
+from backend.storage import UploadError, save_detection_image, save_image, save_result
+
+
+@pytest.mark.parametrize("padding", [0, 0.1, 0.25])
+def test_bundle_crops_match_classifier_pixels(settings, padding):
+    import json
+
+    from backend.models import crop_object
+
+    image_id = uuid4()
+    save_image(upload(image_bytes(size=(16, 12))), image_id, settings)
+    source = settings.image_root / str(image_id)
+    image = Image.new("RGB", (16, 12))
+    image.putdata([(x * 10, y * 10, 100) for y in range(12) for x in range(16)])
+    image.save(source / "normalized.png")
+    objects = [
+        {"object_id": uuid4(), "bbox": bbox, "label": "car"}
+        for bbox in ([0.1, 0.1, 5.2, 5.2], [4, 3, 12, 9], [0, 0, 16, 12])
+    ]
+    result = ImageResult(
+        id=image_id,
+        width=16,
+        height=12,
+        models={stage: {} for stage in ("detection", "classification", "annotation")},
+        detection={"objects": objects},
+        classification={
+            "objects": [{"object_id": obj["object_id"], "label": "car"} for obj in objects]
+        },
+        annotation={"raw_caption": "A car."},
+    )
+    destination = settings.image_root / "results" / str(image_id)
+    save_result(result, source, destination, crop_padding=padding)
+    manifest = json.loads((destination / "results.json").read_text())
+    assert manifest["crops"] == [f"{obj['object_id']}.png" for obj in objects]
+    for obj, name in zip(objects, manifest["crops"], strict=True):
+        expected = crop_object(image, obj["bbox"], padding)
+        with Image.open(destination / "crops" / name) as actual:
+            assert actual.format == "PNG"
+            assert actual.size == expected.size
+            assert actual.tobytes() == expected.tobytes()
+    assert ImageResult.model_validate(manifest) == result
 
 
 @pytest.fixture

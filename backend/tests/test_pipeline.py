@@ -44,6 +44,7 @@ def pipeline(tmp_path, monkeypatch):
                 "normalized.png",
                 "detection.png",
                 "results.json",
+                "crops",
             }
             assert (
                 ImageResult.model_validate_json((directory / "results.json").read_text()) == result
@@ -113,6 +114,9 @@ def test_no_detections_still_runs_caption_and_saves_empty_classification(pipelin
     process_image(p.id, p.sessions, p.settings, runner=p.runner)
     assert sorted(p.calls) == ["annotation", "detection"]
     assert p.saved[p.id].result.classification.objects == []
+    assert (p.output / "crops").is_dir()
+    assert list((p.output / "crops").iterdir()) == []
+    assert json.loads((p.output / "results.json").read_text())["crops"] == []
 
 
 def test_database_failure_keeps_volume_and_retry_does_not_run_models(pipeline, monkeypatch):
@@ -134,13 +138,16 @@ def test_database_failure_keeps_volume_and_retry_does_not_run_models(pipeline, m
     assert p.id in p.saved
 
 
-def test_disk_failure_never_commits_result_or_exposes_partial_bundle(pipeline, monkeypatch):
+@pytest.mark.parametrize("function", ["save_detection_image", "crop_object"])
+def test_disk_failure_never_commits_result_or_exposes_partial_bundle(
+    pipeline, monkeypatch, function
+):
     p = pipeline
 
     def failure(*args):
         raise OSError("disk full")
 
-    monkeypatch.setattr("backend.storage.save_detection_image", failure)
+    monkeypatch.setattr(f"backend.storage.{function}", failure)
     with pytest.raises(OSError):
         process_image(p.id, p.sessions, p.settings, runner=p.runner)
     assert not p.saved
@@ -156,6 +163,29 @@ def test_corrupt_cached_bundle_is_not_saved_to_database(pipeline):
         process_image(p.id, p.sessions, p.settings, runner=p.runner)
     assert not p.saved
     assert not p.calls
+
+
+@pytest.mark.parametrize("missing", ["file", "manifest_entry"])
+def test_cached_bundle_with_missing_crop_is_not_committed(pipeline, monkeypatch, missing):
+    p = pipeline
+
+    def failure(*args):
+        raise SQLAlchemyError("database unavailable")
+
+    monkeypatch.setattr(p.repository, "save", failure)
+    with pytest.raises(SQLAlchemyError):
+        process_image(p.id, p.sessions, p.settings, runner=p.runner)
+    manifest = p.output / "results.json"
+    data = json.loads(manifest.read_text())
+    if missing == "file":
+        (p.output / "crops" / data["crops"][0]).unlink()
+    else:
+        data["crops"] = []
+        manifest.write_text(json.dumps(data))
+    with pytest.raises(ValueError, match="Incomplete crop bundle"):
+        process_image(p.id, p.sessions, p.settings, runner=p.runner)
+    assert len(p.calls) == 3
+    assert not p.saved
 
 
 def test_annotation_overlaps_detection_and_classification(pipeline):
