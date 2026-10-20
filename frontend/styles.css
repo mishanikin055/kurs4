@@ -73,11 +73,11 @@ th { position: sticky; top: 0; font-weight: 600; background: var(--tint); }
 #object-overlays, .object-box { position: absolute; inset: 0; pointer-events: none; }
 .object-box { color: var(--object); }
 .object-outline { position: absolute; border: 2px solid currentColor; }
-.object-marker { position: absolute; pointer-events: auto; width: max-content; min-width: 28px; min-height: 28px; padding: 3px 6px; border: 1px solid white; border-radius: 4px; background: var(--object); color: white; font-size: 13px; line-height: 20px; }
+.object-marker { position: absolute; pointer-events: auto; width: max-content; max-width: 100%; min-height: 28px; padding: 3px 6px; border: 1px solid white; border-radius: 4px; background: var(--object); color: white; font-size: 12px; line-height: 20px; }
 .object-marker:active, .object-number:active { transform: none; }
 .object-marker:focus-visible { outline-color: white; box-shadow: 0 0 0 5px var(--selected); }
 .object-box.is-selected { z-index: 1; color: var(--selected); }
-.object-box.is-selected .object-outline { border-width: 3px; box-shadow: 0 0 0 1px white; background: rgb(7 89 133 / 10%); }
+.object-box.is-selected .object-outline { box-shadow: 0 0 0 1px white; }
 .object-box.is-selected .object-marker { background: var(--selected); }
 #objects tr { cursor: pointer; }
 #objects tr:hover { background: var(--tint); }

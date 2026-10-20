@@ -10,27 +10,16 @@ let selectedObject;
 function positionMarkers() {
   const image = $("image-stage").getBoundingClientRect();
   if (!image.width) return;
-  const placed = [];
   for (const box of $("object-overlays").children) {
+    if (box.hidden) continue;
     const outline = box.querySelector(".object-outline").getBoundingClientRect();
     const marker = box.querySelector("button");
     const width = marker.offsetWidth;
     const height = marker.offsetHeight;
-    const candidates = [
-      [outline.left, outline.top], [outline.right - width, outline.top],
-      [outline.left, outline.bottom - height], [outline.right - width, outline.bottom - height],
-    ].map(([x, y]) => ({
-      x: Math.max(0, Math.min(x - image.left, image.width - width)),
-      y: Math.max(0, Math.min(y - image.top, image.height - height)),
-      width, height,
-    }));
-    const position = candidates.find((candidate) => placed.every((other) =>
-      candidate.x >= other.x + other.width || candidate.x + width <= other.x ||
-      candidate.y >= other.y + other.height || candidate.y + height <= other.y
-    )) || candidates[0];
-    marker.style.left = `clamp(0px, ${position.x / image.width * 100}%, calc(100% - ${width}px))`;
-    marker.style.top = `clamp(0px, ${position.y / image.height * 100}%, calc(100% - ${height}px))`;
-    placed.push(position);
+    const x = Math.max(0, Math.min(outline.left - image.left, image.width - width));
+    const y = Math.max(0, outline.top - image.top - height);
+    marker.style.left = `clamp(0px, ${x / image.width * 100}%, calc(100% - ${width}px))`;
+    marker.style.top = `clamp(0px, ${y / image.height * 100}%, calc(100% - ${height}px))`;
   }
 }
 
@@ -44,6 +33,7 @@ function selectObject(index, revealRow = false) {
       const selected = i === selectedObject;
       element.classList.toggle("is-selected", selected);
       element.querySelector("button").setAttribute("aria-pressed", String(selected));
+      if (container.id === "object-overlays") element.hidden = selectedObject !== null && !selected;
     });
   }
   const row = rows[selectedObject];
@@ -51,6 +41,7 @@ function selectObject(index, revealRow = false) {
     ? `Выбран объект №${selectedObject + 1}: ${[...row.cells].slice(1).map((cell) => cell.textContent).filter(Boolean).join(", ")}.`
     : "Выделение снято.";
   if (revealRow && row) row.scrollIntoView({ block: "nearest" });
+  positionMarkers();
 }
 
 function renderObjects(result) {
@@ -91,7 +82,7 @@ function renderObjects(result) {
     outline.style.height = `${(y2 - y1) / result.height * 100}%`;
     const marker = number.cloneNode(true);
     marker.className = "object-marker";
-    marker.textContent = index + 1;
+    marker.textContent = `№${index + 1} · ${object.label}`;
     marker.title = marker.getAttribute("aria-label");
     marker.addEventListener("click", () => selectObject(index, true));
     box.append(outline, marker);
@@ -213,7 +204,7 @@ async function waitForResult(id, deadline = Date.now() + 40 * 60 * 1000) {
     $("result-placeholder").hidden = true;
     $("result-preview").hidden = false;
     $("preview-placeholder").hidden = true;
-    positionMarkers();
+    if (result.detection.objects.length) selectObject(0);
     readyImageId = id;
     $("save-actions").hidden = Boolean(folderHandle);
     $("status").textContent = "Результат готов.";

@@ -95,17 +95,20 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
     assert.equal(await page.locator("#caption").textContent(), result.annotation.raw_caption);
     assert.equal(await page.locator("#caption b").count(), 0, "Model text must never become HTML");
     assert.deepEqual(await page.locator("#objects tr").allTextContents(), ["1dogLabrador retriever", "2cat"]);
-    assert.deepEqual(await page.locator(".object-marker").allTextContents(), ["1", "2"]);
-    const firstMarker = await page.locator(".object-marker").first().boundingBox();
-    const secondMarker = await page.locator(".object-marker").nth(1).boundingBox();
-    assert(firstMarker.x + firstMarker.width <= secondMarker.x || secondMarker.x + secondMarker.width <= firstMarker.x || firstMarker.y + firstMarker.height <= secondMarker.y || secondMarker.y + secondMarker.height <= firstMarker.y, "Overlapping boxes use free corners for readable numbers");
+    assert.deepEqual(await page.locator(".object-marker").allTextContents(), ["№1 · dog", "№2 · cat"]);
+    assert.equal(await page.locator(".object-box:visible").count(), 1, "The first object is shown on its own by default");
+    assert.equal(await page.locator(".object-number").first().getAttribute("aria-pressed"), "true");
     assert(requests.includes(`/api/images/${imageId}/files/normalized.png`), "Old and new results use clean source pixels with the same numbered overlay");
     await page.locator("#objects tr").nth(1).locator("td").nth(1).click();
     assert.equal(await page.locator(".object-marker").nth(1).getAttribute("aria-pressed"), "true", "Clicking a row selects its box");
+    assert(await page.locator(".object-box").first().isHidden(), "Other boxes and labels cannot obscure the selected object");
+    assert.equal(await page.locator(".object-box:visible").count(), 1);
     await page.locator(".object-number").first().focus();
     await page.keyboard.press("Enter");
     assert.equal(await page.locator(".object-marker").first().getAttribute("aria-pressed"), "true", "Object selection works from the keyboard");
     assert.equal(await page.locator(".object-marker").nth(1).getAttribute("aria-pressed"), "false", "Only one object is selected");
+    await page.keyboard.press("Escape");
+    assert.equal(await page.locator(".object-box:visible").count(), 2, "Escape restores the overview");
     await page.locator(".object-marker").nth(1).click();
     assert.equal(await page.locator(".object-number").nth(1).getAttribute("aria-pressed"), "true", "Clicking an image label selects its row");
     assert.equal(await page.locator("#objects tr.is-selected").count(), 1);
@@ -118,6 +121,7 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
     assert(await page.locator("#result").evaluate((result) => Boolean(result.closest(".controls"))), "Results are below the form in the left column");
     for (const viewport of [{ width: 1366, height: 650 }, { width: 1280, height: 600 }, { width: 1536, height: 730 }, { width: 1024, height: 600 }]) {
       await page.setViewportSize(viewport);
+      await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
       assert(await page.evaluate(() => document.documentElement.scrollHeight <= innerHeight && document.documentElement.scrollWidth <= innerWidth), `No page scrolling at ${viewport.width}x${viewport.height}`);
       for (const selector of ["#submit", ".result-panel", ".preview"]) {
         const box = await page.locator(selector).boundingBox();
@@ -141,6 +145,8 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
         assert(Math.abs(box.height - (y2 - y1) / result.height * picture.height) < 1);
         const marker = await page.locator(".object-marker").nth(index).boundingBox();
         assert(marker.x >= picture.x - 1 && marker.y >= picture.y - 1 && marker.x + marker.width <= picture.x + picture.width + 1 && marker.y + marker.height <= picture.y + picture.height + 1, "Edge labels stay inside the image");
+        assert(marker.y + marker.height <= box.y + 1 || box.y - picture.y < marker.height, "Labels stay above their box instead of covering the object");
+        assert(marker.x <= box.x + 1, "Labels remain attached to the top-left edge");
       }
     }
     await page.evaluate(() => {
@@ -189,7 +195,7 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
     assert(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth));
     assert.equal(requests.length, countBeforeResize);
     if (process.env.SCREENSHOT_DIR) await page.screenshot({ path: `${process.env.SCREENSHOT_DIR}/simple-mobile.png`, fullPage: true });
-    await page.locator(".object-marker").nth(1).click();
+    await page.locator(".object-number").nth(1).click();
     assert.equal(await page.locator(".object-number").nth(1).getAttribute("aria-pressed"), "true");
     preview = { ...result, detection: { objects: [] }, classification: { objects: [] } };
     await page.locator("#submit").click();
@@ -268,7 +274,7 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
     assert.equal(new URL(docs.url()).pathname, "/api/docs");
     assert.deepEqual(await docs.evaluate(() => window.swaggerConfig.spec.servers), [{ url: "/api" }]);
     assert.deepEqual(docsErrors, []);
-    console.log("Browser checks passed: numbered boxes, synchronized row/image selection, keyboard and Escape, box alignment on resize, automatic preview, compatible/blank refinements, literal caption, pending/error/retry/empty results, wait/request timeouts, polling stops on success/error/reset, automatic folder copy with crops, permission/write failure fallback, ZIP, compact laptop/mobile layout, contained long-table scrolling, external submit, Swagger proxy and CSP.");
+    console.log("Browser checks passed: isolated selected object, default first selection, number/class labels above boxes, Escape overview, synchronized row/image selection, keyboard, box alignment on resize, automatic preview, compatible/blank refinements, literal caption, pending/error/retry/empty results, wait/request timeouts, polling stops on success/error/reset, automatic folder copy with crops, permission/write failure fallback, ZIP, compact laptop/mobile layout, contained long-table scrolling, external submit, Swagger proxy and CSP.");
   } finally {
     await browser.close();
   }
