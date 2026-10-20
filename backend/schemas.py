@@ -31,13 +31,19 @@ class DetectionPayload(BaseModel):
 
 class ClassifiedObject(BaseModel):
     object_id: UUID
-    label: str | None = Field(default=None, min_length=1)
+    label: str | None = Field(default=None, min_length=1)  # Legacy ImageNet bundles.
+    object_caption: str | None = Field(default=None, min_length=1)
     error: dict | None = None
 
     @model_validator(mode="after")
     def check_result(self):
-        if (self.label is None) == (self.error is None) or self.error == {}:
-            raise ValueError("Expected either one label or a crop error")
+        if (
+            sum(value is not None for value in (self.label, self.object_caption, self.error)) != 1
+            or self.error == {}
+        ):
+            raise ValueError("Expected one object caption, legacy label or crop error")
+        if self.object_caption is not None and not self.object_caption.strip():
+            raise ValueError("Empty object caption")
         return self
 
 

@@ -201,3 +201,44 @@ def test_streaming_body_limit_without_content_length(app):
         )
     assert response.status_code == 413
     assert not list(app.state.settings.image_root.iterdir())
+
+
+def test_object_captions_reach_api_and_zip_without_mapping_or_rewrite(app, tmp_path, monkeypatch):
+    from io import BytesIO
+    from zipfile import ZipFile
+
+    def forbidden_mapping():
+        pytest.fail("Object captions must never use ImageNet mapping")
+
+    monkeypatch.setattr("backend.service.compatible_labels", forbidden_mapping)
+    image_id = uuid4()
+    directory = tmp_path / "results" / str(image_id)
+    directory.mkdir(parents=True)
+    result = {
+        "detection": {
+            "objects": [
+                {"object_id": "one", "label": "dog", "bbox": [0, 0, 8, 8]},
+                {"object_id": "two", "label": "cat", "bbox": [1, 1, 3, 3]},
+            ]
+        },
+        "classification": {
+            "objects": [
+                {"object_id": "two", "object_caption": "  <b>A cat</b>.  "},
+                {"object_id": "one", "object_caption": "tabby"},
+            ]
+        },
+        "annotation": {"raw_caption": "  A detailed scene.  "},
+        "crops": [],
+    }
+    raw = json.dumps(result).encode()
+    (directory / "results.json").write_bytes(raw)
+    for name in ("original", "normalized.png", "detection.png"):
+        (directory / name).write_bytes(b"test")
+    (directory / "crops").mkdir()
+    with TestClient(app) as client:
+        assert client.get(f"/images/{image_id}").json() == result
+        assert client.get(f"/images/{image_id}/files/results.json").content == raw
+        with ZipFile(BytesIO(client.get(f"/images/{image_id}/archive").content)) as archive:
+            assert archive.read(f"{image_id}/results.json") == raw
+            assert f"{image_id}/crops/" in archive.namelist()
+    assert (directory / "results.json").read_bytes() == raw

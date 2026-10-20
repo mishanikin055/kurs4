@@ -12,7 +12,7 @@ from backend.storage import UploadError, save_detection_image, save_image, save_
 
 
 @pytest.mark.parametrize("padding", [0, 0.1, 0.25])
-def test_bundle_crops_match_classifier_pixels(settings, padding):
+def test_bundle_crops_match_florence_input_pixels(settings, padding):
     import json
 
     from backend.models import crop_object
@@ -34,7 +34,9 @@ def test_bundle_crops_match_classifier_pixels(settings, padding):
         models={stage: {} for stage in ("detection", "classification", "annotation")},
         detection={"objects": objects},
         classification={
-            "objects": [{"object_id": obj["object_id"], "label": "car"} for obj in objects]
+            "objects": [
+                {"object_id": obj["object_id"], "object_caption": "  A car.  "} for obj in objects
+            ]
         },
         annotation={"raw_caption": "A car."},
     )

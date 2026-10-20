@@ -16,7 +16,7 @@ def predict(request):
         directory = Path(os.environ["MOCK_PARALLEL_DIR"])
         (directory / (stage + ".started")).write_text(str(os.getpid()))
         # Fail a sequential pipeline instead of relying on elapsed-time comparisons.
-        dependency = {"detection": "annotation", "annotation": "classification"}.get(stage)
+        dependency = {"detection": "annotation", "annotation": "detection"}.get(stage)
         if dependency is not None:
             deadline = time.monotonic() + 5
             while not (directory / (dependency + ".started")).exists():
@@ -41,7 +41,7 @@ def predict(request):
         return {
             "payload": {
                 "objects": [
-                    dict(object_id=obj["object_id"], label="synthetic")
+                    dict(object_id=obj["object_id"], object_caption="  Synthetic object.  ")
                     for obj in request["detection"]["objects"]
                 ]
             },

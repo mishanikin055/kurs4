@@ -28,7 +28,6 @@ def settings(tmp_path):
         broker_url="amqp://unused:unused@localhost/unused",
         lock_path=tmp_path / "inference.lock",
         detection_python=sys.executable,
-        classification_python=sys.executable,
         annotation_python=sys.executable,
         stage_timeout=5,
         device="cpu",
@@ -42,6 +41,7 @@ def request(settings, stage):
 def test_resident_processes_reused_and_stopped(settings):
     with resident_models(settings, module="backend.tests.mock_model") as runtime:
         pids = {stage: process.pid for stage, process in runtime.processes.items()}
+        assert set(pids) == {"detection", "annotation"}
         for _ in range(2):
             detection = runtime(request(settings, "detection"), settings, runtime.lock_fd, 3)
             assert detection["pid"] == pids["detection"]
@@ -51,7 +51,7 @@ def test_resident_processes_reused_and_stopped(settings):
                 runtime.lock_fd,
                 3,
             )
-            assert classification["pid"] == pids["classification"]
+            assert classification["pid"] == pids["annotation"]
             assert (
                 classification["payload"]["objects"][0]["object_id"]
                 == detection["payload"]["objects"][0]["object_id"]
@@ -63,7 +63,9 @@ def test_resident_processes_reused_and_stopped(settings):
         pass
 
 
-def test_resident_annotation_overlaps_detection_and_classification(settings, tmp_path, monkeypatch):
+def test_resident_annotation_overlaps_detection_then_reuses_florence(
+    settings, tmp_path, monkeypatch
+):
     monkeypatch.setenv("MOCK_MODEL_MODE", "parallel")
     monkeypatch.setenv("MOCK_PARALLEL_DIR", str(tmp_path))
     with resident_models(settings, module="backend.tests.mock_model") as runtime:
@@ -72,7 +74,7 @@ def test_resident_annotation_overlaps_detection_and_classification(settings, tmp
                 runtime, request(settings, "annotation"), settings, runtime.lock_fd, 3
             )
             detection = runtime(request(settings, "detection"), settings, runtime.lock_fd, 3)
-            assert not annotation.done()
+            assert annotation.result(timeout=3)["payload"]["raw_caption"].strip()
             classification = runtime(
                 dict(request(settings, "classification"), detection=detection["payload"]),
                 settings,
@@ -144,14 +146,13 @@ def test_protocol_rejects_large_response():
             receive(right, deadline=time.monotonic() + 1)
 
 
-@pytest.mark.parametrize("stage", ["detection", "classification", "annotation"])
+@pytest.mark.parametrize("stage", ["detection", "annotation"])
 def test_server_loads_once_and_rejects_checkpoint_change(settings, tmp_path, monkeypatch, stage):
     loader = Mock(return_value=object())
     verify = Mock(return_value=tmp_path)
     predict = Mock(return_value={"payload": {"test": True}})
     monkeypatch.setattr(models, "verify_files", verify)
     monkeypatch.setattr(models, "load_detector", loader)
-    monkeypatch.setattr(models, "load_classifier", loader)
     monkeypatch.setattr(models, "load_annotator", loader)
     monkeypatch.setattr(models, "predict", predict)
     monkeypatch.setitem(sys.modules, "torch", Mock())
@@ -172,13 +173,27 @@ def test_server_loads_once_and_rejects_checkpoint_change(settings, tmp_path, mon
         spec = request(settings, stage)
         send(left, spec)
         assert receive(left, deadline=time.monotonic() + 2)["ready"]
-        for _ in range(2):
-            send(left, dict(spec, image_path="unused"))
+        for request_stage in (
+            ["annotation", "classification"] if stage == "annotation" else [stage, stage]
+        ):
+            send(left, dict(request(settings, request_stage), image_path="unused"))
             assert receive(left, deadline=time.monotonic() + 2) == {"payload": {"test": True}}
         send(left, dict(spec, model_revision="changed"))
         assert receive(left, deadline=time.monotonic() + 2) == {
             "error": {"code": "model_not_configured"}
         }
+        if stage == "annotation":
+            crop_spec = request(settings, "classification")
+            send(
+                left,
+                dict(
+                    crop_spec,
+                    parameters={**crop_spec["parameters"], "prompt": "<DETAILED_CAPTION>"},
+                ),
+            )
+            assert receive(left, deadline=time.monotonic() + 2) == {
+                "error": {"code": "model_not_configured"}
+            }
         assert predict.call_count == 3  # One warmup and two requests.
         assert all(call.kwargs["loaded"] is loader.return_value for call in predict.call_args_list)
         loader.assert_called_once()

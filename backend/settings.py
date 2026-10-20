@@ -16,7 +16,6 @@ class Settings(BaseSettings):
     lock_path: Path = Path("storage/locks/inference.lock")
     model_root: Path = Path(".")
     detection_python: str = "/opt/detection/bin/python"
-    classification_python: str = "/opt/detection/bin/python"
     annotation_python: str = "/opt/annotation/bin/python"
     device: str = "cuda"
     stage_timeout: float = Field(default=600, gt=0)
@@ -27,6 +26,15 @@ def model_specs(settings: Settings) -> dict:
     import json
 
     specs = json.loads(Path(__file__).with_name("checkpoints.json").read_text())
+    specs["classification"] = {
+        **specs["annotation"],
+        "parameters": {
+            **specs["annotation"]["parameters"],
+            "prompt": "<CAPTION>",
+            "max_new_tokens": 96,
+            "crop_padding_fraction": 0.1,
+        },
+    }
     return {
         stage: {
             **{key: spec[key] for key in ("model_name", "model_revision", "weights_sha256")},

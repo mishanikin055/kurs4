@@ -1,4 +1,4 @@
-"""Save and publish uploads; read completed files and compatible preview labels."""
+"""Save and publish uploads; read completed captions and legacy preview labels."""
 
 import json
 from functools import cache
@@ -63,6 +63,8 @@ class ImageService:
         result = json.loads(self.result_file(image_id, "results.json").read_text(encoding="utf-8"))
         detected = {obj["object_id"]: obj["label"] for obj in result["detection"]["objects"]}
         for obj in result["classification"]["objects"]:
+            if "object_caption" in obj:
+                continue
             coco = detected.get(obj["object_id"])
             label = obj.get("label")
             obj["refinement"] = (

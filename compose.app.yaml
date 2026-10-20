@@ -75,12 +75,11 @@ services:
     profiles: ["processing"]
     restart: unless-stopped
     mem_limit: 5g
-    # Three resident models; startup checks headroom before consuming images.
+    # Two resident models; startup checks headroom before consuming images.
     volumes:
       - image_data:/var/lib/kurs4/images
       - ./storage/locks:/var/lib/kurs4/locks
       - ./detection/models/rf_detr_small:/models/detection/models/rf_detr_small:ro
-      - ./classification/models/vit_b_16:/models/classification/models/vit_b_16:ro
       - ./annotation/models/florence2_base_ft:/models/annotation/models/florence2_base_ft:ro
     environment:
       APP_IMAGE_ROOT: /var/lib/kurs4/images

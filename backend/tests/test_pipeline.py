@@ -82,11 +82,13 @@ def pipeline(tmp_path, monkeypatch):
     )
 
 
-def test_three_models_then_volume_then_database(pipeline):
+def test_detector_and_shared_florence_then_volume_then_database(pipeline):
     p = pipeline
     process_image(p.id, p.sessions, p.settings, runner=p.runner)
     assert sorted(p.calls) == ["annotation", "classification", "detection"]
     assert p.calls.index("detection") < p.calls.index("classification")
+    assert p.calls.index("annotation") < p.calls.index("classification")
+    assert p.saved[p.id].result.classification.objects[0].object_caption == "  Synthetic object.  "
     result = p.saved[p.id].result
     assert result.annotation.raw_caption == "  Synthetic caption.  "
     assert result.detection.objects[0].object_id == result.classification.objects[0].object_id
@@ -188,47 +190,45 @@ def test_cached_bundle_with_missing_crop_is_not_committed(pipeline, monkeypatch,
     assert not p.saved
 
 
-def test_annotation_overlaps_detection_and_classification(pipeline):
+def test_annotation_overlaps_detection_but_crops_wait_for_florence(pipeline):
     p = pipeline
-    annotation_started = Event()
-    classification_finished = Event()
+    annotation_started, detection_finished, annotation_finished = Event(), Event(), Event()
 
     def runner(request, *args, **kwargs):
         stage = request["stage"]
+        assert request["image_path"].endswith("normalized.png")
         if stage == "annotation":
+            assert request["parameters"]["prompt"] == "<DETAILED_CAPTION>"
             annotation_started.set()
-            assert classification_finished.wait(3), "Annotation must overlap the other branch"
+            assert detection_finished.wait(3)
+            annotation_finished.set()
+        elif stage == "detection":
+            assert annotation_started.wait(3)
+            detection_finished.set()
         else:
-            assert annotation_started.wait(3), "Detection must not block annotation startup"
-        response = p.runner(request, *args, **kwargs)
-        if stage == "classification":
-            classification_finished.set()
-        return response
+            assert annotation_finished.is_set() and detection_finished.is_set()
+            assert request["parameters"]["prompt"] == "<CAPTION>"
+        return p.runner(request, *args, **kwargs)
 
     process_image(p.id, p.sessions, p.settings, runner=runner)
     assert p.id in p.saved
 
 
 @pytest.mark.parametrize("last_stage", ["annotation", "classification"])
-def test_saving_waits_for_both_branches(pipeline, last_stage):
+def test_saving_waits_for_scene_and_all_crops(pipeline, last_stage):
     p = pipeline
-    blocked, other_finished, release = Event(), Event(), Event()
-    other_stage = "classification" if last_stage == "annotation" else "annotation"
+    blocked, release = Event(), Event()
 
     def runner(request, *args, **kwargs):
-        stage = request["stage"]
-        if stage == last_stage:
+        if request["stage"] == last_stage:
             blocked.set()
             assert release.wait(3)
-        response = p.runner(request, *args, **kwargs)
-        if stage == other_stage:
-            other_finished.set()
-        return response
+        return p.runner(request, *args, **kwargs)
 
     with ThreadPoolExecutor(max_workers=1) as executor:
         future = executor.submit(process_image, p.id, p.sessions, p.settings, runner=runner)
         try:
-            assert blocked.wait(3) and other_finished.wait(3)
+            assert blocked.wait(3)
             assert not future.done()
             assert not p.saved and not p.output.exists()
         finally:
@@ -309,3 +309,35 @@ def test_coordinator_interrupt_stops_both_branches(pipeline, monkeypatch):
         process_image(p.id, p.sessions, p.settings, runner=runner)
     assert all(event.is_set() for event in stopped.values())
     assert not p.saved and not p.output.exists()
+
+
+def test_old_bundle_recovers_database_without_inference_or_rewrite(pipeline, monkeypatch):
+    p = pipeline
+
+    def fail_commit(*args):
+        raise SQLAlchemyError("offline")
+
+    monkeypatch.setattr(p.repository, "save", fail_commit)
+    with pytest.raises(SQLAlchemyError):
+        process_image(p.id, p.sessions, p.settings, runner=p.runner)
+    manifest = p.output / "results.json"
+    data = json.loads(manifest.read_text())
+    for obj in data["classification"]["objects"]:
+        obj.pop("object_caption")
+        obj["label"] = "tench"
+    data["models"]["classification"] = {"model_name": "vit_b_16", "model_revision": "legacy"}
+    for name in data.pop("crops"):
+        (p.output / "crops" / name).unlink()
+    (p.output / "crops").rmdir()
+    manifest.write_text(json.dumps(data))
+    previous = manifest.read_bytes()
+
+    def save_legacy(self, result, directory):
+        p.saved[result.id] = result
+
+    monkeypatch.setattr(p.repository, "save", save_legacy)
+    p.calls.clear()
+    process_image(p.id, p.sessions, p.settings, runner=p.runner)
+    assert not p.calls
+    assert manifest.read_bytes() == previous
+    assert p.saved[p.id].classification.objects[0].label == "tench"

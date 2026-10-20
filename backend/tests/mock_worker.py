@@ -12,7 +12,6 @@ from backend.tasks import worker_main
 if __name__ == "__main__":
     settings = Settings(
         detection_python=sys.executable,
-        classification_python=sys.executable,
         annotation_python=sys.executable,
     )
     if os.environ.get("MOCK_RESIDENT") == "1":

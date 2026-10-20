@@ -87,6 +87,8 @@ class ResidentModels:
 
     def start(self) -> None:
         for stage, spec in model_specs(self.settings).items():
+            if stage == "classification":
+                continue
             check_memory()
             channel, child = socket.socketpair()
             self.channels[stage] = channel
@@ -142,7 +144,8 @@ class ResidentModels:
                 raise ResidentModelFailed
             check_memory()
 
-        channel = self.channels[request["stage"]]
+        stage = "annotation" if request["stage"] == "classification" else request["stage"]
+        channel = self.channels[stage]
         try:
             check()
             channel.settimeout(max(0.01, timeout))

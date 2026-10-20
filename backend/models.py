@@ -1,4 +1,4 @@
-"""Three offline adapters; each resident process owns one initialized model."""
+"""Offline detector and shared Florence adapters, one initialized model per process."""
 
 import hashlib
 import json
@@ -12,6 +12,7 @@ from PIL import Image
 
 
 def verify_files(stage: str, request: dict) -> Path:
+    stage = "annotation" if stage == "classification" else stage
     spec = json.loads(Path(__file__).with_name("checkpoints.json").read_text())[stage]
     if any(request[key] != spec[key] for key in ("model_name", "model_revision", "weights_sha256")):
         raise ValueError("Unsupported checkpoint")
@@ -86,20 +87,6 @@ def detect(image: Image.Image, directory: Path, parameters: dict, *, loaded=None
     return {"objects": objects}
 
 
-def load_classifier(directory: Path, device: str):
-    import torch
-    from torchvision.models import ViT_B_16_Weights, vit_b_16
-
-    model = vit_b_16(weights=None)
-    state = torch.load(directory / "vit_b_16-c867db91.pth", map_location="cpu", weights_only=True)
-    model.load_state_dict(state, strict=True)
-    del state
-    model.eval().to(device)
-    transform = ViT_B_16_Weights.IMAGENET1K_V1.transforms()
-    labels = json.loads((Path(__file__).with_name("imagenet_labels.json")).read_text())["classes"]
-    return model, transform, labels
-
-
 def crop_object(image: Image.Image, bbox, padding: float) -> Image.Image:
     if not math.isfinite(padding) or not 0 <= padding <= 1:
         raise ValueError("Invalid crop padding")
@@ -118,28 +105,27 @@ def crop_object(image: Image.Image, bbox, padding: float) -> Image.Image:
 def classify(
     image: Image.Image, directory: Path, parameters: dict, detection: dict, *, loaded=None
 ) -> dict:
+    """Describe crops; classification remains the legacy name of this result section."""
     padding = parameters.get("crop_padding_fraction", 0.1)
     if not math.isfinite(padding) or not 0 <= padding <= 1:
         raise ValueError("Invalid crop padding")
     import torch
 
-    model, transform, labels = (
-        loaded if loaded is not None else load_classifier(directory, parameters["device"])
-    )
+    loaded = loaded if loaded is not None else load_annotator(directory, parameters["device"])
     objects = []
     for obj in detection["objects"]:
         record = {"object_id": obj["object_id"]}
         try:
-            with torch.inference_mode():
-                crop = crop_object(image, obj["bbox"], padding)
-                logits = model(transform(crop).unsqueeze(0).to(parameters["device"]))
-                if logits.shape != (1, 1000) or not torch.isfinite(logits).all():
-                    raise ValueError("Invalid classifier output")
-                index = logits.argmax(-1).item()
-            record["label"] = labels[index]["name"]
+            crop = crop_object(image, obj["bbox"], padding)
+            record["object_caption"] = annotate(crop, directory, parameters, loaded=loaded)[
+                "raw_caption"
+            ]
+            if not record["object_caption"].strip():
+                raise ValueError("Empty object caption")
         except torch.cuda.OutOfMemoryError:
             raise
         except Exception as exc:
+            record.pop("object_caption", None)
             record["error"] = {"code": "crop_error", "type": type(exc).__name__}
         objects.append(record)
     return {"objects": objects}
@@ -234,8 +220,6 @@ def serve(fd: int) -> None:
         device = spec["parameters"]["device"]
         if spec["stage"] == "detection":
             loaded = load_detector(directory, device)
-        elif spec["stage"] == "classification":
-            loaded = load_classifier(directory, device)
         else:
             loaded = load_annotator(directory, device)
         # Pay CUDA/kernel initialization once, before consuming user jobs.
@@ -251,16 +235,26 @@ def serve(fd: int) -> None:
             torch.cuda.synchronize(device)
             free = torch.cuda.mem_get_info(device)[0]
         send(channel, {"ready": True, "startup_s": time.monotonic() - started, "vram_free": free})
+        from backend.settings import Settings, model_specs
+
+        specs = model_specs(Settings.model_construct(device=device))
+        allowed_stages = (
+            {"annotation", "classification"} if spec["stage"] == "annotation" else {"detection"}
+        )
         while True:
             request = receive(channel)
-            if any(request[key] != spec[key] for key in spec):
+            stage = request.get("stage")
+            expected = dict(specs.get(stage, {}), stage=stage, model_root=spec["model_root"])
+            if stage not in allowed_stages or any(
+                request.get(key) != value for key, value in expected.items()
+            ):
                 send(channel, {"error": {"code": "model_not_configured"}})
                 continue
             started = time.monotonic()
             response = predict(request, directory, loaded=loaded)
             if device.startswith("cuda"):
                 torch.cuda.synchronize(device)
-            print(f"stage={spec['stage']} inference_s={time.monotonic() - started:.3f}", flush=True)
+            print(f"stage={stage} inference_s={time.monotonic() - started:.3f}", flush=True)
             send(channel, response)
 
 

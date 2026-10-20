@@ -11,7 +11,7 @@ from uuid import uuid4
 
 import pytest
 
-from backend.models import classify, detect
+from backend.models import annotate, classify, detect
 from backend.processing import (
     LockTimeout,
     ProcessingInterrupted,
@@ -79,42 +79,37 @@ def test_raw_caption_is_unchanged():
     "bbox,expected_size",
     [([0.1, 0.1, 5.2, 5.2], (6, 6)), ([4, 3, 12, 9], (10, 8)), ([0, 0, 16, 12], (16, 12))],
 )
-def test_classifier_returns_only_one_label_or_error(
+def test_crop_caption_uses_entire_padded_image_and_shared_model(
     tmp_path, monkeypatch, invalid, bbox, expected_size
 ):
     from PIL import Image
 
-    logits = MagicMock()
-    logits.shape = (1, 2) if invalid else (1, 1000)
-    logits.argmax.return_value.item.return_value = 0
-    model = MagicMock(return_value=logits)
-    transform = MagicMock(return_value=MagicMock())
-    weights = SimpleNamespace(IMAGENET1K_V1=SimpleNamespace(transforms=lambda: transform))
-    torch = MagicMock()
-    torch.inference_mode = nullcontext
-    torch.isfinite.return_value.all.return_value = True
-    torch.cuda.OutOfMemoryError = MemoryError
-    monkeypatch.setitem(sys.modules, "torch", torch)
-    monkeypatch.setitem(sys.modules, "torchvision", SimpleNamespace())
+    loaded = object()
+    caption = MagicMock(return_value={"raw_caption": "  A spotted cat.  "})
+    if invalid:
+        caption.side_effect = ValueError("generation failed")
+    monkeypatch.setattr("backend.models.annotate", caption)
     monkeypatch.setitem(
-        sys.modules,
-        "torchvision.models",
-        SimpleNamespace(ViT_B_16_Weights=weights, vit_b_16=lambda **kwargs: model),
+        sys.modules, "torch", SimpleNamespace(cuda=SimpleNamespace(OutOfMemoryError=MemoryError))
     )
-    object_id = str(uuid4())
+    object_ids = [str(uuid4()), str(uuid4())]
     result = classify(
         Image.new("RGB", (16, 12)),
         tmp_path,
-        {"device": "cpu"},
-        {"objects": [{"object_id": object_id, "bbox": bbox}]},
+        {"device": "cpu", "prompt": "<CAPTION>"},
+        {"objects": [{"object_id": object_id, "bbox": bbox} for object_id in object_ids]},
+        loaded=loaded,
     )
-    assert transform.call_args.args[0].size == expected_size
-    obj = result["objects"][0]
-    assert set(obj) == {"object_id", "error" if invalid else "label"}
-    if not invalid:
-        assert obj["label"] == "tench"
-        logits.argmax.assert_called_once_with(-1)
-    logits.softmax.assert_not_called()
+    assert len(caption.call_args_list) == 2
+    for call in caption.call_args_list:
+        assert call.args[0].size == expected_size
+        assert call.args[2]["prompt"] == "<CAPTION>"
+        assert call.kwargs["loaded"] is loaded
+    assert [obj["object_id"] for obj in result["objects"]] == object_ids
+    for obj in result["objects"]:
+        assert set(obj) == {"object_id", "error" if invalid else "object_caption"}
+        if not invalid:
+            assert obj["object_caption"] == "  A spotted cat.  "
 
 
 @pytest.mark.parametrize("padding", [-0.1, 1.1, float("nan"), float("inf")])
@@ -132,7 +127,15 @@ def test_invalid_crop_padding_is_rejected(tmp_path, padding):
 
 @pytest.mark.parametrize(
     "record",
-    [{}, {"label": ""}, {"label": "cat", "error": {"code": "crop_error"}}, {"error": {}}],
+    [
+        {},
+        {"object_caption": ""},
+        {"object_caption": "  "},
+        {"object_caption": "cat", "error": {"code": "crop_error"}},
+        {"object_caption": "cat", "label": "cat"},
+        {"error": {}},
+        {"label": "cat"},
+    ],
 )
 def test_classification_rejects_ambiguous_results(record):
     object_id = str(uuid4())
@@ -149,7 +152,7 @@ def test_partial_classification_preserves_object_links():
     first, second = str(uuid4()), str(uuid4())
     payload = {
         "objects": [
-            {"object_id": first, "label": "cat"},
+            {"object_id": first, "object_caption": "cat"},
             {"object_id": second, "error": {"code": "crop_error"}},
         ]
     }
@@ -308,3 +311,51 @@ def test_cancellation_stops_single_use_model(settings, tmp_path, monkeypatch):
                 future.result(timeout=3)
         with pytest.raises(ProcessLookupError):
             os.kill(int(marker.read_text()), 0)
+
+
+@pytest.mark.parametrize(
+    "stage,prompt,tokens",
+    [("annotation", "<DETAILED_CAPTION>", 256), ("classification", "<CAPTION>", 96)],
+)
+def test_florence_processor_receives_whole_image_and_raw_decode(
+    settings, tmp_path, monkeypatch, stage, prompt, tokens
+):
+    from PIL import Image
+
+    from backend.settings import model_specs
+
+    processor, model = MagicMock(), MagicMock()
+    processor.return_value = {}
+    processor.decode.return_value = "  A scene with <b>objects</b>.  "
+    torch = MagicMock()
+    torch.inference_mode = nullcontext
+    monkeypatch.setitem(sys.modules, "torch", torch)
+    image = Image.new("RGB", (431, 217))
+    parameters = model_specs(settings)[stage]["parameters"]
+    result = annotate(image, tmp_path, parameters, loaded=(processor, model))
+    processor.assert_called_once_with(text=prompt, images=image, return_tensors="pt")
+    assert model.generate.call_args.kwargs == dict(
+        max_new_tokens=tokens, do_sample=False, num_beams=1, use_cache=True
+    )
+    assert result == {"raw_caption": processor.decode.return_value}
+    assert processor.decode.call_args.kwargs == dict(
+        skip_special_tokens=True, clean_up_tokenization_spaces=False
+    )
+
+
+@pytest.mark.parametrize("failure", [ValueError("bad crop"), MemoryError("OOM")])
+def test_crop_generation_errors_never_become_success(tmp_path, monkeypatch, failure):
+    from PIL import Image
+
+    monkeypatch.setitem(
+        sys.modules, "torch", SimpleNamespace(cuda=SimpleNamespace(OutOfMemoryError=MemoryError))
+    )
+    monkeypatch.setattr("backend.models.annotate", MagicMock(side_effect=failure))
+    detection = {"objects": [{"object_id": str(uuid4()), "bbox": [0, 0, 4, 4]}]}
+    if isinstance(failure, MemoryError):
+        with pytest.raises(MemoryError):
+            classify(Image.new("RGB", (8, 8)), tmp_path, {}, detection, loaded=object())
+    else:
+        response = classify(Image.new("RGB", (8, 8)), tmp_path, {}, detection, loaded=object())
+        status, _ = validate_payload("classification", response, (8, 8), detection)
+        assert status == "failed"

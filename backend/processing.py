@@ -1,4 +1,4 @@
-"""Parallel annotation and detection/classification, then files and one DB write."""
+"""Parallel detection and scene caption, then sequential crops, files and one DB write."""
 
 import fcntl
 import json
@@ -77,7 +77,8 @@ def run_stage(
     module: str = "backend.models",
     cancelled: Event | None = None,
 ) -> dict:
-    executable = getattr(settings, request["stage"] + "_python")
+    stage = "annotation" if request["stage"] == "classification" else request["stage"]
+    executable = getattr(settings, stage + "_python")
     with tempfile.TemporaryDirectory(prefix="kurs4-inference-") as directory:
         input_path, output_path = Path(directory) / "input.json", Path(directory) / "output.json"
         input_path.write_text(json.dumps(request, allow_nan=False))
@@ -136,7 +137,9 @@ def validate_payload(
     ids = [str(obj.object_id) for obj in parsed.objects]
     if set(ids) != set(expected) or len(ids) != len(expected):
         raise ValueError("Classification object IDs do not match detection")
-    count = sum(obj.label is not None for obj in parsed.objects)
+    if any(obj.label is not None for obj in parsed.objects):
+        raise ValueError("Expected object captions, not ImageNet labels")
+    count = sum(obj.object_caption is not None for obj in parsed.objects)
     status = "succeeded" if count == len(parsed.objects) else "partial" if count else "failed"
     return status, parsed.model_dump(mode="json", exclude_none=True)
 
@@ -213,20 +216,13 @@ def process_image(
                     raise RuntimeError(f"{stage}: incomplete result")
                 return payload
 
-            def detect_and_classify() -> dict:
-                detection = infer("detection")
-                classification = (
-                    infer("classification", detection) if detection["objects"] else {"objects": []}
-                )
-                return {"detection": detection, "classification": classification}
-
             payloads = {}
             errors = []
-            # Threads only coordinate IPC; CUDA stays in the three model processes.
+            # Threads only coordinate IPC; CUDA stays in the two model processes.
             with ThreadPoolExecutor(max_workers=2, thread_name_prefix="inference") as executor:
                 try:
                     pending = {
-                        executor.submit(detect_and_classify): None,
+                        executor.submit(infer, "detection"): "detection",
                         executor.submit(infer, "annotation"): "annotation",
                     }
                     while pending:
@@ -239,15 +235,19 @@ def process_image(
                                 # Drain the other branch before reusing resident IPC channels.
                                 errors.append(exc)
                             else:
-                                if stage is None:
-                                    payloads.update(payload)
-                                else:
-                                    payloads[stage] = payload
+                                payloads[stage] = payload
                 finally:
                     # Interrupt/IPC failure must unblock both branches before releasing the lock.
                     cancelled.set()
             if errors:
                 raise errors[0]
+            # Both branches have released their channels; Florence now owns all crop requests.
+            cancelled.clear()
+            payloads["classification"] = (
+                infer("classification", payloads["detection"])
+                if payloads["detection"]["objects"]
+                else {"objects": []}
+            )
             result = ImageResult(
                 id=image_id,
                 width=size[0],

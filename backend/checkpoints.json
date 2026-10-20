@@ -24,27 +24,6 @@
       "precision": "fp32"
     }
   },
-  "classification": {
-    "model_name": "vit_b_16",
-    "model_revision": "vit_b_16-c867db91.pth",
-    "weights_sha256": "c867db91d3e12c6cbadabb610d73c24a546bf82d8c03a9fea34f43a712ddb0e9",
-    "files": [
-      {
-        "path": "vit_b_16-c867db91.pth",
-        "sha256": "c867db91d3e12c6cbadabb610d73c24a546bf82d8c03a9fea34f43a712ddb0e9"
-      },
-      {
-        "path": "LICENSE",
-        "sha256": "6502f676851cfe25f8af75531dfb32375b7325b73c37e7b43741fa422893e71d"
-      }
-    ],
-    "parameters": {
-      "batch_size": 1,
-      "precision": "fp32",
-      "weights": "IMAGENET1K_V1",
-      "crop_padding_fraction": 0.1
-    }
-  },
   "annotation": {
     "model_name": "florence2_base_ft",
     "model_revision": "f6c1a25888ffc1d945ee8a1a77ac833c7303d46e",
@@ -113,8 +92,8 @@
     ],
     "parameters": {
       "batch_size": 1,
-      "prompt": "<CAPTION>",
-      "max_new_tokens": 96,
+      "prompt": "<DETAILED_CAPTION>",
+      "max_new_tokens": 256,
       "num_beams": 1,
       "do_sample": false,
       "precision": "fp16"
