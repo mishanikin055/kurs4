@@ -95,22 +95,23 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
     assert.equal(await page.locator("#caption").textContent(), result.annotation.raw_caption);
     assert.equal(await page.locator("#caption b").count(), 0, "Model text must never become HTML");
     assert.deepEqual(await page.locator("#objects tr").allTextContents(), ["1dogLabrador retriever", "2cat"]);
-    assert.deepEqual(await page.locator(".object-marker").allTextContents(), ["№1 · dog", "№2 · cat"]);
-    assert.equal(await page.locator(".object-box:visible").count(), 1, "The first object is shown on its own by default");
-    assert.equal(await page.locator(".object-number").first().getAttribute("aria-pressed"), "true");
+    assert.deepEqual(await page.locator(".object-marker").allTextContents(), ["dog", "cat"], "Image labels contain classes without object numbers");
+    assert.equal(await page.locator("#object-overlays button").count(), 0, "Object numbers are clickable only in the table");
+    assert.equal(await page.locator(".object-box:visible").count(), 2, "All boxes are shown by default");
+    assert.equal(await page.locator("[aria-pressed=true]").count(), 0);
     assert(requests.includes(`/api/images/${imageId}/files/normalized.png`), "Old and new results use clean source pixels with the same numbered overlay");
     await page.locator("#objects tr").nth(1).locator("td").nth(1).click();
-    assert.equal(await page.locator(".object-marker").nth(1).getAttribute("aria-pressed"), "true", "Clicking a row selects its box");
-    assert(await page.locator(".object-box").first().isHidden(), "Other boxes and labels cannot obscure the selected object");
-    assert.equal(await page.locator(".object-box:visible").count(), 1);
+    assert(await page.locator(".object-box").nth(1).evaluate((box) => box.classList.contains("is-selected")), "Clicking a row selects its box");
+    assert.equal(await page.locator(".object-box:visible").count(), 2, "Selection keeps all boxes and class names visible");
+    assert.deepEqual(await page.locator(".object-outline").nth(1).evaluate((box) => [getComputedStyle(box).borderColor, getComputedStyle(box).borderWidth]), ["rgb(180, 35, 24)", "3px"], "Selected box remains red and gets thicker");
     await page.locator(".object-number").first().focus();
     await page.keyboard.press("Enter");
-    assert.equal(await page.locator(".object-marker").first().getAttribute("aria-pressed"), "true", "Object selection works from the keyboard");
-    assert.equal(await page.locator(".object-marker").nth(1).getAttribute("aria-pressed"), "false", "Only one object is selected");
+    assert(await page.locator(".object-box").first().evaluate((box) => box.classList.contains("is-selected")), "Object selection works from the keyboard");
+    assert.equal(await page.locator(".object-box.is-selected").count(), 1, "Only one object is selected");
     await page.keyboard.press("Escape");
-    assert.equal(await page.locator(".object-box:visible").count(), 2, "Escape restores the overview");
-    await page.locator(".object-marker").nth(1).click();
-    assert.equal(await page.locator(".object-number").nth(1).getAttribute("aria-pressed"), "true", "Clicking an image label selects its row");
+    assert.equal(await page.locator(".object-box.is-selected").count(), 0, "Escape clears the frame highlight");
+    await page.locator(".object-number").nth(1).click();
+    assert.equal(await page.locator(".object-number").nth(1).getAttribute("aria-pressed"), "true", "Clicking a table number selects its frame");
     assert.equal(await page.locator("#objects tr.is-selected").count(), 1);
     await page.keyboard.press("Escape");
     assert.equal(await page.locator("[aria-pressed=true]").count(), 0, "Escape clears both selections");
@@ -274,7 +275,7 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
     assert.equal(new URL(docs.url()).pathname, "/api/docs");
     assert.deepEqual(await docs.evaluate(() => window.swaggerConfig.spec.servers), [{ url: "/api" }]);
     assert.deepEqual(docsErrors, []);
-    console.log("Browser checks passed: isolated selected object, default first selection, number/class labels above boxes, Escape overview, synchronized row/image selection, keyboard, box alignment on resize, automatic preview, compatible/blank refinements, literal caption, pending/error/retry/empty results, wait/request timeouts, polling stops on success/error/reset, automatic folder copy with crops, permission/write failure fallback, ZIP, compact laptop/mobile layout, contained long-table scrolling, external submit, Swagger proxy and CSP.");
+    console.log("Browser checks passed: all red boxes and class labels stay visible, numbers only in table, thicker red frame selected by table number or keyboard, Escape, box alignment on resize, automatic preview, compatible/blank refinements, literal caption, pending/error/retry/empty results, wait/request timeouts, polling stops on success/error/reset, automatic folder copy with crops, permission/write failure fallback, ZIP, compact laptop/mobile layout, contained long-table scrolling, external submit, Swagger proxy and CSP.");
   } finally {
     await browser.close();
   }

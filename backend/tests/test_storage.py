@@ -116,7 +116,7 @@ def test_detection_image_disk_failure_cleans_temporary_file(settings, monkeypatc
 
 
 @pytest.mark.parametrize("size", [(960, 720), (720, 960), (24, 16)])
-def test_detection_labels_number_identical_classes_in_detection_order(settings, monkeypatch, size):
+def test_detection_labels_keep_class_names_without_numbers(settings, monkeypatch, size):
     from copy import deepcopy
 
     from PIL import ImageDraw
@@ -149,7 +149,7 @@ def test_detection_labels_number_identical_classes_in_detection_order(settings, 
     monkeypatch.setattr(ImageDraw.ImageDraw, "text", record_text)
     destination = source.parent / "detection.png"
     save_detection_image(str(source), destination, payload)
-    assert labels == ["#1 car", "#2 car"]
+    assert labels == ["car", "car"]
     assert payload == original_payload
     assert source.read_bytes() == before
     with Image.open(destination) as image:

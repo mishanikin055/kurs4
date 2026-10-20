@@ -11,9 +11,8 @@ function positionMarkers() {
   const image = $("image-stage").getBoundingClientRect();
   if (!image.width) return;
   for (const box of $("object-overlays").children) {
-    if (box.hidden) continue;
     const outline = box.querySelector(".object-outline").getBoundingClientRect();
-    const marker = box.querySelector("button");
+    const marker = box.querySelector(".object-marker");
     const width = marker.offsetWidth;
     const height = marker.offsetHeight;
     const x = Math.max(0, Math.min(outline.left - image.left, image.width - width));
@@ -25,22 +24,20 @@ function positionMarkers() {
 
 new ResizeObserver(positionMarkers).observe($("image-stage"));
 
-function selectObject(index, revealRow = false) {
+function selectObject(index) {
   selectedObject = selectedObject === index ? null : index;
   const rows = [...$("objects").children];
   for (const container of [$("objects"), $("object-overlays")]) {
     [...container.children].forEach((element, i) => {
       const selected = i === selectedObject;
       element.classList.toggle("is-selected", selected);
-      element.querySelector("button").setAttribute("aria-pressed", String(selected));
-      if (container.id === "object-overlays") element.hidden = selectedObject !== null && !selected;
+      element.querySelector("button")?.setAttribute("aria-pressed", String(selected));
     });
   }
   const row = rows[selectedObject];
   $("selection-status").textContent = row
     ? `Выбран объект №${selectedObject + 1}: ${[...row.cells].slice(1).map((cell) => cell.textContent).filter(Boolean).join(", ")}.`
     : "Выделение снято.";
-  if (revealRow && row) row.scrollIntoView({ block: "nearest" });
   positionMarkers();
 }
 
@@ -80,22 +77,19 @@ function renderObjects(result) {
     outline.style.top = `${y1 / result.height * 100}%`;
     outline.style.width = `${(x2 - x1) / result.width * 100}%`;
     outline.style.height = `${(y2 - y1) / result.height * 100}%`;
-    const marker = number.cloneNode(true);
+    const marker = document.createElement("span");
     marker.className = "object-marker";
-    marker.textContent = `№${index + 1} · ${object.label}`;
-    marker.title = marker.getAttribute("aria-label");
-    marker.addEventListener("click", () => selectObject(index, true));
+    marker.textContent = object.label;
+    marker.setAttribute("aria-hidden", "true");
     box.append(outline, marker);
     $("object-overlays").append(box);
   });
   $("object-help").hidden = result.detection.objects.length === 0;
 }
 
-for (const id of ["objects", "object-overlays"]) {
-  $(id).addEventListener("keydown", (event) => {
-    if (event.key === "Escape") selectObject(null);
-  });
-}
+$("objects").addEventListener("keydown", (event) => {
+  if (event.key === "Escape") selectObject(null);
+});
 
 function stopWaiting() {
   clearTimeout(resultTimer);
@@ -204,7 +198,7 @@ async function waitForResult(id, deadline = Date.now() + 40 * 60 * 1000) {
     $("result-placeholder").hidden = true;
     $("result-preview").hidden = false;
     $("preview-placeholder").hidden = true;
-    if (result.detection.objects.length) selectObject(0);
+    positionMarkers();
     readyImageId = id;
     $("save-actions").hidden = Boolean(folderHandle);
     $("status").textContent = "Результат готов.";

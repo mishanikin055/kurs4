@@ -22,18 +22,18 @@ class UploadError(Exception):
 
 
 def save_detection_image(normalized_path: str, destination: Path, detection: dict) -> Path:
-    """Number COCO boxes in detection order without changing inputs or model responses."""
+    """Draw COCO boxes and class names without changing inputs or model responses."""
     directory = destination.parent
     directory.mkdir(parents=True, exist_ok=True)
     with Image.open(normalized_path) as source:
         image = source.convert("RGB")
     draw = ImageDraw.Draw(image)
     font = ImageFont.load_default(size=max(16, round(max(image.size) / 45)))
-    for index, obj in enumerate(detection["objects"], start=1):
+    for obj in detection["objects"]:
         x1, y1, x2, y2 = obj["bbox"]
         box = (int(x1), int(y1), min(image.width - 1, int(x2)), min(image.height - 1, int(y2)))
         draw.rectangle(box, outline="red", width=2)
-        text = f"#{index} {obj['label']}"
+        text = obj["label"]
         left, top, right, bottom = draw.textbbox((0, 0), text, font=font)
         label_width, label_height = right - left + 8, bottom - top + 8
         x = max(0, min(box[0], image.width - label_width))
