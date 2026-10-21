@@ -231,6 +231,8 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
     assert.equal(await page.locator(".object-number").nth(1).getAttribute("aria-pressed"), "true");
     for (const [rawCaption, expected] of [
       ["In this image I can see a dog.", "a dog."],
+      ["In this image we can see a dog.", "a dog."],
+      ["  In this image, WE can see: a cat.", "a cat."],
       ["  IN THIS IMAGE, i CAN SEE:   <b>a cat</b>.", "<b>a cat</b>."],
       ["In this image I can see", ""],
       ["In this image I can see unanswerable", ""],
