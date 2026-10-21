@@ -211,7 +211,7 @@ async function waitForResult(id, deadline = Date.now() + 40 * 60 * 1000) {
     $("result-image").width = result.width;
     $("result-image").height = result.height;
     const caption = result.annotation.raw_caption.replace(/^\s*in\s+this\s+image\s*,?\s*(?:i|we)\s+can\s+see\b[\s,:;-]*/i, "");
-    $("caption").textContent = displayCaption(caption);
+    $("caption").textContent = displayCaption(caption).replace(/^\s*\p{L}/u, (start) => start.toUpperCase());
     $("caption").hidden = false;
     $("annotation-placeholder").hidden = true;
     renderObjects(result);
