@@ -229,6 +229,20 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
     if (process.env.SCREENSHOT_DIR) await page.screenshot({ path: `${process.env.SCREENSHOT_DIR}/simple-mobile.png`, fullPage: true });
     await page.locator(".object-number").nth(1).click();
     assert.equal(await page.locator(".object-number").nth(1).getAttribute("aria-pressed"), "true");
+    for (const [rawCaption, expected] of [
+      ["In this image I can see a dog.", "a dog."],
+      ["  IN THIS IMAGE, i CAN SEE:   <b>a cat</b>.", "<b>a cat</b>."],
+      ["In this image I can see", ""],
+      ["In this image I can see unanswerable", ""],
+      ["A sign says In this image I can see a dog.", "A sign says In this image I can see a dog."],
+      ["In this image I can seefood.", "In this image I can seefood."],
+    ]) {
+      preview = { ...result, annotation: { raw_caption: rawCaption } };
+      await page.locator("#submit").click();
+      await page.locator("#result").waitFor({ state: "visible" });
+      assert.equal(await page.locator("#caption").textContent(), expected, "Only the scene caption's introductory phrase is removed");
+      assert.equal(await page.locator("#caption b").count(), 0, "Cleaned caption remains literal text");
+    }
     preview = { ...result,
       classification: { objects: [{ object_id: "dog", object_caption: "unanswerable" }, { object_id: "cat", object_caption: "  UNANSWERABLE  " }] },
       annotation: { raw_caption: "  Unanswerable  " },

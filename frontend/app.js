@@ -210,7 +210,8 @@ async function waitForResult(id, deadline = Date.now() + 40 * 60 * 1000) {
     $("result-image").src = previewUrl;
     $("result-image").width = result.width;
     $("result-image").height = result.height;
-    $("caption").textContent = displayCaption(result.annotation.raw_caption);
+    const caption = result.annotation.raw_caption.replace(/^\s*in\s+this\s+image\s*,?\s*i\s+can\s+see\b[\s,:;-]*/i, "");
+    $("caption").textContent = displayCaption(caption);
     $("caption").hidden = false;
     $("annotation-placeholder").hidden = true;
     renderObjects(result);
