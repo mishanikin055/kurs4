@@ -1,5 +1,7 @@
 # Запуск приложения
 
+Пошаговое руководство: [инструкция](docs/instruction.md) · [DOCX](docs/instruction.docx).
+
 Команды для текущей WSL2: нужны запущенный Docker с Compose, Python 3 и доступ к NVIDIA GPU.
 Веса RF-DETR Small и Florence-2-base-ft должны уже находиться в
 `detection/models/rf_detr_small` и `annotation/models/florence2_base_ft`. При запуске они не скачиваются.
