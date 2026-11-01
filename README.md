@@ -2,6 +2,10 @@
 
 Пошаговое руководство: [инструкция](docs/instruction.md) · [DOCX](docs/instruction.docx).
 
+Датасеты сравнений удалены с локального диска 01.11.2026 для освобождения места.
+Источники и команды восстановления: [датасеты сравнений](docs/datasets.md).
+Результаты сравнений и веса сохранены; работа приложения не требует этих датасетов.
+
 Команды для текущей WSL2: нужны запущенный Docker с Compose, Python 3 и доступ к NVIDIA GPU.
 Веса RF-DETR Small и Florence-2-base-ft должны уже находиться в
 `detection/models/rf_detr_small` и `annotation/models/florence2_base_ft`. При запуске они не скачиваются.
