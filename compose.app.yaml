@@ -5,15 +5,19 @@ x-app: &app
   stop_grace_period: 60s
   tmpfs:
     - /tmp:size=1g,mode=1777
+  volumes:
+    - pending_inputs:/var/lib/kurs4/pending
   depends_on:
-    db:
+    elasticsearch:
+      condition: service_healthy
+    s3:
       condition: service_healthy
     rabbitmq:
       condition: service_healthy
 
 services:
   frontend:
-    image: kurs4-frontend:0.2.0
+    image: kurs4-frontend:0.3.0
     build:
       context: ./frontend
     restart: unless-stopped
@@ -23,16 +27,37 @@ services:
     depends_on:
       backend:
         condition: service_started
-  db:
-    image: postgres:18-alpine@sha256:96d56f7f57c6aacd1fcb908bc83b345ec5f83231ee486dd66a1baadce274db88
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:9.5.6
+    restart: unless-stopped
+    mem_limit: 2g
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+      xpack.ml.enabled: "false"
+      ES_JAVA_OPTS: -Xms1g -Xmx1g
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail --silent 'http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=2s' >/dev/null"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+  s3:
+    image: kurs4-minio:RELEASE.2025-10-15T17-29-55Z
+    build:
+      context: .
+      dockerfile: docker/minio.Dockerfile
     env_file: .secrets/app.env
+    command: ["server", "/data", "--console-address", ":9001"]
     restart: unless-stopped
     mem_limit: 512m
     volumes:
-      - pgdata:/var/lib/postgresql
+      - s3data:/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
-      interval: 3s
+      test: ["CMD", "wget", "--quiet", "--spider", "http://localhost:9000/minio/health/live"]
+      interval: 5s
       timeout: 3s
       retries: 20
   rabbitmq:
@@ -51,7 +76,7 @@ services:
       retries: 20
   backend:
     <<: *app
-    image: kurs4-backend:0.2.0
+    image: kurs4-backend:0.3.0
     build:
       context: .
       dockerfile: backend/Dockerfile
@@ -61,7 +86,7 @@ services:
       - "127.0.0.1:${APP_HTTP_PORT:-8000}:8000"
   worker:
     <<: *app
-    image: kurs4-worker:0.2.0
+    image: kurs4-worker:0.3.0
     build:
       context: .
       dockerfile: backend/Dockerfile
@@ -72,6 +97,7 @@ services:
     mem_limit: ${APP_WORKER_MEMORY:-5g}
     # Two resident models; startup checks headroom before consuming images.
     volumes:
+      - pending_inputs:/var/lib/kurs4/pending
       - ./storage/locks:/var/lib/kurs4/locks
       - ./detection/models/rf_detr_small:/models/detection/models/rf_detr_small:ro
       - ./annotation/models/florence2_base_ft:/models/annotation/models/florence2_base_ft:ro
@@ -81,5 +107,7 @@ services:
       APP_DEVICE: ${APP_DEVICE:-cuda}
 
 volumes:
-  pgdata:
+  esdata:
+  s3data:
+  pending_inputs:
   rabbitmq_data:

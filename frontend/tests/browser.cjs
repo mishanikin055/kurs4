@@ -3,7 +3,7 @@ const assert = require("node:assert/strict");
 const { chromium } = require("playwright");
 const baseURL = process.env.FRONTEND_URL || "http://127.0.0.1:8098";
 const imageId = "f5890ad4-90a8-4c51-9b1c-e37ac49d483f";
-const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aS1cAAAAASUVORK5CYII=", "base64");
+const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAoAAAAHgCAIAAAC6s0uzAAADk0lEQVR4nO3BAQEAAACCIP+vbkhAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwaBKyAAEKyjCgAAAAAElFTkSuQmCC", "base64");
 
 (async () => {
   const browser = await chromium.launch({ headless: true, executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE });
@@ -52,11 +52,8 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
     };
     let preview = result;
     const files = {
-      original: png,
       "crops/dog.png": png,
       "crops/cat.png": png,
-      "normalized.png": png,
-      "detection.png": png,
       "results.json": Buffer.from(JSON.stringify(result)),
     };
     await page.route("**/api/**", async (route) => {
@@ -110,7 +107,7 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
     assert.equal(await page.locator(".object-box:visible").count(), 2, "All boxes are shown by default");
     assert.equal(await page.locator("[aria-pressed=true]").count(), 0);
     assert.deepEqual(await page.locator(".object-outline").first().evaluate((box) => [getComputedStyle(box).borderColor, getComputedStyle(box).borderWidth]), ["rgb(255, 0, 0)", "2px"], "Default frames are bright red and more visible");
-    assert(requests.includes(`/api/images/${imageId}/files/normalized.png`), "Old and new results use clean source pixels with the same numbered overlay");
+    assert(!requests.some((path) => /\/files\/(original|normalized\.png|detection\.png)$/.test(path)), "Preview uses local pixels without fetching discarded images");
     await page.locator("#objects tr").nth(1).locator("td").nth(1).click();
     assert(await page.locator(".object-box").nth(1).evaluate((box) => box.classList.contains("is-selected")), "Clicking a row selects its box");
     assert.equal(await page.locator(".object-box:visible").count(), 2, "Selection keeps all boxes and class names visible");
@@ -210,7 +207,7 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
     await page.evaluate(() => { window.savedFiles = {}; });
     await page.locator("#submit").click();
     await page.waitForFunction(() => document.getElementById("status").textContent.includes("Копия сохранена"));
-    assert.equal(await page.evaluate(() => Object.keys(window.savedFiles).length), 6, "Folder selected before upload receives all files and crops automatically");
+    assert.equal(await page.evaluate(() => Object.keys(window.savedFiles).length), 3, "Folder selected before upload receives all files and crops automatically");
     for (const flag of ["folderPermission", "folderWriteError"]) {
       await page.evaluate((key) => { window[key] = key === "folderPermission" ? "denied" : true; }, flag);
       await page.locator("#choose-folder").click();

@@ -25,7 +25,7 @@ from backend.settings import Settings
 @pytest.fixture
 def settings(tmp_path):
     return Settings(
-        database_url="postgresql+psycopg://unused:unused@localhost/unused",
+        s3_secret_key="testing",
         broker_url="amqp://unused:unused@localhost/unused",
         image_root=tmp_path,
         lock_path=tmp_path / "inference.lock",

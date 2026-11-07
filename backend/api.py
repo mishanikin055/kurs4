@@ -1,4 +1,4 @@
-"""Uploads, previews and bounded exports backed by PostgreSQL."""
+"""Uploads and metadata in Elasticsearch; crop downloads from local S3."""
 
 import json
 from io import BytesIO
@@ -8,12 +8,10 @@ from zipfile import ZipFile
 
 from fastapi import APIRouter, Depends, File, HTTPException, Request, UploadFile
 from fastapi.responses import JSONResponse, Response
-from sqlalchemy import text
-from sqlalchemy.exc import SQLAlchemyError
 
 from backend.schemas import AcceptedImage
 from backend.service import BrokerUnavailable, ImageService
-from backend.storage import UploadError
+from backend.storage import BundleTooLarge, UploadError
 from backend.tasks import check_broker
 
 router = APIRouter()
@@ -21,7 +19,7 @@ router = APIRouter()
 
 def get_service(request: Request) -> ImageService:
     return ImageService(
-        request.app.state.settings, request.app.state.celery, request.app.state.sessions
+        request.app.state.settings, request.app.state.celery, request.app.state.repository
     )
 
 
@@ -44,15 +42,10 @@ def upload_image(service: Service, file: UploadFile = File(...)):
 def health(request: Request):
     state = request.app.state
     broker_ready = check_broker(state.celery, state.settings.broker_timeout)
-    try:
-        with state.sessions() as session:
-            session.execute(text("SELECT 1"))
-        database_ready = True
-    except SQLAlchemyError:
-        database_ready = False
+    dependencies = {"rabbitmq": broker_ready, **state.repository.health()}
     return JSONResponse(
-        status_code=200 if broker_ready and database_ready else 503,
-        content={"rabbitmq": broker_ready, "database": database_ready},
+        status_code=200 if all(dependencies.values()) else 503,
+        content=dependencies,
     )
 
 
@@ -88,7 +81,9 @@ def download_archive(image_id: UUID, service: Service):
         artifacts = service.bundle(image_id)
     except FileNotFoundError as exc:
         raise HTTPException(404, "result_not_found") from exc
-    # Only one bounded image bundle is materialized, never the archive catalogue.
+    except BundleTooLarge as exc:
+        raise HTTPException(413, "bundle_too_large") from exc
+    # Only one bounded crop bundle is materialized, never the archive catalogue.
     if sum(len(content) for _, content in artifacts.values()) > service.settings.max_bundle_bytes:
         raise HTTPException(413, "bundle_too_large")
     stream = BytesIO()

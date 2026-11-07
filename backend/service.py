@@ -30,16 +30,15 @@ def compatible_labels() -> dict[str, set[str]]:
 
 
 class ImageService:
-    def __init__(self, settings: Settings, celery, sessions):
+    def __init__(self, settings: Settings, celery, repository: ImageRepository):
         self.settings = settings
         self.celery = celery
-        self.sessions = sessions
+        self.repository = repository
 
     def upload(self, file: UploadFile) -> AcceptedImage:
         image_id = uuid4()
         width, height, artifacts = prepare_image(file, self.settings)
-        with self.sessions.begin() as session:
-            ImageRepository(session).create_input(image_id, width, height, artifacts)
+        self.repository.create_input(image_id, width, height, artifacts)
         try:
             publish_image(self.celery, str(image_id), self.settings.broker_timeout)
         except Exception as exc:
@@ -48,23 +47,20 @@ class ImageService:
         return AcceptedImage(image_id=image_id)
 
     def result_file(self, image_id: UUID, filename: str) -> tuple[str, bytes]:
-        names = {"original", "normalized.png", "detection.png", "results.json"}
+        names = {"results.json"}
         if filename not in names and not fullmatch(r"crops/[0-9a-f-]{36}\.png", filename):
             raise FileNotFoundError
-        with self.sessions() as session:
-            artifact = ImageRepository(session).artifact(image_id, filename)
-            return artifact.content_type, artifact.content
+        artifact = self.repository.artifact(image_id, filename)
+        return artifact.content_type, artifact.content
 
     def bundle(self, image_id: UUID) -> dict[str, tuple[str, bytes]]:
-        with self.sessions() as session:
-            return ImageRepository(session).bundle(image_id)
+        return self.repository.bundle(image_id)
 
     def result(self, image_id: UUID) -> dict:
-        with self.sessions() as session:
-            record = ImageRepository(session).get(image_id)
-            if record is None:
-                raise FileNotFoundError
-            result = deepcopy(record.manifest)
+        record = self.repository.get(image_id)
+        if record is None:
+            raise FileNotFoundError
+        result = deepcopy(record.manifest)
         detected = {obj["object_id"]: obj["label"] for obj in result["detection"]["objects"]}
         for obj in result["classification"]["objects"]:
             if "object_caption" in obj:

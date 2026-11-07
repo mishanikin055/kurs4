@@ -1,4 +1,4 @@
-"""HTTP contracts backed by SQL transactions, without running models or a broker."""
+"""HTTP contracts backed by Elasticsearch/S3 doubles, without running models or a broker."""
 
 import json
 from io import BytesIO
@@ -6,28 +6,23 @@ from uuid import UUID, uuid4
 from zipfile import ZipFile
 
 import pytest
+from elastic_transport import ConnectionError
 from fastapi.testclient import TestClient
-from sqlalchemy import func, select
-from sqlalchemy.exc import OperationalError
 
 from backend.main import create_app
 from backend.repository import ImageRepository
 from backend.schemas import ImageResult
-from backend.settings import Settings
-from backend.tables import ImageRecord
 from backend.tests.test_storage import image_bytes
 
 
 @pytest.fixture
-def app(database, monkeypatch):
-    engine, sessions = database
-    settings = Settings(
-        database_url="sqlite://", broker_url="amqp://unused:unused@127.0.0.1:1/unused"
-    )
-    monkeypatch.setattr("backend.main.make_engine", lambda url: engine)
+def app(repository, monkeypatch):
+    settings = repository.settings
+    monkeypatch.setattr("backend.main.make_elasticsearch", lambda settings: repository.es)
+    monkeypatch.setattr("backend.main.make_s3", lambda settings: repository.s3)
     monkeypatch.setattr("backend.service.publish_image", lambda *args: None)
     application = create_app(settings)
-    application.state.test_sessions = sessions
+    application.state.test_repository = repository
     return application
 
 
@@ -55,16 +50,14 @@ def ready_bundle(app, *, legacy=False, empty=False):
     )
     manifest = result.model_dump(mode="json", exclude_none=True)
     manifest["crops"] = [] if empty else [f"{object_id}.png"]
-    artifacts = {name: image_bytes() for name in ("original", "normalized.png", "detection.png")}
+    artifacts = {}
     if not empty:
         artifacts[f"crops/{object_id}.png"] = image_bytes(size=(7, 7))
-    artifacts["results.json"] = json.dumps(manifest, indent=3).encode()
-    with app.state.test_sessions.begin() as session:
-        repo = ImageRepository(session)
-        repo.create_input(
-            image_id, 16, 12, {name: artifacts[name] for name in ("original", "normalized.png")}
-        )
-        repo.publish(result, artifacts, manifest)
+    artifacts["results.json"] = json.dumps(manifest, ensure_ascii=False, indent=2).encode()
+    repo = app.state.test_repository
+    repo.create_input(image_id, 16, 12, {"normalized.png": image_bytes()})
+    repo.publish(result, artifacts, manifest)
+    repo.cleanup_input(image_id)
     return image_id, manifest, artifacts
 
 
@@ -72,10 +65,9 @@ def test_upload_commits_inputs_before_publishing_and_pending_is_not_visible(app,
     published = []
 
     def publish(celery, image_id, timeout):
-        with app.state.test_sessions() as session:
-            record, inputs = ImageRepository(session).input(UUID(image_id))
-            assert record.manifest is None
-            assert inputs["original"] == image_bytes()
+        record, inputs = app.state.test_repository.input(UUID(image_id))
+        assert record.manifest is None
+        assert inputs["normalized.png"] == image_bytes()
         published.append(image_id)
 
     monkeypatch.setattr("backend.service.publish_image", publish)
@@ -98,10 +90,11 @@ def test_lost_broker_confirm_retains_durable_input(app, monkeypatch):
     with TestClient(app) as client:
         response = client.post("/images", files={"file": ("photo.png", image_bytes())})
         assert response.status_code == 503
-    with app.state.test_sessions() as session:
-        record = session.scalars(select(ImageRecord)).one()
-        assert record.manifest is None
-        assert ImageRepository(session).input(record.id)[1]["original"] == image_bytes()
+    repo = app.state.test_repository
+    image_id = UUID(next(iter(repo.es.documents)))
+    record, inputs = repo.input(image_id)
+    assert record.manifest is None
+    assert inputs["normalized.png"] == image_bytes()
 
 
 @pytest.mark.parametrize("data,status", [(b"bad", 422), (image_bytes("GIF"), 415)])
@@ -111,8 +104,8 @@ def test_invalid_upload_never_persists_or_publishes(app, monkeypatch, data, stat
     )
     with TestClient(app) as client:
         assert client.post("/images", files={"file": ("bad.png", data)}).status_code == status
-    with app.state.test_sessions() as session:
-        assert session.scalar(select(func.count()).select_from(ImageRecord)) == 0
+    assert not app.state.test_repository.es.documents
+    assert not list(app.state.settings.pending_input_dir.glob("*"))
 
 
 def test_files_zip_and_captions_preserve_original_bytes(app, monkeypatch):
@@ -132,7 +125,14 @@ def test_files_zip_and_captions_preserve_original_bytes(app, monkeypatch):
             assert set(archive.namelist()) == {f"{image_id}/{name}" for name in artifacts}
             for name, content in artifacts.items():
                 assert archive.read(f"{image_id}/{name}") == content
-        for name in ("secret", "crops/not-a-crop.png", "crops/../../secret"):
+        for name in (
+            "original",
+            "normalized.png",
+            "detection.png",
+            "secret",
+            "crops/not-a-crop.png",
+            "crops/../../secret",
+        ):
             assert client.get(f"/images/{image_id}/files/{name}").status_code == 404
 
 
@@ -157,13 +157,13 @@ def test_empty_crops_folder_is_present_in_export(app):
 
 def test_database_outage_returns_503_without_internal_details(app, monkeypatch):
     def unavailable(*args):
-        raise OperationalError("secret query", {}, Exception("password"))
+        raise ConnectionError("secret password")
 
     monkeypatch.setattr(ImageRepository, "get", unavailable)
     with TestClient(app) as client:
         response = client.get(f"/images/{uuid4()}")
         assert response.status_code == 503
-        assert response.json() == {"detail": "database_unavailable"}
+        assert response.json() == {"detail": "storage_unavailable"}
 
 
 def test_streaming_body_limit_without_content_length(app):
@@ -188,14 +188,14 @@ def test_streaming_body_limit_without_content_length(app):
 def test_health_checks_both_dependencies(app, monkeypatch):
     monkeypatch.setattr("backend.api.check_broker", lambda *args: True)
     with TestClient(app) as client:
-        assert client.get("/health").json() == {"rabbitmq": True, "database": True}
+        assert client.get("/health").json() == {"rabbitmq": True, "elasticsearch": True, "s3": True}
         monkeypatch.setattr("backend.api.check_broker", lambda *args: False)
         assert client.get("/health").status_code == 503
 
 
 def test_database_failure_during_upload_does_not_publish(app, monkeypatch):
     def unavailable(*args):
-        raise OperationalError("private SQL", {}, Exception("password"))
+        raise ConnectionError("secret password")
 
     monkeypatch.setattr(ImageRepository, "create_input", unavailable)
     monkeypatch.setattr(
@@ -204,4 +204,4 @@ def test_database_failure_during_upload_does_not_publish(app, monkeypatch):
     with TestClient(app) as client:
         response = client.post("/images", files={"file": ("photo.png", image_bytes())})
         assert response.status_code == 503
-        assert response.json() == {"detail": "database_unavailable"}
+        assert response.json() == {"detail": "storage_unavailable"}

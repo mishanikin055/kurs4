@@ -3,6 +3,7 @@ let folderHandle;
 let imageId;
 let readyImageId;
 let previewUrl;
+let previewSize;
 let resultController;
 let resultTimer;
 let selectedObject;
@@ -113,6 +114,23 @@ function stopWaiting() {
   resultController?.abort();
 }
 
+async function preparePreview(file) {
+  const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
+  try {
+    if (bitmap.width * bitmap.height > 25000000) throw new Error("preview_too_large");
+    const canvas = document.createElement("canvas");
+    canvas.width = bitmap.width;
+    canvas.height = bitmap.height;
+    canvas.getContext("2d").drawImage(bitmap, 0, 0);
+    const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
+    if (!blob) throw new Error("preview_unavailable");
+    previewUrl = URL.createObjectURL(blob);
+    previewSize = { width: bitmap.width, height: bitmap.height };
+  } finally {
+    bitmap.close();
+  }
+}
+
 function showResultError(message) {
   $("status").textContent = message;
   $("preview-placeholder").textContent = "Результат пока недоступен.";
@@ -155,12 +173,19 @@ $("upload-form").addEventListener("submit", async (event) => {
   $("selection-status").textContent = "";
   if (previewUrl) URL.revokeObjectURL(previewUrl);
   previewUrl = null;
+  previewSize = null;
   imageId = null;
   readyImageId = null;
   $("status").textContent = "Отправка изображения…";
   const data = new FormData();
   data.append("file", file);
   try {
+    // Keep this submission's pixels even if another file is selected while waiting.
+    try {
+      await preparePreview(file);
+    } catch {
+      // Result metadata and export remain available without browser image decoding.
+    }
     const response = await fetch("/api/images", { method: "POST", body: data });
     if (!response.ok) {
       $("status").textContent = "Отправка не подтверждена. Проверьте файл и доступность сервера.";
@@ -191,6 +216,7 @@ async function waitForResult(id, deadline = Date.now() + 40 * 60 * 1000) {
   const timeout = setTimeout(() => controller.abort(), 15000);
   try {
     const response = await fetch(`/api/images/${id}`, { signal: controller.signal, cache: "no-store" });
+    if (id !== imageId || resultController !== controller) return;
     if (response.status === 404) {
       if (Date.now() >= deadline) {
         showResultError("Ожидание завершено. Результат пока не получен. Можно повторить ожидание.");
@@ -201,13 +227,9 @@ async function waitForResult(id, deadline = Date.now() + 40 * 60 * 1000) {
     }
     if (!response.ok) throw new Error("result_unavailable");
     const result = await response.json();
-    const imageResponse = await fetch(`/api/images/${id}/files/normalized.png`, { signal: controller.signal });
-    if (!imageResponse.ok) throw new Error("result_unavailable");
-    const image = await imageResponse.blob();
-    if (id !== imageId) return;
-    if (previewUrl) URL.revokeObjectURL(previewUrl);
-    previewUrl = URL.createObjectURL(image);
-    $("result-image").src = previewUrl;
+    if (id !== imageId || resultController !== controller) return;
+    const canPreview = previewUrl && previewSize.width === result.width && previewSize.height === result.height;
+    if (canPreview) $("result-image").src = previewUrl;
     $("result-image").width = result.width;
     $("result-image").height = result.height;
     const caption = result.annotation.raw_caption.replace(/^\s*in\s+this\s+image\s*,?\s*(?:i|we)\s+can\s+see\b[\s,:;-]*/i, "");
@@ -219,8 +241,9 @@ async function waitForResult(id, deadline = Date.now() + 40 * 60 * 1000) {
     $("objects-table").hidden = result.detection.objects.length === 0;
     $("result").hidden = false;
     $("result-placeholder").hidden = true;
-    $("result-preview").hidden = false;
-    $("preview-placeholder").hidden = true;
+    $("result-preview").hidden = !canPreview;
+    $("preview-placeholder").hidden = Boolean(canPreview);
+    $("preview-placeholder").textContent = "Локальный предпросмотр недоступен: браузер не смог согласовать изображение с результатом. JSON и вырезки доступны для сохранения.";
     fitLabels();
     readyImageId = id;
     $("save-actions").hidden = Boolean(folderHandle);
@@ -257,11 +280,6 @@ async function saveToFolder(id, selectedFolder) {
     const manifest = await (await resultFile(id, "results.json")).blob();
     const result = JSON.parse(await manifest.text());
     const directory = await selectedFolder.getDirectoryHandle(id, { create: true });
-    for (const name of ["original", "normalized.png", "detection.png"]) {
-      const response = await resultFile(id, name);
-      const file = await directory.getFileHandle(name, { create: true });
-      await response.body.pipeTo(await file.createWritable());
-    }
     if (result.crops) {
       const crops = await directory.getDirectoryHandle("crops", { create: true });
       for (const name of result.crops) {

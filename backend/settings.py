@@ -7,7 +7,14 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="APP_", extra="ignore")
 
-    database_url: SecretStr
+    elasticsearch_url: str = "http://elasticsearch:9200"
+    elasticsearch_index: str = "image-results"
+    s3_endpoint_url: str = "http://s3:9000"
+    s3_access_key: SecretStr = SecretStr("kurs4")
+    s3_secret_key: SecretStr
+    s3_bucket: str = "image-analysis"
+    s3_region: str = "us-east-1"
+    pending_input_dir: Path = Path("/var/lib/kurs4/pending")
     broker_url: SecretStr
     max_upload_bytes: int = Field(default=10 * 1024 * 1024, gt=0)
     max_image_pixels: int = Field(default=25_000_000, gt=0)

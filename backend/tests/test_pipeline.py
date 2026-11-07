@@ -1,4 +1,4 @@
-"""CPU inference coordination and SQL publication tests; no model weights."""
+"""CPU inference coordination and Elasticsearch/S3 publication tests; no model weights."""
 
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
@@ -7,43 +7,36 @@ from types import SimpleNamespace
 from uuid import uuid4
 
 import pytest
-from sqlalchemy.exc import SQLAlchemyError
+from elastic_transport import ConnectionError
 
 from backend.processing import ProcessingInterrupted, process_image
 from backend.repository import ImageRepository
 from backend.runtime import ResidentModelFailed
 from backend.schemas import ImageResult
-from backend.settings import Settings
 from backend.storage import BundleTooLarge, prepare_image
 from backend.tests.mock_model import predict
 from backend.tests.test_storage import image_bytes, upload
 
 
 @pytest.fixture
-def pipeline(tmp_path, monkeypatch, database):
-    _, sessions = database
-    settings = Settings(
-        database_url="sqlite://", broker_url="amqp://unused", lock_path=tmp_path / "inference.lock"
-    )
+def pipeline(tmp_path, monkeypatch, repository):
+    settings = repository.settings
     calls, scratch = [], []
     image_id = uuid4()
     width, height, artifacts = prepare_image(upload(image_bytes()), settings)
-    with sessions.begin() as session:
-        ImageRepository(session).create_input(image_id, width, height, artifacts)
+    repository.create_input(image_id, width, height, artifacts)
     monkeypatch.setenv("MOCK_MODEL_MODE", "success")
 
     class Completed:
         def __contains__(self, key):
-            with sessions() as session:
-                return ImageRepository(session).get(key) is not None
+            return repository.get(key) is not None
 
         def __bool__(self):
             return image_id in self
 
         def __getitem__(self, key):
-            with sessions() as session:
-                record = ImageRepository(session).get(key)
-                return SimpleNamespace(result=ImageResult.model_validate(record.manifest))
+            record = repository.get(key)
+            return SimpleNamespace(result=ImageResult.model_validate(record.manifest))
 
     saved = Completed()
 
@@ -57,30 +50,29 @@ def pipeline(tmp_path, monkeypatch, database):
         settings=settings,
         saved=saved,
         calls=calls,
-        sessions=sessions,
+        repository=repository,
         id=image_id,
         runner=runner,
-        repository=ImageRepository,
+        repository_type=ImageRepository,
         scratch=scratch,
     )
 
 
 def test_parallel_branches_then_captions_publish_and_duplicate_skips_models(pipeline):
     p = pipeline
-    process_image(p.id, p.sessions, p.settings, runner=p.runner)
+    process_image(p.id, p.repository, p.settings, runner=p.runner)
     assert sorted(p.calls) == ["annotation", "classification", "detection"]
     assert p.calls.index("detection") < p.calls.index("classification")
     assert p.calls.index("annotation") < p.calls.index("classification")
     result = p.saved[p.id].result
     assert result.annotation.raw_caption == "  Synthetic caption.  "
     assert result.classification.objects[0].object_caption == "  Synthetic object.  "
-    with p.sessions() as session:
-        before = ImageRepository(session).bundle(p.id)
-    process_image(p.id, p.sessions, p.settings, runner=p.runner)
+    before = p.repository.bundle(p.id)
+    process_image(p.id, p.repository, p.settings, runner=p.runner)
     assert len(p.calls) == 3
-    with p.sessions() as session:
-        assert ImageRepository(session).bundle(p.id) == before
+    assert p.repository.bundle(p.id) == before
     assert all(not path.exists() for path in p.scratch)
+    assert not p.repository._input_path(p.id).exists()
 
 
 @pytest.mark.parametrize("stage", ["detection", "classification", "annotation"])
@@ -88,43 +80,39 @@ def test_model_failure_leaves_only_durable_input(pipeline, monkeypatch, stage):
     p = pipeline
     monkeypatch.setenv("MOCK_MODEL_MODE", "fail_" + stage)
     with pytest.raises(RuntimeError, match=stage):
-        process_image(p.id, p.sessions, p.settings, runner=p.runner)
+        process_image(p.id, p.repository, p.settings, runner=p.runner)
     assert not p.saved
-    with p.sessions() as session:
-        assert set(ImageRepository(session).input(p.id)[1]) == {"original", "normalized.png"}
-        with pytest.raises(FileNotFoundError):
-            ImageRepository(session).bundle(p.id)
+    assert set(p.repository.input(p.id)[1]) == {"normalized.png"}
+    with pytest.raises(FileNotFoundError):
+        p.repository.bundle(p.id)
     assert all(not path.exists() for path in p.scratch)
 
 
 def test_no_detections_saves_empty_crops_and_classification(pipeline, monkeypatch):
     p = pipeline
     monkeypatch.setenv("MOCK_MODEL_MODE", "empty")
-    process_image(p.id, p.sessions, p.settings, runner=p.runner)
+    process_image(p.id, p.repository, p.settings, runner=p.runner)
     assert sorted(p.calls) == ["annotation", "detection"]
     assert p.saved[p.id].result.classification.objects == []
-    with p.sessions() as session:
-        assert ImageRepository(session).get(p.id).manifest["crops"] == []
-        assert len(ImageRepository(session).bundle(p.id)) == 4
+    assert p.repository.get(p.id).manifest["crops"] == []
+    assert len(p.repository.bundle(p.id)) == 1
 
 
 def test_failed_publication_is_not_ready_and_retry_recomputes(pipeline, monkeypatch):
     p = pipeline
-    original = p.repository.publish
+    original = p.repository.es.index
 
-    def failure(*args):
-        original(*args)
-        raise SQLAlchemyError("failed before commit")
+    def failure(*args, **kwargs):
+        raise ConnectionError("failed before publication")
 
-    monkeypatch.setattr(p.repository, "publish", failure)
-    with pytest.raises(SQLAlchemyError):
-        process_image(p.id, p.sessions, p.settings, runner=p.runner)
+    monkeypatch.setattr(p.repository.es, "index", failure)
+    with pytest.raises(ConnectionError):
+        process_image(p.id, p.repository, p.settings, runner=p.runner)
     assert not p.saved
     assert all(not path.exists() for path in p.scratch)
-    with p.sessions() as session:
-        assert ImageRepository(session).input(p.id)[0].manifest is None
-    monkeypatch.setattr(p.repository, "publish", original)
-    process_image(p.id, p.sessions, p.settings, runner=p.runner)
+    assert p.repository.input(p.id)[0].manifest is None
+    monkeypatch.setattr(p.repository.es, "index", original)
+    process_image(p.id, p.repository, p.settings, runner=p.runner)
     assert len(p.calls) == 6
     assert p.id in p.saved
 
@@ -133,7 +121,7 @@ def test_oversized_result_is_never_published(pipeline):
     p = pipeline
     p.settings.max_bundle_bytes = 1
     with pytest.raises(BundleTooLarge):
-        process_image(p.id, p.sessions, p.settings, runner=p.runner)
+        process_image(p.id, p.repository, p.settings, runner=p.runner)
     assert not p.saved
     assert all(not path.exists() for path in p.scratch)
 
@@ -158,7 +146,7 @@ def test_annotation_overlaps_detection_but_crops_wait_for_florence(pipeline):
             assert request["parameters"]["prompt"] == "<CAPTION>"
         return p.runner(request, *args, **kwargs)
 
-    process_image(p.id, p.sessions, p.settings, runner=runner)
+    process_image(p.id, p.repository, p.settings, runner=runner)
     assert p.id in p.saved
 
 
@@ -174,7 +162,7 @@ def test_saving_waits_for_scene_and_all_crops(pipeline, last_stage):
         return p.runner(request, *args, **kwargs)
 
     with ThreadPoolExecutor(max_workers=1) as executor:
-        future = executor.submit(process_image, p.id, p.sessions, p.settings, runner=runner)
+        future = executor.submit(process_image, p.id, p.repository, p.settings, runner=runner)
         try:
             assert blocked.wait(3)
             assert not future.done()
@@ -202,7 +190,7 @@ def test_model_error_drains_the_other_branch_before_returning(pipeline, failed_s
         return p.runner(request, *args, **kwargs)
 
     with ThreadPoolExecutor(max_workers=1) as executor:
-        future = executor.submit(process_image, p.id, p.sessions, p.settings, runner=runner)
+        future = executor.submit(process_image, p.id, p.repository, p.settings, runner=runner)
         try:
             assert failed.wait(3) and blocked.wait(3)
             assert not future.done()
@@ -212,7 +200,7 @@ def test_model_error_drains_the_other_branch_before_returning(pipeline, failed_s
         with pytest.raises(RuntimeError, match=failed_stage):
             future.result(timeout=3)
     assert finished.is_set()
-    process_image(p.id, p.sessions, p.settings, runner=p.runner)
+    process_image(p.id, p.repository, p.settings, runner=p.runner)
     assert p.id in p.saved
 
 
@@ -231,7 +219,7 @@ def test_fatal_model_failure_cancels_the_other_branch(pipeline, failed_stage):
         raise ResidentModelFailed
 
     with pytest.raises(ResidentModelFailed):
-        process_image(p.id, p.sessions, p.settings, runner=runner)
+        process_image(p.id, p.repository, p.settings, runner=runner)
     assert other_stopped.is_set()
     assert not p.saved
 
@@ -254,6 +242,6 @@ def test_coordinator_interrupt_stops_both_branches(pipeline, monkeypatch):
 
     monkeypatch.setattr("backend.processing.wait", interrupt)
     with pytest.raises(ProcessingInterrupted):
-        process_image(p.id, p.sessions, p.settings, runner=runner)
+        process_image(p.id, p.repository, p.settings, runner=runner)
     assert all(event.is_set() for event in stopped.values())
     assert not p.saved

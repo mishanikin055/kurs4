@@ -102,7 +102,7 @@ def prepare_image(upload: UploadFile, settings: Settings) -> tuple[int, int, dic
                 width, height = normalized.size
                 stream = BytesIO()
                 normalized.save(stream, format="PNG")
-        artifacts = {"original": original, "normalized.png": stream.getvalue()}
+        artifacts = {"normalized.png": stream.getvalue()}
         check_artifacts(artifacts, settings)
         return width, height, artifacts
     except BundleTooLarge as exc:
@@ -119,14 +119,7 @@ def build_artifacts(
     result: ImageResult, source: Path, settings: Settings, *, crop_padding: float = 0.1
 ) -> tuple[dict, dict[str, bytes]]:
     """Prepare one bounded bundle using task-local scratch, never a permanent directory."""
-    artifacts = {name: (source / name).read_bytes() for name in ("original", "normalized.png")}
-    check_artifacts(artifacts, settings)
-    destination = source / "detection.png"
-    save_detection_image(
-        str(source / "normalized.png"), destination, result.detection.model_dump(mode="json")
-    )
-    artifacts["detection.png"] = destination.read_bytes()
-    check_artifacts(artifacts, settings)
+    artifacts = {}
     manifest = result.model_dump(mode="json", exclude_none=True)
     manifest["crops"] = []
     with Image.open(source / "normalized.png") as source_image:

@@ -126,11 +126,14 @@ class ResidentRequest(Request):
 def register_processing_task(app: Celery, settings: Settings, *, runner=None, lock_fd=None):
     from uuid import UUID
 
+    from botocore.exceptions import BotoCoreError, ClientError
     from celery.exceptions import Reject
-    from sqlalchemy.exc import SQLAlchemyError
+    from elastic_transport import TransportError
+    from elasticsearch import ApiError
 
-    from backend.db import make_engine, make_sessions
+    from backend.db import make_elasticsearch, make_s3
     from backend.processing import LockTimeout, ProcessingInterrupted, interrupt, process_image
+    from backend.repository import ImageRepository
 
     @app.task(
         name=TASK_NAME,
@@ -143,15 +146,21 @@ def register_processing_task(app: Celery, settings: Settings, *, runner=None, lo
         import os
         import signal
 
-        engine = make_engine(settings.database_url.get_secret_value())
+        es, s3 = make_elasticsearch(settings), make_s3(settings)
         previous = signal.signal(signal.SIGTERM, interrupt)
         previous_interrupt = signal.signal(signal.SIGUSR2, interrupt)
         try:
             options = {"runner": runner} if runner is not None else {}
             process_image(
-                UUID(image_id), make_sessions(engine), settings, lock_fd=lock_fd, **options
+                UUID(image_id),
+                ImageRepository(es, s3, settings),
+                settings,
+                lock_fd=lock_fd,
+                **options,
             )
-        except (SQLAlchemyError, ProcessingInterrupted) as exc:
+        except (ApiError, TransportError, BotoCoreError, ClientError, OSError) as exc:
+            raise task.retry(exc=exc, countdown=30, max_retries=None)
+        except ProcessingInterrupted as exc:
             # Interrupted parallel requests leave unread IPC: restart before the next image.
             signal.signal(signal.SIGUSR2, signal.SIG_IGN)
             os.kill(os.getppid(), signal.SIGTERM)
@@ -161,7 +170,8 @@ def register_processing_task(app: Celery, settings: Settings, *, runner=None, lo
         finally:
             signal.signal(signal.SIGTERM, previous)
             signal.signal(signal.SIGUSR2, previous_interrupt)
-            engine.dispose()
+            es.close()
+            s3.close()
 
     return task
 
@@ -169,28 +179,19 @@ def register_processing_task(app: Celery, settings: Settings, *, runner=None, lo
 def worker_main(settings: Settings, *, runner=None) -> None:
     import time
 
-    from sqlalchemy.exc import SQLAlchemyError
+    from backend.db import make_elasticsearch, make_s3
+    from backend.repository import ImageRepository
 
-    from backend.db import make_engine, make_sessions
-
-    # Readiness gate also prevents immediate requeue loops during database outages.
-    engine = make_engine(settings.database_url.get_secret_value())
+    # Readiness gate prevents consumption before the index and bucket are initialized.
+    es, s3 = make_elasticsearch(settings), make_s3(settings)
     try:
-        while True:
-            try:
-                with make_sessions(engine)() as session:
-                    # Fail readiness until the new completed-results table exists.
-                    from sqlalchemy import select
-
-                    from backend.tables import ImageRecord
-
-                    session.execute(select(ImageRecord.id).limit(1))
-                break
-            except SQLAlchemyError:
-                logger.warning("Worker waiting for database")
-                time.sleep(5)
+        repository = ImageRepository(es, s3, settings)
+        while not all(repository.health().values()):
+            logger.warning("Worker waiting for Elasticsearch/S3")
+            time.sleep(5)
     finally:
-        engine.dispose()
+        es.close()
+        s3.close()
     from contextlib import nullcontext
 
     from backend.runtime import resident_models

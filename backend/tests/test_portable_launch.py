@@ -4,6 +4,7 @@ import hashlib
 import json
 import sys
 from contextlib import nullcontext
+from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import MagicMock
 
@@ -46,8 +47,8 @@ def bundle(tmp_path, monkeypatch):
     monkeypatch.setattr(start_app, "ROOT", tmp_path)
     (tmp_path / "backend").mkdir()
     (tmp_path / "backend" / "app.env.example").write_text(
-        "PASSWORD=REPLACE_WITH_RANDOM_HEX\nURL=REPLACE_WITH_RANDOM_HEX\n"
-        "BROKER=REPLACE_WITH_ANOTHER_RANDOM_HEX\n"
+        "PASSWORD=REPLACE_WITH_S3_SECRET_HEX\nURL=REPLACE_WITH_S3_SECRET_HEX\n"
+        "BROKER=REPLACE_WITH_BROKER_SECRET_HEX\n"
     )
     model = tmp_path / "annotation" / "models" / "test"
     model.mkdir(parents=True)
@@ -115,12 +116,23 @@ def test_bad_weights_stop_before_services_or_settings(bundle, monkeypatch):
     assert not any("up" in call[0] or "build" in call[0] for call in calls)
 
 
-def test_start_orders_database_guard_before_worker(bundle, monkeypatch):
+def test_start_initializes_storage_before_worker(bundle, monkeypatch):
     calls = mock_docker(monkeypatch)
     assert start_app.main(["--device", "cuda"]) == 0
     commands = [call[0] for call in calls]
-    assert commands[-3][-5:] == ["up", "-d", "--wait", "db", "rabbitmq"]
-    assert commands[-2][-1] == start_app.PREPARE_DATABASE
+    assert commands[-3][-6:] == ["up", "-d", "--wait", "elasticsearch", "s3", "rabbitmq"]
+    assert commands[-2][-7:] == [
+        "run",
+        "--rm",
+        "--no-deps",
+        "backend",
+        "python",
+        "-m",
+        "backend.db",
+    ]
+    assert any(
+        command[-5:] == ["build", "s3", "backend", "worker", "frontend"] for command in commands
+    )
     assert commands[-1][-5:] == ["up", "-d", "backend", "worker", "frontend"]
     assert "compose.app.gpu.yaml" in commands[-1]
     assert (bundle / "storage" / "locks" / "inference.lock").is_file()
@@ -139,53 +151,43 @@ def test_nonregular_lock_rejected(bundle, monkeypatch, existing):
     assert not any("build" in call[0] for call in calls)
 
 
-@pytest.mark.parametrize(
-    "tables,revisions,allowed,upgrade",
-    [
-        ([], [], True, True),
-        ("current", ["current"], True, False),
-        ("extra", ["current"], False, False),
-        (["alembic_version", "images"], ["old"], False, False),
-        (["unknown"], [], False, False),
-        (["alembic_version"], [], False, False),
-    ],
-)
-def test_database_guard_never_migrates_existing_schema(
-    monkeypatch, tables, revisions, allowed, upgrade
-):
-    import alembic.command
-    import alembic.config
-    import alembic.script
-    import sqlalchemy
+def test_initialization_failure_stops_before_worker(bundle, monkeypatch):
+    import subprocess
 
-    from backend.tables import Base
+    calls = mock_docker(monkeypatch)
+    mocked_run = start_app.subprocess.run
 
-    if tables in ("current", "extra"):
-        tables = [*Base.metadata.tables, "alembic_version"] + (
-            ["jobs"] if tables == "extra" else []
-        )
+    def fail_init(command, **kwargs):
+        result = mocked_run(command, **kwargs)
+        if command[-1] == "backend.db":
+            raise subprocess.CalledProcessError(1, command)
+        return result
 
-    connection = MagicMock()
-    connection.execute.return_value.scalars.return_value.all.return_value = revisions
-    engine = MagicMock()
-    engine.connect.return_value.__enter__.return_value = connection
-    monkeypatch.setattr(sqlalchemy, "create_engine", MagicMock(return_value=engine))
-    inspector = MagicMock()
-    inspector.get_table_names.return_value = tables
-    monkeypatch.setattr(sqlalchemy, "inspect", MagicMock(return_value=inspector))
-    script = MagicMock()
-    script.get_current_head.return_value = "current"
-    monkeypatch.setattr(
-        alembic.script.ScriptDirectory, "from_config", MagicMock(return_value=script)
+    monkeypatch.setattr(start_app.subprocess, "run", fail_init)
+    assert start_app.main(["--device", "cpu"]) == 1
+    assert not any(
+        call[0][-3:] == ["backend", "worker", "frontend"] and "up" in call[0] for call in calls
     )
-    monkeypatch.setattr(alembic.config, "Config", MagicMock())
-    migrate = MagicMock()
-    monkeypatch.setattr(alembic.command, "upgrade", migrate)
-    monkeypatch.setenv("APP_DATABASE_URL", "postgresql://test:test@localhost/test")
-    monkeypatch.setenv("APP_BROKER_URL", "amqp://test:test@localhost/test")
-    if allowed:
-        exec(start_app.PREPARE_DATABASE, {})
-    else:
-        with pytest.raises(SystemExit, match="backup"):
-            exec(start_app.PREPARE_DATABASE, {})
-    assert migrate.call_count == int(upgrade)
+
+
+def test_existing_postgres_settings_receive_s3_without_changing_broker(bundle):
+    template = Path(__file__).resolve().parents[1] / "app.env.example"
+    (bundle / "backend" / "app.env.example").write_text(template.read_text())
+    secret = bundle / ".secrets" / "app.env"
+    secret.parent.mkdir()
+    old = "APP_BROKER_URL=amqp://existing\nRABBITMQ_DEFAULT_PASS=keep-me\n"
+    secret.write_text(old)
+    start_app.prepare_secrets()
+    values = dict(
+        line.split("=", 1)
+        for line in secret.read_text().splitlines()
+        if "=" in line and not line.startswith("#")
+    )
+    assert secret.read_text().startswith(old)
+    assert values["APP_BROKER_URL"] == "amqp://existing"
+    assert values["RABBITMQ_DEFAULT_PASS"] == "keep-me"
+    assert values["APP_S3_SECRET_KEY"] == values["MINIO_ROOT_PASSWORD"]
+    assert "REPLACE" not in secret.read_text()
+    before = secret.read_bytes()
+    start_app.prepare_secrets()
+    assert secret.read_bytes() == before

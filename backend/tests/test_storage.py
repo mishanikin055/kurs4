@@ -62,7 +62,7 @@ def test_bundle_crops_match_florence_input_pixels(settings, tmp_path, padding):
 @pytest.fixture
 def settings(tmp_path):
     return Settings(
-        database_url="postgresql+psycopg://unused:unused@localhost/unused",
+        s3_secret_key="testing",
         broker_url="amqp://unused:unused@localhost/unused",
     )
 
@@ -78,10 +78,10 @@ def upload(data, filename="image.png"):
     return UploadFile(file=BytesIO(data), filename=filename)
 
 
-def test_original_and_normalized_are_separate(settings):
+def test_only_normalized_input_is_staged(settings):
     data = image_bytes(mode="RGBA")
     width, height, artifacts = prepare_image(upload(data, "../../image.png"), settings)
-    assert artifacts["original"] == data
+    assert set(artifacts) == {"normalized.png"}
     assert (width, height) == (16, 12)
     with Image.open(BytesIO(artifacts["normalized.png"])) as image:
         assert image.mode == "RGB"

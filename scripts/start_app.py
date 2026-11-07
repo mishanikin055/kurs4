@@ -11,30 +11,6 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 
-# Existing databases are never migrated automatically: older revisions delete tables.
-PREPARE_DATABASE = """
-from alembic import command
-from alembic.config import Config
-from alembic.script import ScriptDirectory
-from sqlalchemy import create_engine, inspect, text
-from backend.settings import Settings
-from backend.tables import Base
-
-config = Config('backend/alembic.ini')
-head = ScriptDirectory.from_config(config).get_current_head()
-with create_engine(Settings().database_url.get_secret_value()).connect() as connection:
-    tables = inspect(connection).get_table_names()
-    revision = None
-    if 'alembic_version' in tables:
-        revisions = connection.execute(text('SELECT version_num FROM alembic_version')).scalars().all()
-        revision = revisions[0] if len(revisions) == 1 else None
-if not tables:
-    command.upgrade(config, 'head')
-elif revision != head or set(tables) != set(Base.metadata.tables) | {'alembic_version'}:
-    raise SystemExit('Existing database has an older or unknown schema. Stop: make a database '
-                     'backup and follow the manual migration instructions in README.md.')
-"""
-
 
 def run(command, *, env, capture=False):
     return subprocess.run(
@@ -49,11 +25,31 @@ def run(command, *, env, capture=False):
 
 def prepare_secrets():
     path = ROOT / ".secrets" / "app.env"
-    if path.exists():
-        return
+    existing = path.read_text(encoding="utf-8") if path.exists() else ""
+    values = dict(
+        line.split("=", 1)
+        for line in existing.splitlines()
+        if "=" in line and not line.lstrip().startswith("#")
+    )
+    s3_secret = (
+        values.get("MINIO_ROOT_PASSWORD")
+        or values.get("APP_S3_SECRET_KEY")
+        or secrets.token_hex(24)
+    )
+    s3_user = values.get("MINIO_ROOT_USER") or values.get("APP_S3_ACCESS_KEY") or "kurs4"
     content = (ROOT / "backend" / "app.env.example").read_text(encoding="utf-8")
-    for placeholder in ("REPLACE_WITH_RANDOM_HEX", "REPLACE_WITH_ANOTHER_RANDOM_HEX"):
-        content = content.replace(placeholder, secrets.token_hex(24))
+    content = content.replace("REPLACE_WITH_S3_SECRET_HEX", s3_secret)
+    content = content.replace("REPLACE_WITH_BROKER_SECRET_HEX", secrets.token_hex(24))
+    content = content.replace("MINIO_ROOT_USER=kurs4", "MINIO_ROOT_USER=" + s3_user)
+    content = content.replace("APP_S3_ACCESS_KEY=kurs4", "APP_S3_ACCESS_KEY=" + s3_user)
+    missing = [
+        line for line in content.splitlines() if "=" in line and line.split("=", 1)[0] not in values
+    ]
+    if existing:
+        if missing:
+            with path.open("a", encoding="utf-8") as stream:
+                stream.write(("" if existing.endswith("\n") else "\n") + "\n".join(missing) + "\n")
+        return
     path.parent.mkdir(parents=True, exist_ok=True)
     try:
         with open(
@@ -124,10 +120,10 @@ def main(argv=None):
             lock.chmod(0o666)
         except FileExistsError:
             pass
-        run(compose + ["build", "backend", "worker", "frontend"], env=env)
-        run(compose + ["up", "-d", "--wait", "db", "rabbitmq"], env=env)
+        run(compose + ["build", "s3", "backend", "worker", "frontend"], env=env)
+        run(compose + ["up", "-d", "--wait", "elasticsearch", "s3", "rabbitmq"], env=env)
         run(
-            compose + ["run", "--rm", "--no-deps", "backend", "python", "-c", PREPARE_DATABASE],
+            compose + ["run", "--rm", "--no-deps", "backend", "python", "-m", "backend.db"],
             env=env,
         )
         run(compose + ["up", "-d", "backend", "worker", "frontend"], env=env)

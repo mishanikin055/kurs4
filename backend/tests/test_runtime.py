@@ -22,9 +22,11 @@ from backend.settings import Settings, model_specs
 
 
 @pytest.fixture
-def settings(tmp_path):
+def settings(tmp_path, monkeypatch):
+    # Synthetic subprocesses need no model memory; test the memory gate separately below.
+    monkeypatch.setattr("backend.runtime.check_memory", lambda: None)
     return Settings(
-        database_url="postgresql+psycopg://unused:unused@localhost/unused",
+        s3_secret_key="testing",
         broker_url="amqp://unused:unused@localhost/unused",
         lock_path=tmp_path / "inference.lock",
         detection_python=sys.executable,

@@ -1,12 +1,15 @@
 from contextlib import asynccontextmanager
 
+from botocore.exceptions import BotoCoreError, ClientError
+from elastic_transport import TransportError
+from elasticsearch import ApiError
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
-from sqlalchemy.exc import SQLAlchemyError
 
 from backend import __version__
 from backend.api import router
-from backend.db import make_engine, make_sessions
+from backend.db import make_elasticsearch, make_s3
+from backend.repository import ImageRepository
 from backend.settings import Settings
 from backend.tasks import make_celery
 
@@ -40,12 +43,13 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @asynccontextmanager
     async def lifespan(app):
-        engine = make_engine(settings.database_url.get_secret_value())
-        app.state.sessions = make_sessions(engine)
+        es, s3 = make_elasticsearch(settings), make_s3(settings)
+        app.state.repository = ImageRepository(es, s3, settings)
         try:
             yield
         finally:
-            engine.dispose()
+            es.close()
+            s3.close()
             celery.close()
 
     app = FastAPI(title="Image Analysis API", version=__version__, lifespan=lifespan)
@@ -53,9 +57,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.celery = celery
     app.state.settings = settings
 
-    @app.exception_handler(SQLAlchemyError)
-    async def database_unavailable(request, exc):
-        return JSONResponse(status_code=503, content={"detail": "database_unavailable"})
+    async def storage_unavailable(request, exc):
+        return JSONResponse(status_code=503, content={"detail": "storage_unavailable"})
+
+    for error in (ApiError, TransportError, BotoCoreError, ClientError, OSError):
+        app.add_exception_handler(error, storage_unavailable)
 
     app.include_router(router)
     return app

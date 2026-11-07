@@ -19,7 +19,8 @@ from backend.repository import ImageRepository
 from backend.schemas import AnnotationPayload, ClassificationPayload, DetectionPayload, ImageResult
 from backend.settings import Settings, model_specs
 from backend.storage import build_artifacts
-from backend.tables import STAGES
+
+STAGES = ("detection", "classification", "annotation")
 
 
 class ProcessingInterrupted(BaseException):
@@ -145,7 +146,7 @@ def validate_payload(
 
 def process_image(
     image_id: UUID,
-    sessions,
+    repository: ImageRepository,
     settings: Settings,
     *,
     runner=run_stage,
@@ -155,12 +156,11 @@ def process_image(
     lock = inference_lock(settings.lock_path, deadline) if lock_fd is None else nullcontext(lock_fd)
     with lock as lock_fd, tempfile.TemporaryDirectory(prefix="image-inference-") as temporary:
         source = Path(temporary)
-        with sessions() as session:
-            repository = ImageRepository(session)
-            if repository.get(image_id) is not None:
-                return
-            record, inputs = repository.input(image_id)
-            size = (record.width, record.height)
+        if repository.get(image_id) is not None:
+            repository.cleanup_input(image_id)
+            return
+        record, inputs = repository.input(image_id)
+        size = (record.width, record.height)
         for name, content in inputs.items():
             (source / name).write_bytes(content)
         del inputs
@@ -245,6 +245,6 @@ def process_image(
             settings,
             crop_padding=specs["classification"]["parameters"].get("crop_padding_fraction", 0.1),
         )
-        # Publication and all binary artifacts become visible in one transaction.
-        with sessions.begin() as session:
-            ImageRepository(session).publish(result, artifacts, manifest)
+        # Upload crops first, then atomically publish the complete ES document.
+        repository.publish(result, artifacts, manifest)
+        repository.cleanup_input(image_id)

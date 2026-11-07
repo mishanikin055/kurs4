@@ -4,7 +4,7 @@ WORKDIR /app
 COPY backend/requirements.txt /app/backend/requirements.txt
 RUN pip install --no-cache-dir -r backend/requirements.txt
 RUN useradd --uid 1000 --create-home app \
-    && mkdir -p /var/lib/kurs4/locks \
+    && mkdir -p /var/lib/kurs4/locks /var/lib/kurs4/pending \
     && chown -R app:app /var/lib/kurs4
 COPY backend /app/backend
 USER app
@@ -27,7 +27,9 @@ RUN python -m venv --system-site-packages /opt/detection \
 RUN python -m venv --system-site-packages /opt/annotation \
     && /opt/annotation/bin/pip install --no-cache-dir -r /tmp/requirements-annotation.in -c /tmp/annotation.lock \
     && /opt/annotation/bin/pip check
-RUN useradd --uid 1000 --create-home app
+RUN useradd --uid 1000 --create-home app \
+    && mkdir -p /var/lib/kurs4/pending \
+    && chown -R app:app /var/lib/kurs4
 COPY backend /app/backend
 ENV PYTHONUNBUFFERED=1 HF_HOME=/tmp/hf HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 OMP_NUM_THREADS=4
 USER app
