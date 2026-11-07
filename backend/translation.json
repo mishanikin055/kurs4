@@ -1,48 +1,61 @@
 {
-  "repo_id": "Helsinki-NLP/opus-mt-en-ru",
-  "revision": "bb09c99d180016eac6819df3dae68edb1690fdee",
-  "model_name": "opus_mt_en_ru",
-  "license": "Apache-2.0",
+  "repo_id": "Helsinki-NLP/opus-mt-tc-big-en-zle",
+  "revision": "708be1d372fe4c358a352f404e6dc9ca0126ba48",
+  "model_name": "opus_mt_tc_big_en_zle",
+  "license": "CC-BY-4.0",
+  "attribution": "Helsinki-NLP / OPUS-MT; Jörg Tiedemann and Santhosh Thottingal",
+  "model_card": "https://huggingface.co/Helsinki-NLP/opus-mt-tc-big-en-zle/blob/708be1d372fe4c358a352f404e6dc9ca0126ba48/README.md",
   "files": [
     {
       "path": "config.json",
-      "sha256": "d3c2614fd099bc228fc257f047e46f1c6f94cfa12dee2b1fa6c0d780e6b7de06",
-      "size": 1381
+      "sha256": "962d235879c9def4cfdf140be81436d4fb9da25271dd69079df2c90b459f1332",
+      "size": 1076
     },
     {
       "path": "generation_config.json",
-      "sha256": "152452cb7a96bff6c20b54f91fae2a655b72a8a9ce978ca3e9384f87253d5281",
-      "size": 293
+      "sha256": "d851d84c804c745d92dae5659bd2d8e8b976b664dd0fbc39b82ee88340147802",
+      "size": 301
     },
     {
       "path": "source.spm",
-      "sha256": "16bebef1389a0b8ab452772c4e35b9e605e5713f8ac7baa71ca701394eaa086d",
-      "size": 802781
+      "sha256": "3612abfe04bf08344ba91115f0e15e228a7a15a621ea856bfd548097dbaeb43c",
+      "size": 802747
     },
     {
       "path": "target.spm",
-      "sha256": "745998e51ba5b058e38b7ac7765c25c43ed5c1c39cc92b27163b9b2e323c9d7c",
-      "size": 1080169
+      "sha256": "22940e744b3a9fd166a04880938fb61f7dfa8ba4b5d2d3f6371a6c4ba8f3b019",
+      "size": 1017004
+    },
+    {
+      "path": "special_tokens_map.json",
+      "sha256": "09059cedc26bc46bc09a52f05b92d4922e11917e87f3b92059bb1a63a59ab2c4",
+      "size": 65
     },
     {
       "path": "tokenizer_config.json",
-      "sha256": "eca697b0e7109b94a9f2a1de82173fdbd4ddee97d1fd46a15b3162f191e6eed2",
-      "size": 42
+      "sha256": "41deeedfc0e3ce366d6bde180dee025a8ca1bcd62b1451889301e8ea4bcbb609",
+      "size": 339
     },
     {
       "path": "vocab.json",
-      "sha256": "33e95da3be3fa3b50169c4c46693ba2f29fbf4cb29d99044bd07d72d181fa1e9",
-      "size": 2601758
+      "sha256": "41dbdff4a0b5a6ab125715c3342c5ce6516e93ffd49608813240403f036c5efb",
+      "size": 2510527
     },
     {
       "path": "README.md",
-      "sha256": "020bfd697b7d0da0338611cf445eb44ae45dda27ff49f2bf64e21ee46882b48b",
-      "size": 1123
+      "sha256": "20a1bf8e91021f5aae1b271c633fbb70319acce47206292f0063f39db1cb67f9",
+      "size": 10310
     },
     {
-      "path": "pytorch_model.bin",
-      "sha256": "d15fa58c6bc3efd3629c1b6b86d9aa6d15d2751a4620aa4cdd7eed7b5cbe583b",
-      "size": 306991893
+      "path": "model.safetensors",
+      "sha256": "e68caa9a233c177a3489257b69c18cece6da97767ab2581918ce3fc3c3899416",
+      "size": 478977130
+    },
+    {
+      "path": "LICENSE",
+      "url": "https://raw.githubusercontent.com/creativecommons/creativecommons.org/main/docroot/legalcode/by_4.0.txt",
+      "sha256": "9ba9550ad48438d0836ddab3da480b3b69ffa0aac7b7878b5a0039e7ab429411",
+      "size": 18657
     }
   ]
 }

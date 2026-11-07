@@ -68,7 +68,10 @@ def test_unanswerable_is_not_translated():
 def test_translation_checks_context_and_complete_output(monkeypatch, mode):
     monkeypatch.setitem(sys.modules, "torch", SimpleNamespace(inference_mode=nullcontext))
     tokenizer, model = MagicMock(), MagicMock()
-    ids = SimpleNamespace(shape=(1, 513 if mode == "long" else 6))
+    tokenizer.model_max_length = 512
+    ids = MagicMock()
+    ids.shape = (1, 513 if mode == "long" else 6)
+    ids.to.return_value = ids
     tokenizer.return_value = {"input_ids": ids}
     model.config.max_position_embeddings = 512
     model.config.eos_token_id = 0
@@ -77,7 +80,9 @@ def test_translation_checks_context_and_complete_output(monkeypatch, mode):
     tokenizer.decode.return_value = " " if mode == "empty" else "Кошка."
     if mode == "valid":
         assert models.translate_caption("A cat.", (tokenizer, model)) == "Кошка."
-        tokenizer.assert_called_once_with("A cat.", return_tensors="pt", truncation=False)
+        tokenizer.assert_called_once_with(">>rus<< A cat.", return_tensors="pt", truncation=False)
+        ids.to.assert_called_once_with("cpu")
+        assert model.generate.call_args.kwargs["num_beams"] == 4
     else:
         with pytest.raises(ValueError):
             models.translate_caption("A cat.", (tokenizer, model))
@@ -95,7 +100,11 @@ def test_russian_caption_requires_original_object():
 def test_translation_removes_florence_introduction_only(monkeypatch):
     monkeypatch.setitem(sys.modules, "torch", SimpleNamespace(inference_mode=nullcontext))
     tokenizer, model = MagicMock(), MagicMock()
-    tokenizer.return_value = {"input_ids": SimpleNamespace(shape=(1, 6))}
+    tokenizer.model_max_length = 512
+    ids = MagicMock()
+    ids.shape = (1, 6)
+    ids.to.return_value = ids
+    tokenizer.return_value = {"input_ids": ids}
     model.config.max_position_embeddings = 512
     model.config.eos_token_id = 0
     model.generate.return_value[0][-1].item.return_value = 0
@@ -104,24 +113,81 @@ def test_translation_removes_florence_introduction_only(monkeypatch):
     assert (
         models.translate_caption("In this image, I can see a cat.", (tokenizer, model)) == "Кошка."
     )
-    tokenizer.assert_called_once_with("a cat.", return_tensors="pt", truncation=False)
+    tokenizer.assert_called_once_with(">>rus<< a cat.", return_tensors="pt", truncation=False)
 
 
-def test_translation_keeps_each_sentence(monkeypatch):
+def test_translation_whole_caption_keeps_context(monkeypatch):
     monkeypatch.setitem(sys.modules, "torch", SimpleNamespace(inference_mode=nullcontext))
     tokenizer, model = MagicMock(), MagicMock()
-    tokenizer.return_value = {"input_ids": SimpleNamespace(shape=(1, 6))}
-    model.config.max_position_embeddings = 512
+    tokenizer.model_max_length = 512
+    ids = MagicMock()
+    ids.shape = (1, 6)
+    ids.to.return_value = ids
+    tokenizer.return_value = {"input_ids": ids}
+    model.config.max_position_embeddings = 1024
     model.config.eos_token_id = 0
     model.generate.return_value[0][-1].item.return_value = 0
     model.generate.return_value[0].__len__.return_value = 10
-    tokenizer.decode.side_effect = ["Автомобиль на земле.", "На фоне деревья."]
-    source = "In this image we can see a vehicle on the ground. In the background there are trees."
-    assert (
-        models.translate_caption(source, (tokenizer, model))
-        == "Автомобиль на земле. На фоне деревья."
+    tokenizer.decode.return_value = "Птица на земле. Она смотрит вдаль."
+    source = "In this image we can see a bird on the ground. It looks into the distance."
+    assert models.translate_caption(source, (tokenizer, model)) == tokenizer.decode.return_value
+    tokenizer.assert_called_once_with(
+        ">>rus<< a bird on the ground. It looks into the distance.",
+        return_tensors="pt",
+        truncation=False,
     )
-    assert [call.args[0] for call in tokenizer.call_args_list] == [
-        "a vehicle on the ground.",
-        "In the background there are trees.",
-    ]
+    assert model.generate.call_args.kwargs["num_beams"] == 4
+
+
+def test_translator_loads_verified_safetensors_only_on_cpu(tmp_path, monkeypatch):
+    import hashlib
+
+    (tmp_path / "model.safetensors").write_bytes(b"weights")
+    monkeypatch.setattr(
+        models,
+        "TRANSLATION_SPEC",
+        {
+            "files": [
+                {"path": "model.safetensors", "sha256": hashlib.sha256(b"weights").hexdigest()}
+            ]
+        },
+    )
+    tokenizer_loader, model_loader = MagicMock(), MagicMock()
+    monkeypatch.setitem(
+        sys.modules,
+        "transformers",
+        SimpleNamespace(
+            MarianTokenizer=tokenizer_loader,
+            MarianMTModel=model_loader,
+        ),
+    )
+    tokenizer, model = models.load_translator(tmp_path)
+    tokenizer_loader.from_pretrained.assert_called_once_with(str(tmp_path), local_files_only=True)
+    model_loader.from_pretrained.assert_called_once_with(
+        str(tmp_path),
+        local_files_only=True,
+        torch_dtype="float32",
+        use_safetensors=True,
+    )
+    model_loader.from_pretrained.return_value.to.assert_called_once_with("cpu")
+    assert model is model_loader.from_pretrained.return_value.to.return_value.eval.return_value
+    assert tokenizer is tokenizer_loader.from_pretrained.return_value
+    (tmp_path / "model.safetensors").write_bytes(b"wrong")
+    with pytest.raises(ValueError, match="Translation checkpoint checksum mismatch"):
+        models.load_translator(tmp_path)
+    assert model_loader.from_pretrained.call_count == 1
+
+
+@pytest.mark.parametrize("tokenizer_limit,model_limit", [(512, 1024), (1024, 512)])
+def test_translation_context_includes_target_language_token(
+    monkeypatch, tokenizer_limit, model_limit
+):
+    monkeypatch.setitem(sys.modules, "torch", SimpleNamespace(inference_mode=nullcontext))
+    tokenizer, model = MagicMock(), MagicMock()
+    tokenizer.model_max_length = tokenizer_limit
+    model.config.max_position_embeddings = model_limit
+    tokenizer.return_value = {"input_ids": SimpleNamespace(shape=(1, 513))}
+    with pytest.raises(ValueError, match="Caption exceeds translation model context"):
+        models.translate_caption("A cat.", (tokenizer, model))
+    tokenizer.assert_called_once_with(">>rus<< A cat.", return_tensors="pt", truncation=False)
+    model.generate.assert_not_called()

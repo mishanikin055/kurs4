@@ -54,7 +54,7 @@ def test_sources_cover_application_models_and_translator():
     assert {target.parent.name for target, *_ in rows} == {
         "rf_detr_small",
         "florence2_base_ft",
-        "opus_mt_en_ru",
+        "opus_mt_tc_big_en_zle",
     }
     assert all(len(expected) == 64 for _, expected, *_ in rows)
     assert all(spec.get("size") or spec.get("generated") for *_, spec in rows)

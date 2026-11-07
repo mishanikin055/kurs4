@@ -11,6 +11,8 @@ from uuid import uuid4
 
 from PIL import Image
 
+TRANSLATION_SPEC = json.loads(Path(__file__).with_name("translation.json").read_text())
+
 
 def verify_files(stage: str, request: dict) -> Path:
     stage = "annotation" if stage == "classification" else stage
@@ -187,7 +189,7 @@ def load_translator(directory: Path):
     """Keep the small English-to-Russian model on CPU alongside resident Florence."""
     from transformers import MarianMTModel, MarianTokenizer
 
-    spec = json.loads(Path(__file__).with_name("translation.json").read_text())
+    spec = TRANSLATION_SPEC
     for item in spec["files"]:
         digest = hashlib.sha256()
         with (directory / item["path"]).open("rb") as stream:
@@ -196,9 +198,13 @@ def load_translator(directory: Path):
         if digest.hexdigest() != item["sha256"]:
             raise ValueError("Translation checkpoint checksum mismatch")
     tokenizer = MarianTokenizer.from_pretrained(str(directory), local_files_only=True)
-    model = MarianMTModel.from_pretrained(
-        str(directory), local_files_only=True, torch_dtype="float32"
-    ).eval()
+    model = (
+        MarianMTModel.from_pretrained(
+            str(directory), local_files_only=True, torch_dtype="float32", use_safetensors=True
+        )
+        .to("cpu")
+        .eval()
+    )
     return tokenizer, model
 
 
@@ -216,21 +222,22 @@ def translate_caption(caption: str, loaded) -> str | None:
     )
     if not text.strip() or text.strip().casefold() == "unanswerable":
         return None
-    translated_sentences = []
-    # Marian is trained on sentence pairs; whole paragraphs can lose a sentence.
-    for sentence in re.split(r"(?<=[.!?])\s+", text.strip()):
-        inputs = tokenizer(sentence, return_tensors="pt", truncation=False)
-        if inputs["input_ids"].shape[-1] > model.config.max_position_embeddings:
-            raise ValueError("Caption exceeds translation model context")
-        with torch.inference_mode():
-            output = model.generate(**inputs, max_new_tokens=511, do_sample=False, num_beams=1)
-        if len(output[0]) >= 512 or output[0][-1].item() != model.config.eos_token_id:
-            raise ValueError("Incomplete Russian translation")
-        translated = tokenizer.decode(output[0], skip_special_tokens=True)
-        if not translated.strip():
-            raise ValueError("Empty Russian translation")
-        translated_sentences.append(translated.strip())
-    return " ".join(translated_sentences)
+    inputs = tokenizer(">>rus<< " + text.strip(), return_tensors="pt", truncation=False)
+    context_limit = min(tokenizer.model_max_length, model.config.max_position_embeddings)
+    if inputs["input_ids"].shape[-1] > context_limit:
+        raise ValueError("Caption exceeds translation model context")
+    inputs = {name: value.to("cpu") for name, value in inputs.items()}
+    max_new_tokens = min(511, model.config.max_position_embeddings - 1)
+    with torch.inference_mode():
+        output = model.generate(
+            **inputs, max_new_tokens=max_new_tokens, do_sample=False, num_beams=4
+        )
+    if len(output[0]) >= max_new_tokens + 1 or output[0][-1].item() != model.config.eos_token_id:
+        raise ValueError("Incomplete Russian translation")
+    translated = tokenizer.decode(output[0], skip_special_tokens=True)
+    if not translated.strip():
+        raise ValueError("Empty Russian translation")
+    return translated.strip()
 
 
 def predict(request: dict, directory: Path, *, loaded=None, translator=None, image=None) -> dict:
@@ -251,7 +258,7 @@ def predict(request: dict, directory: Path, *, loaded=None, translator=None, ima
             raise ValueError("Unknown stage")
         if stage in {"annotation", "classification"}:
             if translator is None:
-                translator = load_translator(directory.parent / "opus_mt_en_ru")
+                translator = load_translator(directory.parent / TRANSLATION_SPEC["model_name"])
             if stage == "annotation":
                 payload["russian_caption"] = translate_caption(payload["raw_caption"], translator)
             else:
@@ -288,7 +295,7 @@ def serve(fd: int) -> None:
             loaded = load_detector(directory, device)
         else:
             loaded = load_annotator(directory, device)
-            translator = load_translator(directory.parent / "opus_mt_en_ru")
+            translator = load_translator(directory.parent / TRANSLATION_SPEC["model_name"])
         # Pay CUDA/kernel initialization once, before consuming user jobs.
         warmup = dict(
             spec, detection={"objects": [{"object_id": str(uuid4()), "bbox": [0, 0, 224, 224]}]}

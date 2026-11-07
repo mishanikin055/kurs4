@@ -364,11 +364,11 @@ def test_external_storage_failure_never_falls_back_to_local_minio(bundle, monkey
 
 
 def test_check_weights_requires_verified_translation_files(bundle):
-    directory = bundle / "annotation/models/opus_mt_en_ru"
+    directory = bundle / "annotation/models/opus_mt_tc_big_en_zle"
     directory.mkdir()
     target = directory / "weights"
     manifest = {
-        "model_name": "opus_mt_en_ru",
+        "model_name": "opus_mt_tc_big_en_zle",
         "files": [{"path": "weights", "sha256": hashlib.sha256(b"translation").hexdigest()}],
     }
     (bundle / "backend/translation.json").write_text(json.dumps(manifest))

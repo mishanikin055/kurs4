@@ -41,7 +41,7 @@ def sources():
     for item in translation["files"]:
         target = ROOT / "annotation/models" / translation["model_name"] / item["path"]
         url = f"https://huggingface.co/{translation['repo_id']}/resolve/{translation['revision']}/{item['path']}"
-        yield target, item["sha256"], url, item
+        yield target, item["sha256"], item.get("url", url), item
 
 
 def fetch(target, expected, url, spec):
