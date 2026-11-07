@@ -156,6 +156,7 @@ def test_server_loads_once_and_rejects_checkpoint_change(settings, tmp_path, mon
     monkeypatch.setattr(models, "verify_files", verify)
     monkeypatch.setattr(models, "load_detector", loader)
     monkeypatch.setattr(models, "load_annotator", loader)
+    monkeypatch.setattr(models, "load_translator", Mock(return_value=object()))
     monkeypatch.setattr(models, "predict", predict)
     monkeypatch.setitem(sys.modules, "torch", Mock())
     left, right = socket.socketpair()

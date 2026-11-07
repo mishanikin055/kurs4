@@ -32,6 +32,7 @@ class ClassifiedObject(BaseModel):
     object_id: UUID
     label: str | None = Field(default=None, min_length=1)  # Legacy ImageNet bundles.
     object_caption: str | None = Field(default=None, min_length=1)
+    russian_caption: str | None = Field(default=None, min_length=1, pattern=r"\S")
     error: dict | None = None
 
     @model_validator(mode="after")
@@ -41,6 +42,8 @@ class ClassifiedObject(BaseModel):
             or self.error == {}
         ):
             raise ValueError("Expected one object caption, legacy label or crop error")
+        if self.russian_caption is not None and self.object_caption is None:
+            raise ValueError("Russian caption requires original object caption")
         if self.object_caption is not None and not self.object_caption.strip():
             raise ValueError("Empty object caption")
         return self
@@ -52,6 +55,7 @@ class ClassificationPayload(BaseModel):
 
 class AnnotationPayload(BaseModel):
     raw_caption: str = Field(min_length=1)
+    russian_caption: str | None = Field(default=None, min_length=1, pattern=r"\S")
 
 
 class ImageResult(BaseModel):

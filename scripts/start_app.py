@@ -86,7 +86,10 @@ def use_external_s3(compose, env):
 
 def check_weights():
     specs = json.loads((ROOT / "backend" / "checkpoints.json").read_text(encoding="utf-8"))
+    translation = json.loads((ROOT / "backend/translation.json").read_text(encoding="utf-8"))
+    specs["translation"] = translation
     for stage, spec in specs.items():
+        stage = "annotation" if stage == "translation" else stage
         directory = ROOT / stage / "models" / spec["model_name"]
         for item in spec["files"]:
             path = directory / item["path"]

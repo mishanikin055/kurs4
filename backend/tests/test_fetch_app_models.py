@@ -43,7 +43,7 @@ def test_bad_download_never_becomes_a_model_file(tmp_path, monkeypatch, data, si
     assert not list(target.parent.iterdir())
 
 
-def test_sources_cover_exactly_two_application_models():
+def test_sources_cover_application_models_and_translator():
     rows = list(fetcher.sources())
     assert {target.name for target, *_ in rows} >= {
         "rf-detr-small.pth",
@@ -51,6 +51,10 @@ def test_sources_cover_exactly_two_application_models():
         "model.safetensors",
         "modeling_florence2.py",
     }
-    assert {target.parent.name for target, *_ in rows} == {"rf_detr_small", "florence2_base_ft"}
+    assert {target.parent.name for target, *_ in rows} == {
+        "rf_detr_small",
+        "florence2_base_ft",
+        "opus_mt_en_ru",
+    }
     assert all(len(expected) == 64 for _, expected, *_ in rows)
     assert all(spec.get("size") or spec.get("generated") for *_, spec in rows)

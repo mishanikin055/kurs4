@@ -17,7 +17,12 @@ INDEX_MAPPING = {
             "type": "object",
             "dynamic": False,
             "properties": {
-                "annotation": {"properties": {"raw_caption": {"type": "text"}}},
+                "annotation": {
+                    "properties": {
+                        "raw_caption": {"type": "text"},
+                        "russian_caption": {"type": "text", "analyzer": "russian"},
+                    }
+                },
                 "detection": {
                     "properties": {
                         "objects": {
@@ -37,6 +42,7 @@ INDEX_MAPPING = {
                             "properties": {
                                 "object_id": {"type": "keyword"},
                                 "object_caption": {"type": "text"},
+                                "russian_caption": {"type": "text", "analyzer": "russian"},
                             },
                         }
                     }
@@ -79,6 +85,9 @@ def initialize(settings: Settings, es, s3) -> None:
         except BadRequestError as exc:
             if exc.error != "resource_already_exists_exception":
                 raise
+    es.indices.put_mapping(
+        index=settings.elasticsearch_index, properties=INDEX_MAPPING["properties"]
+    )
     try:
         s3.head_bucket(Bucket=settings.s3_bucket)
     except ClientError as exc:

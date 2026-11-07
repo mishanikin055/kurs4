@@ -3,6 +3,7 @@
 import hashlib
 import json
 import math
+import re
 import sys
 import time
 from pathlib import Path
@@ -182,7 +183,57 @@ def annotate(image: Image.Image, directory: Path, parameters: dict, *, loaded=No
     }
 
 
-def predict(request: dict, directory: Path, *, loaded=None, image=None) -> dict:
+def load_translator(directory: Path):
+    """Keep the small English-to-Russian model on CPU alongside resident Florence."""
+    from transformers import MarianMTModel, MarianTokenizer
+
+    spec = json.loads(Path(__file__).with_name("translation.json").read_text())
+    for item in spec["files"]:
+        digest = hashlib.sha256()
+        with (directory / item["path"]).open("rb") as stream:
+            for block in iter(lambda: stream.read(1024 * 1024), b""):
+                digest.update(block)
+        if digest.hexdigest() != item["sha256"]:
+            raise ValueError("Translation checkpoint checksum mismatch")
+    tokenizer = MarianTokenizer.from_pretrained(str(directory), local_files_only=True)
+    model = MarianMTModel.from_pretrained(
+        str(directory), local_files_only=True, torch_dtype="float32"
+    ).eval()
+    return tokenizer, model
+
+
+def translate_caption(caption: str, loaded) -> str | None:
+    if caption.strip().casefold() == "unanswerable":
+        return None
+    import torch
+
+    tokenizer, model = loaded
+    text = re.sub(
+        r"^\s*in\s+this\s+image\s*,?\s*(?:i|we)\s+can\s+see\b[\s,:;-]*",
+        "",
+        caption,
+        flags=re.IGNORECASE,
+    )
+    if not text.strip() or text.strip().casefold() == "unanswerable":
+        return None
+    translated_sentences = []
+    # Marian is trained on sentence pairs; whole paragraphs can lose a sentence.
+    for sentence in re.split(r"(?<=[.!?])\s+", text.strip()):
+        inputs = tokenizer(sentence, return_tensors="pt", truncation=False)
+        if inputs["input_ids"].shape[-1] > model.config.max_position_embeddings:
+            raise ValueError("Caption exceeds translation model context")
+        with torch.inference_mode():
+            output = model.generate(**inputs, max_new_tokens=511, do_sample=False, num_beams=1)
+        if len(output[0]) >= 512 or output[0][-1].item() != model.config.eos_token_id:
+            raise ValueError("Incomplete Russian translation")
+        translated = tokenizer.decode(output[0], skip_special_tokens=True)
+        if not translated.strip():
+            raise ValueError("Empty Russian translation")
+        translated_sentences.append(translated.strip())
+    return " ".join(translated_sentences)
+
+
+def predict(request: dict, directory: Path, *, loaded=None, translator=None, image=None) -> dict:
     try:
         if image is None:
             with Image.open(request["image_path"]) as source:
@@ -198,6 +249,17 @@ def predict(request: dict, directory: Path, *, loaded=None, image=None) -> dict:
             payload = annotate(image, directory, request["parameters"], loaded=loaded)
         else:
             raise ValueError("Unknown stage")
+        if stage in {"annotation", "classification"}:
+            if translator is None:
+                translator = load_translator(directory.parent / "opus_mt_en_ru")
+            if stage == "annotation":
+                payload["russian_caption"] = translate_caption(payload["raw_caption"], translator)
+            else:
+                for obj in payload["objects"]:
+                    if "object_caption" in obj:
+                        obj["russian_caption"] = translate_caption(
+                            obj["object_caption"], translator
+                        )
         return {"payload": payload}
     except Exception as exc:
         return {
@@ -221,15 +283,23 @@ def serve(fd: int) -> None:
         directory = verify_files(spec["stage"], spec)
         started = time.monotonic()
         device = spec["parameters"]["device"]
+        translator = None
         if spec["stage"] == "detection":
             loaded = load_detector(directory, device)
         else:
             loaded = load_annotator(directory, device)
+            translator = load_translator(directory.parent / "opus_mt_en_ru")
         # Pay CUDA/kernel initialization once, before consuming user jobs.
         warmup = dict(
             spec, detection={"objects": [{"object_id": str(uuid4()), "bbox": [0, 0, 224, 224]}]}
         )
-        response = predict(warmup, directory, loaded=loaded, image=Image.new("RGB", (224, 224)))
+        response = predict(
+            warmup,
+            directory,
+            loaded=loaded,
+            translator=translator,
+            image=Image.new("RGB", (224, 224)),
+        )
         if "error" in response:
             send(channel, response)
             return
@@ -254,7 +324,7 @@ def serve(fd: int) -> None:
                 send(channel, {"error": {"code": "model_not_configured"}})
                 continue
             started = time.monotonic()
-            response = predict(request, directory, loaded=loaded)
+            response = predict(request, directory, loaded=loaded, translator=translator)
             if device.startswith("cuda"):
                 torch.cuda.synchronize(device)
             print(f"stage={stage} inference_s={time.monotonic() - started:.3f}", flush=True)

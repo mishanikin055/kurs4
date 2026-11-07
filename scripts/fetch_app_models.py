@@ -37,6 +37,12 @@ def sources():
                 url = spec.get("url")
             yield target, item["sha256"], url, spec
 
+    translation = json.loads((ROOT / "backend/translation.json").read_text(encoding="utf-8"))
+    for item in translation["files"]:
+        target = ROOT / "annotation/models" / translation["model_name"] / item["path"]
+        url = f"https://huggingface.co/{translation['repo_id']}/resolve/{translation['revision']}/{item['path']}"
+        yield target, item["sha256"], url, item
+
 
 def fetch(target, expected, url, spec):
     if target.exists():

@@ -6,3 +6,5 @@ Pillow==11.0.0
 einops==0.8.1
 timm==1.0.22
 typing-extensions==4.16.0
+sentencepiece==0.2.1
+sacremoses==0.1.1

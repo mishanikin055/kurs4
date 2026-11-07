@@ -228,6 +228,18 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAoAAAAHgCAIAAAC6s0uzAAADk0lEQVR
     if (process.env.SCREENSHOT_DIR) await page.screenshot({ path: `${process.env.SCREENSHOT_DIR}/simple-mobile.png`, fullPage: true });
     await page.locator(".object-number").nth(1).click();
     assert.equal(await page.locator(".object-number").nth(1).getAttribute("aria-pressed"), "true");
+    preview = { ...result,
+      annotation: { raw_caption: "A dog and a cat.", russian_caption: "Собака и <b>кошка</b>." },
+      classification: { objects: [
+        { object_id: "cat", object_caption: "A spotted cat.", russian_caption: "Пятнистая кошка." },
+        { object_id: "dog", object_caption: "A brown dog.", russian_caption: "Коричневая собака." },
+      ] },
+    };
+    await page.locator("#submit").click();
+    await page.locator("#result").waitFor({ state: "visible" });
+    assert.equal(await page.locator("#caption").textContent(), "Собака и <b>кошка</b>.");
+    assert.equal(await page.locator("#caption b").count(), 0, "Russian translation remains literal text");
+    assert.deepEqual(await page.locator("#objects tr").allTextContents(), ["1dogКоричневая собака.", "2catПятнистая кошка."], "Russian captions are matched by object ID");
     for (const [rawCaption, expected] of [
       ["In this image I can see a dog.", "A dog."],
       ["In this image we can see a dog.", "A dog."],
@@ -329,7 +341,7 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAoAAAAHgCAIAAAC6s0uzAAADk0lEQVR
     const docs = await browser.newPage();
     const docsErrors = [];
     docs.on("pageerror", (error) => docsErrors.push(error.message));
-    await docs.route("https://cdn.jsdelivr.net/**", (route) => route.fulfill({
+    await docs.route("**/vendor/swagger-ui/**", (route) => route.fulfill({
       contentType: route.request().url().endsWith(".css") ? "text/css" : "application/javascript",
       body: route.request().url().endsWith(".css") ? "" : "window.SwaggerUIBundle = (config) => { window.swaggerConfig = config; document.getElementById('swagger-ui').textContent = config.spec.info.title; };",
     }));

@@ -50,7 +50,7 @@ function renderObjects(result) {
   $("object-overlays").replaceChildren();
   $("image-stage").style.setProperty("--image-ratio", result.width / result.height);
   $("image-stage").style.aspectRatio = `${result.width} / ${result.height}`;
-  const captions = new Map(result.classification.objects.map((object) => [object.object_id, object.object_caption]));
+  const captions = new Map(result.classification.objects.map((object) => [object.object_id, object.russian_caption ?? object.object_caption]));
   result.detection.objects.forEach((object, index) => {
     const row = document.createElement("tr");
     const number = document.createElement("button");
@@ -232,7 +232,7 @@ async function waitForResult(id, deadline = Date.now() + 40 * 60 * 1000) {
     if (canPreview) $("result-image").src = previewUrl;
     $("result-image").width = result.width;
     $("result-image").height = result.height;
-    const caption = result.annotation.raw_caption.replace(/^\s*in\s+this\s+image\s*,?\s*(?:i|we)\s+can\s+see\b[\s,:;-]*/i, "");
+    const caption = (result.annotation.russian_caption ?? result.annotation.raw_caption).replace(/^\s*in\s+this\s+image\s*,?\s*(?:i|we)\s+can\s+see\b[\s,:;-]*/i, "");
     $("caption").textContent = displayCaption(caption).replace(/^\s*\p{L}/u, (start) => start.toUpperCase());
     $("caption").hidden = false;
     $("annotation-placeholder").hidden = true;
