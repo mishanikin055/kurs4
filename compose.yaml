@@ -1,3 +1,4 @@
+# Исторические научные сравнения. Приложение запускается через scripts/start_app.py.
 x-runtime: &runtime
   init: true
   working_dir: /workspace

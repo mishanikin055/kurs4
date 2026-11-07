@@ -1,6 +1,10 @@
 .git
 .venv*
 **/__pycache__
+**/*.py[cod]
+.pytest_cache
+.ruff_cache
+.playwright-mcp
 detection/models
 data
 storage
@@ -15,3 +19,12 @@ classification/models
 .secrets
 
 annotation/models
+
+# Старое SQL-хранилище сохранено локально, но приложению Elasticsearch не нужно.
+backend/alembic.ini
+backend/migrations
+backend/tables.py
+backend/import_legacy.py
+backend/tests/test_migrations.py
+backend/tests/test_import_legacy.py
+backend/tests/test_worker_integration.py
