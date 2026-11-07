@@ -250,6 +250,6 @@ def process_image(
             settings,
             crop_padding=specs["classification"]["parameters"].get("crop_padding_fraction", 0.1),
         )
-        # Upload crops first, then atomically publish the complete ES document.
+        # Upload all result PNGs first, then conditionally publish the complete ES document.
         repository.publish(result, artifacts, manifest)
         repository.cleanup_input(image_id)

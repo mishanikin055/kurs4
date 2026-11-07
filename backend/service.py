@@ -47,7 +47,7 @@ class ImageService:
         return AcceptedImage(image_id=image_id)
 
     def result_file(self, image_id: UUID, filename: str) -> tuple[str, bytes]:
-        names = {"results.json"}
+        names = {"results.json", "detection.png"}
         if filename not in names and not fullmatch(r"crops/[0-9a-f-]{36}\.png", filename):
             raise FileNotFoundError
         artifact = self.repository.artifact(image_id, filename)

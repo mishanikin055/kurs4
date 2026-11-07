@@ -280,6 +280,11 @@ async function saveToFolder(id, selectedFolder) {
     const manifest = await (await resultFile(id, "results.json")).blob();
     const result = JSON.parse(await manifest.text());
     const directory = await selectedFolder.getDirectoryHandle(id, { create: true });
+    if (result.detection_image === "detection.png") {
+      const response = await resultFile(id, "detection.png");
+      const file = await directory.getFileHandle("detection.png", { create: true });
+      await response.body.pipeTo(await file.createWritable());
+    }
     if (result.crops) {
       const crops = await directory.getDirectoryHandle("crops", { create: true });
       for (const name of result.crops) {

@@ -24,7 +24,4 @@ annotation/models
 backend/alembic.ini
 backend/migrations
 backend/tables.py
-backend/import_legacy.py
 backend/tests/test_migrations.py
-backend/tests/test_import_legacy.py
-backend/tests/test_worker_integration.py

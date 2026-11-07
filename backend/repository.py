@@ -1,4 +1,4 @@
-"""Result metadata in Elasticsearch, crops in S3, pending inputs in shared scratch."""
+"""Metadata in Elasticsearch, result PNGs in S3, pending inputs in shared scratch."""
 
 import json
 import os
@@ -90,11 +90,15 @@ class ImageRepository:
         if (source["width"], source["height"]) != (result.width, result.height):
             raise ValueError("Conflicting image dimensions")
         expected = {f"crops/{obj.object_id}.png" for obj in result.detection.objects}
+        expected.add("detection.png")
         if set(artifacts) != expected | {"results.json"}:
-            raise ValueError("Expected only crops and results.json")
-        if ImageResult.model_validate(manifest) != result or set(manifest["crops"]) != {
-            name.removeprefix("crops/") for name in expected
-        }:
+            raise ValueError("Expected crops, detection.png and results.json")
+        if (
+            ImageResult.model_validate(manifest) != result
+            or manifest.get("detection_image") != "detection.png"
+            or set(manifest["crops"])
+            != {name.removeprefix("crops/") for name in expected if name.startswith("crops/")}
+        ):
             raise ValueError("Conflicting result manifest")
         check_artifacts(artifacts, self.settings)
         attempt = uuid4()
@@ -104,8 +108,8 @@ class ImageRepository:
             key = f"{result.id}/{attempt}/{name}"
             self.s3.put_object(Bucket=self.bucket, Key=key, Body=content, ContentType="image/png")
             files[name] = {"key": key, "size": len(content), "sha256": sha256(content).hexdigest()}
-        # One conditional ES write publishes all metadata after every crop has been stored.
-        # Failed/ambiguous writes may leave unreferenced S3 crops; never delete a possible winner.
+        # Keep the existing crop_files field for all PNG references; no index migration needed.
+        # Publish only after every PNG is stored; ambiguous writes must not trigger deletion.
         try:
             self.es.index(
                 index=self.index,
@@ -136,7 +140,7 @@ class ImageRepository:
             response = self.s3.get_object(Bucket=self.bucket, Key=reference["key"])
         except ClientError as exc:
             if exc.response["Error"]["Code"] in {"NoSuchKey", "404"}:
-                raise OSError("Missing stored crop") from exc
+                raise OSError("Missing stored image") from exc
             raise
         body = response["Body"]
         try:
@@ -144,7 +148,7 @@ class ImageRepository:
         finally:
             body.close()
         if len(content) != reference["size"] or sha256(content).hexdigest() != reference["sha256"]:
-            raise OSError("Stored crop integrity check failed")
+            raise OSError("Stored image integrity check failed")
         return SimpleNamespace(content_type="image/png", content=content)
 
     def bundle(self, image_id: UUID) -> dict[str, tuple[str, bytes]]:

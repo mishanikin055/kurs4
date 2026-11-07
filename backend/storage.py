@@ -122,6 +122,7 @@ def build_artifacts(
     artifacts = {}
     manifest = result.model_dump(mode="json", exclude_none=True)
     manifest["crops"] = []
+    manifest["detection_image"] = "detection.png"
     with Image.open(source / "normalized.png") as source_image:
         image = source_image.convert("RGB")
         for obj in result.detection.objects:
@@ -131,6 +132,10 @@ def build_artifacts(
             artifacts[f"crops/{name}"] = stream.getvalue()
             check_artifacts(artifacts, settings)
             manifest["crops"].append(name)
+    rendered = save_detection_image(
+        str(source / "normalized.png"), source / "detection.png", manifest["detection"]
+    )
+    artifacts["detection.png"] = rendered.read_bytes()
     artifacts["results.json"] = json.dumps(
         manifest, ensure_ascii=False, indent=2, allow_nan=False
     ).encode("utf-8")

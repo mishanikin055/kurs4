@@ -50,7 +50,8 @@ def ready_bundle(app, *, legacy=False, empty=False):
     )
     manifest = result.model_dump(mode="json", exclude_none=True)
     manifest["crops"] = [] if empty else [f"{object_id}.png"]
-    artifacts = {}
+    manifest["detection_image"] = "detection.png"
+    artifacts = {"detection.png": image_bytes()}
     if not empty:
         artifacts[f"crops/{object_id}.png"] = image_bytes(size=(7, 7))
     artifacts["results.json"] = json.dumps(manifest, ensure_ascii=False, indent=2).encode()
@@ -128,7 +129,6 @@ def test_files_zip_and_captions_preserve_original_bytes(app, monkeypatch):
         for name in (
             "original",
             "normalized.png",
-            "detection.png",
             "secret",
             "crops/not-a-crop.png",
             "crops/../../secret",
@@ -146,6 +146,19 @@ def test_legacy_mapping_changes_only_preview(app):
             client.get(f"/images/{image_id}/files/results.json").content
             == artifacts["results.json"]
         )
+
+
+def test_preexisting_result_without_detection_image_remains_available(app):
+    image_id, _, _ = ready_bundle(app)
+    source = app.state.test_repository.es.documents[str(image_id)]["_source"]
+    source["manifest"].pop("detection_image")
+    source["crop_files"].pop("detection.png")
+    with TestClient(app) as client:
+        assert client.get(f"/images/{image_id}").status_code == 200
+        assert client.get(f"/images/{image_id}/files/detection.png").status_code == 404
+        with ZipFile(BytesIO(client.get(f"/images/{image_id}/archive").content)) as archive:
+            assert f"{image_id}/results.json" in archive.namelist()
+            assert f"{image_id}/detection.png" not in archive.namelist()
 
 
 def test_empty_crops_folder_is_present_in_export(app):

@@ -1,4 +1,4 @@
-"""Publication failures keep inputs; completed results contain only metadata and crops."""
+"""Publication failures keep inputs; completed results reference all stored PNGs."""
 
 import json
 from uuid import uuid4
@@ -29,11 +29,13 @@ def prepared(repository, tmp_path):
     return result, manifest, artifacts
 
 
-def test_only_crops_in_s3_metadata_in_es_and_no_overwrite(repository, tmp_path):
+def test_result_images_in_s3_metadata_in_es_and_no_overwrite(repository, tmp_path):
     result, manifest, artifacts = prepared(repository, tmp_path)
     repository.publish(result, artifacts, manifest)
-    assert len(repository.s3.objects) == 1
-    assert all("/crops/" in key and key.endswith(".png") for key in repository.s3.objects)
+    assert len(repository.s3.objects) == 2
+    assert {key.split("/", 2)[2] for key in repository.s3.objects} == set(artifacts) - {
+        "results.json"
+    }
     source = repository.es.documents[str(result.id)]["_source"]
     assert json.loads(json.dumps(source))["manifest"] == manifest
     assert source["manifest"]["annotation"]["raw_caption"] == "  A scene.  "
@@ -62,17 +64,41 @@ def test_failure_never_publishes_and_retains_input(repository, tmp_path, monkeyp
     assert repository.get(result.id).manifest == manifest
 
 
-def test_missing_or_corrupt_crop_does_not_become_a_successful_download(repository, tmp_path):
+@pytest.mark.parametrize("kind", ["crop", "detection"])
+def test_missing_or_corrupt_image_does_not_become_a_successful_download(repository, tmp_path, kind):
     result, manifest, artifacts = prepared(repository, tmp_path)
     repository.publish(result, artifacts, manifest)
-    name = next(name for name in artifacts if name.startswith("crops/"))
-    key = next(iter(repository.s3.objects))
+    name = (
+        "detection.png"
+        if kind == "detection"
+        else next(name for name in artifacts if name.startswith("crops/"))
+    )
+    key = repository.get(result.id).crop_files[name]["key"]
     repository.s3.objects[key] = b"corrupt"
     with pytest.raises(OSError, match="integrity"):
         repository.artifact(result.id, name)
     repository.s3.objects.clear()
-    with pytest.raises(OSError, match="Missing stored crop"):
+    with pytest.raises(OSError, match="Missing stored image"):
         repository.artifact(result.id, name)
+
+
+def test_detection_upload_failure_does_not_publish_partial_result(
+    repository, tmp_path, monkeypatch
+):
+    result, manifest, artifacts = prepared(repository, tmp_path)
+    put = repository.s3.put_object
+
+    def fail_detection(**kwargs):
+        if kwargs["Key"].endswith("/detection.png"):
+            raise ConnectionError("synthetic detection upload failure")
+        put(**kwargs)
+
+    monkeypatch.setattr(repository.s3, "put_object", fail_detection)
+    with pytest.raises(ConnectionError):
+        repository.publish(result, artifacts, manifest)
+    assert repository.get(result.id) is None
+    assert repository._input_path(result.id).exists()
+    assert any("/crops/" in key for key in repository.s3.objects)
 
 
 def test_lost_publish_confirmation_can_be_recovered_without_overwriting(

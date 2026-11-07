@@ -1,4 +1,4 @@
-"""Uploads and metadata in Elasticsearch; crop downloads from local S3."""
+"""Uploads and metadata in Elasticsearch; result image downloads from S3."""
 
 import json
 from io import BytesIO

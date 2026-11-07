@@ -70,14 +70,19 @@ def test_real_storage_api_and_mock_pipeline(storage, monkeypatch, empty):
         assert not storage._input_path(image_id).exists()
         manifest = client.get(f"/images/{image_id}").json()
         assert manifest["annotation"]["raw_caption"] == "  Synthetic caption.  "
-        expected = {"results.json", *(f"crops/{name}" for name in manifest["crops"])}
+        expected = {
+            "results.json",
+            "detection.png",
+            *(f"crops/{name}" for name in manifest["crops"]),
+        }
         with ZipFile(BytesIO(client.get(f"/images/{image_id}/archive").content)) as archive:
             names = {f"{image_id}/{name}" for name in expected}
             if empty:
                 names.add(f"{image_id}/crops/")
             assert set(archive.namelist()) == names
             assert json.loads(archive.read(f"{image_id}/results.json")) == manifest
-        for name in ("original", "normalized.png", "detection.png"):
+        assert client.get(f"/images/{image_id}/files/detection.png").status_code == 200
+        for name in ("original", "normalized.png"):
             assert client.get(f"/images/{image_id}/files/{name}").status_code == 404
         before = len(calls)
         process_image(image_id, storage, storage.settings, runner=runner)
@@ -88,5 +93,5 @@ def test_real_storage_api_and_mock_pipeline(storage, monkeypatch, empty):
         )
         assert hits["hits"]["total"]["value"] == 1
         objects = storage.s3.list_objects_v2(Bucket=storage.bucket).get("Contents", [])
-        assert len(objects) == len(manifest["crops"])
-        assert all("/crops/" in obj["Key"] for obj in objects)
+        assert len(objects) == len(manifest["crops"]) + 1
+        assert {obj["Key"].split("/", 2)[2] for obj in objects} == expected - {"results.json"}

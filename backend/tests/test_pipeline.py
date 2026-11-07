@@ -1,6 +1,7 @@
 """CPU inference coordination and Elasticsearch/S3 publication tests; no model weights."""
 
 from concurrent.futures import ThreadPoolExecutor
+from io import BytesIO
 from pathlib import Path
 from threading import Event
 from types import SimpleNamespace
@@ -8,6 +9,7 @@ from uuid import uuid4
 
 import pytest
 from elastic_transport import ConnectionError
+from PIL import Image
 
 from backend.processing import ProcessingInterrupted, process_image
 from backend.repository import ImageRepository
@@ -73,6 +75,11 @@ def test_parallel_branches_then_captions_publish_and_duplicate_skips_models(pipe
     assert p.repository.bundle(p.id) == before
     assert all(not path.exists() for path in p.scratch)
     assert not p.repository._input_path(p.id).exists()
+    assert p.repository.get(p.id).manifest["detection_image"] == "detection.png"
+    with Image.open(BytesIO(p.repository.artifact(p.id, "detection.png").content)) as image:
+        assert image.size == (result.width, result.height)
+        assert image.getpixel((0, 4)) == (255, 0, 0)
+        assert image.getpixel((15, 11)) == (0, 0, 0)
 
 
 @pytest.mark.parametrize("stage", ["detection", "classification", "annotation"])
@@ -95,7 +102,10 @@ def test_no_detections_saves_empty_crops_and_classification(pipeline, monkeypatc
     assert sorted(p.calls) == ["annotation", "detection"]
     assert p.saved[p.id].result.classification.objects == []
     assert p.repository.get(p.id).manifest["crops"] == []
-    assert len(p.repository.bundle(p.id)) == 1
+    bundle = p.repository.bundle(p.id)
+    assert set(bundle) == {"results.json", "detection.png"}
+    with Image.open(BytesIO(bundle["detection.png"][1])) as image:
+        assert image.tobytes() == Image.new("RGB", image.size).tobytes()
 
 
 def test_failed_publication_is_not_ready_and_retry_recomputes(pipeline, monkeypatch):

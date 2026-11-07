@@ -46,12 +46,14 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAoAAAAHgCAIAAAC6s0uzAAADk0lEQVR
     const result = {
       id: imageId, width: 640, height: 480,
       crops: ["dog.png", "cat.png"],
+      detection_image: "detection.png",
       detection: { objects: [{ object_id: "dog", label: "dog", bbox: [32, 24, 240, 432] }, { object_id: "cat", label: "cat", bbox: [40, 30, 640, 480] }] },
       classification: { objects: [{ object_id: "cat", object_caption: "  <b>A spotted cat</b>.  " }, { object_id: "dog", object_caption: "A brown dog." }] },
       annotation: { raw_caption: "  A dog and <b>a cat</b>.  " },
     };
     let preview = result;
     const files = {
+      "detection.png": png,
       "crops/dog.png": png,
       "crops/cat.png": png,
       "results.json": Buffer.from(JSON.stringify(result)),
@@ -207,7 +209,7 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAoAAAAHgCAIAAAC6s0uzAAADk0lEQVR
     await page.evaluate(() => { window.savedFiles = {}; });
     await page.locator("#submit").click();
     await page.waitForFunction(() => document.getElementById("status").textContent.includes("Копия сохранена"));
-    assert.equal(await page.evaluate(() => Object.keys(window.savedFiles).length), 3, "Folder selected before upload receives all files and crops automatically");
+    assert.equal(await page.evaluate(() => Object.keys(window.savedFiles).length), 4, "Folder selected before upload receives JSON, annotated image and crops automatically");
     for (const flag of ["folderPermission", "folderWriteError"]) {
       await page.evaluate((key) => { window[key] = key === "folderPermission" ? "denied" : true; }, flag);
       await page.locator("#choose-folder").click();

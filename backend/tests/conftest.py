@@ -16,8 +16,6 @@ from backend.settings import Settings
 # These tests target the retired storage, not the Elasticsearch application.
 collect_ignore = [
     "test_migrations.py",
-    "test_import_legacy.py",
-    "test_worker_integration.py",
 ]
 
 

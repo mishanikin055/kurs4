@@ -17,7 +17,7 @@ x-app: &app
 
 services:
   frontend:
-    image: kurs4-frontend:0.3.2
+    image: kurs4-frontend:0.3.3
     build:
       context: ./frontend
     restart: unless-stopped
@@ -76,7 +76,7 @@ services:
       retries: 20
   backend:
     <<: *app
-    image: kurs4-backend:0.3.2
+    image: kurs4-backend:0.3.3
     build:
       context: .
       dockerfile: backend/Dockerfile
@@ -86,7 +86,7 @@ services:
       - "127.0.0.1:${APP_HTTP_PORT:-8000}:8000"
   worker:
     <<: *app
-    image: kurs4-worker:0.3.2
+    image: kurs4-worker:0.3.3
     build:
       context: .
       dockerfile: backend/Dockerfile
