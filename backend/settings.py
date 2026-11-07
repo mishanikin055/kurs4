@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from pydantic import Field, SecretStr
+from pydantic import Field, SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -28,6 +28,11 @@ class Settings(BaseSettings):
     device: str = "cuda"
     stage_timeout: float = Field(default=600, gt=0)
     job_timeout: float = Field(default=2400, gt=0, lt=6000)
+
+    @field_validator("s3_endpoint_url", mode="before")
+    @classmethod
+    def default_s3_endpoint(cls, value):
+        return (value or "").strip().rstrip("/") or "http://s3:9000"
 
 
 def model_specs(settings: Settings) -> dict:

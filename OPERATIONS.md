@@ -1,10 +1,10 @@
 # Техническая документация Image Analysis
 
-Версия 0.3.1. Запуск — в [README](README.md). Старые учебные материалы находятся в archive/coursework.
+Версия 0.3.2. Запуск — в [README](README.md). Старые учебные материалы находятся в archive/coursework.
 
 ## Компоненты и хранение
 
-Docker поднимает nginx frontend, FastAPI backend, Elasticsearch, локальное S3 MinIO, RabbitMQ и Celery worker. API модели не загружает. Очередь содержит только UUID; worker concurrency/prefetch/batch = 1. Elasticsearch и S3 не публикуют порты на хост; API/frontend доступны через localhost.
+Docker поднимает nginx frontend, FastAPI backend, Elasticsearch, RabbitMQ и Celery worker. S3 по умолчанию — локальный MinIO; при внешнем endpoint локальный сервер не запускается. API модели не загружает. Очередь содержит только UUID; worker concurrency/prefetch/batch = 1. Elasticsearch и локальный S3 не публикуют порты на хост; API/frontend доступны через localhost.
 
 API проверяет JPEG/PNG, применяет EXIF orientation и создаёт RGB PNG без EXIF. Исходные байты не записываются в постоянное хранилище. Для передачи между API и worker нормализованный PNG временно лежит в volume `pending_inputs`; метаданные входа — в Elasticsearch. После этого API отправляет UUID с подтверждением RabbitMQ. Потерянное подтверждение может означать доставленное сообщение, поэтому временный вход сохраняется для повтора.
 
@@ -35,15 +35,21 @@ RF-DETR Small выполняет детекцию параллельно с оп
 
 ## Настройки и запуск
 
-Launcher создаёт `.secrets/app.env` со случайными паролями; этот файл не коммитится и не выводится. API/worker используют существующий S3-клиент с path addressing ([настройки Boto3](https://docs.aws.amazon.com/boto3/latest/guide/configuration.html)). Сборка настроена только для локального S3. Подключение удалённого хранилища, его авторизация/TLS и перенос данных не входят в эту версию.
+Launcher создаёт `.secrets/app.env` со случайными локальными паролями; этот файл не коммитится и не выводится. API/worker используют S3-клиент с path addressing и стандартной проверкой TLS ([настройки Boto3](https://docs.aws.amazon.com/boto3/latest/guide/configuration.html)). Пустой/не заданный `APP_S3_ENDPOINT_URL` и `http://s3:9000` выбирают локальный MinIO. Любой другой HTTP(S)-адрес выбирает внешний S3: нужны непустые `APP_S3_ACCESS_KEY`, `APP_S3_SECRET_KEY`, `APP_S3_BUCKET` и `APP_S3_REGION`. Launcher читает effective environment через Compose, поэтому кавычки и подстановка dotenv обрабатываются так же, как при запуске контейнеров; shell `APP_S3_*` сами по себе не заменяют значения `env_file`.
+
+Для внешнего адреса launcher добавляет `compose.app.external-s3.yaml`: MinIO исключён профилем, зависимость `depends_on.s3` у API/worker удалена через `!reset` ([слияние Compose](https://docs.docker.com/reference/compose-file/merge/)). Нужен современный Docker Compose с поддержкой `!reset`. MinIO не собирается и не запускается; прежний локальный контейнер останавливается после успешной инициализации внешнего хранилища и переключения приложений. Volume остаётся на месте. Новые ключи внешнего S3 launcher не генерирует. `--check` проверяет конфигурацию и веса без сетевого запроса к S3 и без изменения файлов/контейнеров.
+
+Обычный запуск проверяет bucket до старта нового worker. Рекомендуется заранее создать bucket: нужны права для HEAD bucket, PUT и GET объектов. При 404/NoSuchBucket инициализация пробует создать bucket с указанным регионом; ошибка доступа не превращается в создание bucket. Ошибки внешнего S3 завершают запуск, локального fallback нет. Не отключайте TLS verification. Session token, специальный CA и автоматический перенос данных не настроены; совместимость с реальным облачным провайдером пока не проверена.
+
+Перед сменой endpoint/bucket остановите приложение и дождитесь окончания обработки. Существующие crop references не содержат прежнего endpoint/bucket: после переключения старые результаты ищут вырезки в новом хранилище. Для их сохранения нужен перенос объектов с теми же ключами или возврат прежних настроек. Launcher данные не переносит и не удаляет.
 
 | Переменная | Назначение |
 |---|---|
 | `APP_ELASTICSEARCH_URL` | `http://elasticsearch:9200` внутри Docker. |
 | `APP_ELASTICSEARCH_INDEX` | `image-results`. |
-| `APP_S3_ENDPOINT_URL` | `http://s3:9000` внутри Docker. |
-| `APP_S3_ACCESS_KEY`, `APP_S3_SECRET_KEY` | Совпадают с локальными `MINIO_ROOT_USER`, `MINIO_ROOT_PASSWORD`. |
-| `APP_S3_BUCKET`, `APP_S3_REGION` | `image-analysis`, `us-east-1`. |
+| `APP_S3_ENDPOINT_URL` | Пустой/`http://s3:9000` — локальный MinIO; другой HTTP(S)-адрес — внешний S3. |
+| `APP_S3_ACCESS_KEY`, `APP_S3_SECRET_KEY` | Локально совпадают с `MINIO_ROOT_USER`/`MINIO_ROOT_PASSWORD`; для внешнего S3 — ключи провайдера. |
+| `APP_S3_BUCKET`, `APP_S3_REGION` | Локально `image-analysis`, `us-east-1`; для внешнего S3 задаются явно. |
 | `APP_PENDING_INPUT_DIR` | `/var/lib/kurs4/pending`, общий временный вход API/worker. |
 | `APP_BROKER_URL` | URL RabbitMQ из секретов. |
 | `APP_DEVICE` | Явный `cpu`/`cuda`; launcher выбирает режим. |
@@ -93,4 +99,6 @@ docker compose -p kurs4-app -f compose.app.yaml --profile processing down
 
 `APP_TEST_INTEGRATION=1` включает тесты настоящих Elasticsearch/S3. Используйте отдельные тестовые контейнеры и тестовые credentials: тест создаёт и удаляет только свои случайные index/bucket. Инференс в нём синтетический, веса не загружаются. Новые отчёты, benchmark и проверки производительности без отдельного поручения не создаются.
 
-Проверено 07.11.2026 для 0.3.1: 122 CPU/mock теста backend, 2 интеграционных теста пропущены в этом прогоне; Ruff check/format, сборки и конфигурации Docker прошли. После увеличения локального лимита WSL с 8 до 12 ГБ RAM и swap с 2 до 4 ГБ восстановлена обработка уже принятого изображения 810×1080 на NVIDIA GPU: сохранены аннотация, детекция, описания 5 объектов и 5 вырезок в S3. Получены JSON и ZIP без полных изображений, проверено удаление временного входа. Это функциональная проверка одного задания; настоящий CPU-инференс не проверен. Бенчмарки и нагрузочные проверки не выполнялись.
+Проверено 07.11.2026 для 0.3.2: 154 CPU/mock теста backend, 2 интеграционных теста пропущены; Ruff check/format прошли. Настоящий Compose проверен для локального/пустого/внешнего endpoint в CPU/CUDA/WSL-конфигурациях, включая кавычки и подстановки dotenv: внешний режим исключает MinIO и зависимости API/worker от него. Локальный `--check` прошёл без запуска сервисов. Реальный внешний S3 и новый GPU-инференс в этой версии не запускались.
+
+Ранее проверено для 0.3.1: 122 CPU/mock теста backend, Ruff check/format, сборки и конфигурации Docker прошли. После увеличения локального лимита WSL с 8 до 12 ГБ RAM и swap с 2 до 4 ГБ восстановлена обработка уже принятого изображения 810×1080 на NVIDIA GPU: сохранены аннотация, детекция, описания 5 объектов и 5 вырезок в S3. Получены JSON и ZIP без полных изображений, проверено удаление временного входа. Это функциональная проверка одного задания; настоящий CPU-инференс не проверен. Бенчмарки и нагрузочные проверки не выполнялись.

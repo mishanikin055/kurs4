@@ -80,11 +80,15 @@ def test_secrets_generate_matching_password_and_never_overwrite(bundle):
     assert path.read_text() == content
 
 
-def mock_docker(monkeypatch, *, runtimes=None):
+def mock_docker(monkeypatch, *, runtimes=None, s3_settings=None):
     calls = []
 
     def run(command, **kwargs):
         calls.append((command, kwargs))
+        if command[-3:] == ["config", "--format", "json"]:
+            return SimpleNamespace(
+                stdout=json.dumps({"services": {"backend": {"environment": s3_settings or {}}}})
+            )
         return SimpleNamespace(
             stdout=json.dumps(
                 {
@@ -228,3 +232,129 @@ def test_existing_postgres_settings_receive_s3_without_changing_broker(bundle):
     before = secret.read_bytes()
     start_app.prepare_secrets()
     assert secret.read_bytes() == before
+
+
+def external_settings(bundle, **overrides):
+    values = {
+        "APP_S3_ENDPOINT_URL": "https://objects.example.invalid",
+        "APP_S3_ACCESS_KEY": "external-user",
+        "APP_S3_SECRET_KEY": "external-secret",
+        "APP_S3_BUCKET": "existing-crops",
+        "APP_S3_REGION": "eu-west-1",
+    } | overrides
+    secret = bundle / ".secrets" / "app.env"
+    secret.parent.mkdir(exist_ok=True)
+    secret.write_text("".join(f"{name}={value}\n" for name, value in values.items()))
+    return values
+
+
+@pytest.mark.parametrize("endpoint", [None, "", "  ", "http://s3:9000", "http://s3:9000/"])
+def test_local_s3_endpoint_keeps_minio_in_startup(bundle, monkeypatch, endpoint):
+    values = external_settings(bundle, APP_S3_ENDPOINT_URL=endpoint or "")
+    if endpoint is None:
+        values.pop("APP_S3_ENDPOINT_URL")
+    calls = mock_docker(monkeypatch, s3_settings=values)
+    assert start_app.main(["--device", "cpu"]) == 0
+    commands = [command for command, _ in calls]
+    assert not any("compose.app.external-s3.yaml" in command for command in commands)
+    assert any(
+        command[-6:] == ["up", "-d", "--wait", "elasticsearch", "s3", "rabbitmq"]
+        for command in commands
+    )
+
+
+@pytest.mark.parametrize("device", ["cpu", "cuda", "wsl-cuda"])
+def test_external_s3_skips_minio_and_stops_previous_container(bundle, monkeypatch, capsys, device):
+    values = external_settings(bundle)
+    calls = mock_docker(monkeypatch, s3_settings=values)
+    exists = Path.exists
+    monkeypatch.setattr(
+        Path, "exists", lambda path: True if path == Path("/dev/dxg") else exists(path)
+    )
+    assert start_app.main(["--device", device]) == 0
+    commands = [command for command, _ in calls]
+    startup = [command for command in commands if "build" in command or "up" in command]
+    assert all(
+        "compose.app.external-s3.yaml" in command and "s3" not in command for command in startup
+    )
+    assert commands[-3][-1] == "backend.db"
+    assert commands[-2][-5:] == ["up", "-d", "backend", "worker", "frontend"]
+    assert commands[-1][-2:] == ["stop", "s3"]
+    text = (bundle / ".secrets" / "app.env").read_text()
+    assert f"APP_S3_SECRET_KEY={values['APP_S3_SECRET_KEY']}\n" in text
+    assert "MINIO_ROOT" not in text
+    output = capsys.readouterr()
+    assert values["APP_S3_SECRET_KEY"] not in output.out + output.err
+    assert all(
+        kwargs["stdout"] == start_app.subprocess.PIPE
+        for command, kwargs in calls
+        if command[-3:] == ["config", "--format", "json"]
+    )
+
+
+def test_external_check_is_read_only_and_uses_compose_resolved_settings(bundle, monkeypatch):
+    values = external_settings(bundle)
+    secret = bundle / ".secrets" / "app.env"
+    secret.write_text('APP_S3_ENDPOINT_URL="${MY_S3_ENDPOINT}"\n')
+    calls = mock_docker(monkeypatch, s3_settings=values)
+    before = {path: path.read_bytes() for path in bundle.rglob("*") if path.is_file()}
+    assert start_app.main(["--device", "cpu", "--check"]) == 0
+    assert {path: path.read_bytes() for path in bundle.rglob("*") if path.is_file()} == before
+    assert any("compose.app.external-s3.yaml" in command for command, _ in calls)
+    assert not any(
+        "build" in command or "up" in command or "stop" in command for command, _ in calls
+    )
+
+
+@pytest.mark.parametrize(
+    "name", ["APP_S3_ACCESS_KEY", "APP_S3_SECRET_KEY", "APP_S3_BUCKET", "APP_S3_REGION"]
+)
+@pytest.mark.parametrize("value", ["", "REPLACE_WITH_S3_SECRET_HEX"])
+def test_incomplete_external_settings_fail_without_generating_credentials(
+    bundle, monkeypatch, capsys, name, value
+):
+    values = external_settings(bundle, **{name: value})
+    calls = mock_docker(monkeypatch, s3_settings=values)
+    secret = bundle / ".secrets" / "app.env"
+    original = secret.read_bytes()
+    assert start_app.main(["--device", "cpu"]) == 1
+    assert secret.read_bytes() == original
+    assert name in capsys.readouterr().err
+    assert not any(
+        "build" in command or "up" in command or "stop" in command for command, _ in calls
+    )
+
+
+@pytest.mark.parametrize(
+    "endpoint",
+    ["s3.example.invalid", "ftp://s3.example.invalid", "https://user:secret@example.invalid"],
+)
+def test_invalid_external_endpoint_is_rejected_without_exposing_it(
+    bundle, monkeypatch, capsys, endpoint
+):
+    values = external_settings(bundle, APP_S3_ENDPOINT_URL=endpoint)
+    calls = mock_docker(monkeypatch, s3_settings=values)
+    assert start_app.main(["--device", "cpu"]) == 1
+    output = capsys.readouterr()
+    assert "APP_S3_ENDPOINT_URL" in output.err
+    assert endpoint not in output.out + output.err
+    assert not any("build" in command or "up" in command for command, _ in calls)
+
+
+def test_external_storage_failure_never_falls_back_to_local_minio(bundle, monkeypatch):
+    values = external_settings(bundle)
+    calls = mock_docker(monkeypatch, s3_settings=values)
+    mocked_run = start_app.subprocess.run
+
+    def fail_init(command, **kwargs):
+        result = mocked_run(command, **kwargs)
+        if command[-1] == "backend.db":
+            raise start_app.subprocess.CalledProcessError(1, command)
+        return result
+
+    monkeypatch.setattr(start_app.subprocess, "run", fail_init)
+    assert start_app.main(["--device", "cpu"]) == 1
+    assert not any("s3" in command for command, _ in calls)
+    assert not any(
+        command[-5:] == ["up", "-d", "backend", "worker", "frontend"] for command, _ in calls
+    )

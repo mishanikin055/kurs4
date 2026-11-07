@@ -8,6 +8,7 @@ import secrets
 import subprocess
 import sys
 from pathlib import Path
+from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -23,7 +24,7 @@ def run(command, *, env, capture=False):
     )
 
 
-def prepare_secrets():
+def prepare_secrets(*, external_s3=False):
     path = ROOT / ".secrets" / "app.env"
     existing = path.read_text(encoding="utf-8") if path.exists() else ""
     values = dict(
@@ -43,7 +44,11 @@ def prepare_secrets():
     content = content.replace("MINIO_ROOT_USER=kurs4", "MINIO_ROOT_USER=" + s3_user)
     content = content.replace("APP_S3_ACCESS_KEY=kurs4", "APP_S3_ACCESS_KEY=" + s3_user)
     missing = [
-        line for line in content.splitlines() if "=" in line and line.split("=", 1)[0] not in values
+        line
+        for line in content.splitlines()
+        if "=" in line
+        and line.split("=", 1)[0] not in values
+        and not (external_s3 and line.startswith("MINIO_"))
     ]
     if existing:
         if missing:
@@ -58,6 +63,25 @@ def prepare_secrets():
             f.write(content)
     except FileExistsError:
         pass
+
+
+def use_external_s3(compose, env):
+    if not (ROOT / ".secrets" / "app.env").exists():
+        return False
+    # Let Compose resolve dotenv quoting/interpolation exactly as for the containers.
+    config = json.loads(run(compose + ["config", "--format", "json"], env=env, capture=True).stdout)
+    values = config["services"]["backend"]["environment"]
+    endpoint = (values.get("APP_S3_ENDPOINT_URL") or "").strip().rstrip("/")
+    if not endpoint or endpoint == "http://s3:9000":
+        return False
+    url = urlsplit(endpoint)
+    if url.scheme not in {"http", "https"} or not url.hostname or url.username or url.password:
+        raise RuntimeError("APP_S3_ENDPOINT_URL должен быть HTTP(S)-адресом S3 без ключей доступа.")
+    for name in ("APP_S3_ACCESS_KEY", "APP_S3_SECRET_KEY", "APP_S3_BUCKET", "APP_S3_REGION"):
+        value = values.get(name) or ""
+        if not value.strip() or value.startswith("REPLACE_WITH_"):
+            raise RuntimeError(f"Для внешнего S3 задайте {name} в .secrets/app.env.")
+    return True
 
 
 def check_weights():
@@ -108,14 +132,18 @@ def main(argv=None):
             raise RuntimeError(f"Docker не имеет runtime nvidia для режима cuda. {advice}")
         if args.device == "wsl-cuda" and not Path("/dev/dxg").exists():
             raise RuntimeError("Режим wsl-cuda требует /dev/dxg в локальной WSL.")
+        external_s3 = use_external_s3(compose, env)
+        if external_s3:
+            compose += ["-f", "compose.app.external-s3.yaml"]
         run(compose + ["config", "--quiet", "--no-env-resolution"], env=env)
         check_weights()
+        print("S3: внешний, локальный MinIO отключён." if external_s3 else "S3: локальный MinIO.")
         if args.check:
             print("Preflight passed. No services or settings were changed.")
             if not (ROOT / ".secrets" / "app.env").exists():
                 print(".secrets/app.env will be generated on launch.")
             return 0
-        prepare_secrets()
+        prepare_secrets(external_s3=external_s3)
         lock = ROOT / "storage" / "locks" / "inference.lock"
         lock.parent.mkdir(parents=True, exist_ok=True)
         if lock.is_symlink() or (lock.exists() and not lock.is_file()):
@@ -127,13 +155,17 @@ def main(argv=None):
             lock.chmod(0o666)
         except FileExistsError:
             pass
-        run(compose + ["build", "s3", "backend", "worker", "frontend"], env=env)
-        run(compose + ["up", "-d", "--wait", "elasticsearch", "s3", "rabbitmq"], env=env)
+        local_s3 = [] if external_s3 else ["s3"]
+        run(compose + ["build", *local_s3, "backend", "worker", "frontend"], env=env)
+        run(compose + ["up", "-d", "--wait", "elasticsearch", *local_s3, "rabbitmq"], env=env)
         run(
             compose + ["run", "--rm", "--no-deps", "backend", "python", "-m", "backend.db"],
             env=env,
         )
         run(compose + ["up", "-d", "backend", "worker", "frontend"], env=env)
+        if external_s3:
+            # Stop a previous local deployment only after the new storage is initialized.
+            run(compose + ["stop", "s3"], env=env)
         print("Services started. Open http://localhost:" + env.get("APP_FRONTEND_PORT", "8080"))
         print("Models initialize in the worker; inspect readiness with:")
         print(" ".join(compose + ["logs", "--tail", "100", "worker"]))

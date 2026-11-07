@@ -1,0 +1,10 @@
+# Selected by start_app.py when APP_S3_ENDPOINT_URL points to external storage.
+services:
+  s3:
+    profiles: ["local-s3"]
+  backend:
+    depends_on:
+      s3: !reset null
+  worker:
+    depends_on:
+      s3: !reset null
