@@ -1,4 +1,4 @@
-"""Uploads, previews and downloads work without accessing PostgreSQL."""
+"""HTTP contracts backed by SQL transactions, without running models or a broker."""
 
 import json
 from io import BytesIO
@@ -7,185 +7,168 @@ from zipfile import ZipFile
 
 import pytest
 from fastapi.testclient import TestClient
+from sqlalchemy import func, select
+from sqlalchemy.exc import OperationalError
 
 from backend.main import create_app
+from backend.repository import ImageRepository
+from backend.schemas import ImageResult
 from backend.settings import Settings
+from backend.tables import ImageRecord
 from backend.tests.test_storage import image_bytes
 
 
 @pytest.fixture
-def app(tmp_path, monkeypatch):
+def app(database, monkeypatch):
+    engine, sessions = database
     settings = Settings(
-        database_url="postgresql+psycopg://unused:unused@127.0.0.1:1/unused",
-        broker_url="amqp://unused:unused@127.0.0.1:1/unused",
-        image_root=tmp_path,
+        database_url="sqlite://", broker_url="amqp://unused:unused@127.0.0.1:1/unused"
     )
+    monkeypatch.setattr("backend.main.make_engine", lambda url: engine)
     monkeypatch.setattr("backend.service.publish_image", lambda *args: None)
-    return create_app(settings)
+    application = create_app(settings)
+    application.state.test_sessions = sessions
+    return application
 
 
-def test_upload_publishes_directly_without_database(app, monkeypatch):
+def ready_bundle(app, *, legacy=False, empty=False):
+    image_id, object_id = uuid4(), uuid4()
+    objects = [] if empty else [{"object_id": str(object_id), "label": "cat", "bbox": [1, 1, 8, 8]}]
+    classified = (
+        []
+        if empty
+        else [
+            {
+                "object_id": str(object_id),
+                **({"label": "tabby"} if legacy else {"object_caption": "  <b>A cat</b>.  "}),
+            }
+        ]
+    )
+    result = ImageResult(
+        id=image_id,
+        width=16,
+        height=12,
+        models={stage: {} for stage in ("detection", "classification", "annotation")},
+        detection={"objects": objects},
+        classification={"objects": classified},
+        annotation={"raw_caption": "  A detailed scene.  "},
+    )
+    manifest = result.model_dump(mode="json", exclude_none=True)
+    manifest["crops"] = [] if empty else [f"{object_id}.png"]
+    artifacts = {name: image_bytes() for name in ("original", "normalized.png", "detection.png")}
+    if not empty:
+        artifacts[f"crops/{object_id}.png"] = image_bytes(size=(7, 7))
+    artifacts["results.json"] = json.dumps(manifest, indent=3).encode()
+    with app.state.test_sessions.begin() as session:
+        repo = ImageRepository(session)
+        repo.create_input(
+            image_id, 16, 12, {name: artifacts[name] for name in ("original", "normalized.png")}
+        )
+        repo.publish(result, artifacts, manifest)
+    return image_id, manifest, artifacts
+
+
+def test_upload_commits_inputs_before_publishing_and_pending_is_not_visible(app, monkeypatch):
     published = []
-    monkeypatch.setattr("backend.service.publish_image", lambda *args: published.append(args))
+
+    def publish(celery, image_id, timeout):
+        with app.state.test_sessions() as session:
+            record, inputs = ImageRepository(session).input(UUID(image_id))
+            assert record.manifest is None
+            assert inputs["original"] == image_bytes()
+        published.append(image_id)
+
+    monkeypatch.setattr("backend.service.publish_image", publish)
     with TestClient(app) as client:
         response = client.post("/images", files={"file": ("photo.png", image_bytes())})
         assert response.status_code == 202
-        accepted = response.json()
-        image_id = UUID(accepted["image_id"])
-        assert accepted == {"image_id": str(image_id), "output_folder": f"results/{image_id}"}
-        assert published == [(app.state.celery, str(image_id), 3)]
-        assert (app.state.settings.image_root / str(image_id) / "original").is_file()
-        assert not (app.state.settings.image_root / "results").exists()
-        assert client.get(f"/jobs/{image_id}").status_code == 404
-        assert client.get(f"/jobs/{image_id}/status").status_code == 404
-        pending = client.get(f"/images/{image_id}")
-        assert pending.status_code == 404
-        assert pending.headers["cache-control"] == "no-store"
+        assert set(response.json()) == {"image_id"}
+        image_id = response.json()["image_id"]
+        assert published == [image_id]
+        for path in ("", "/files/original", "/archive"):
+            assert client.get(f"/images/{image_id}{path}").status_code == 404
+        assert client.get(f"/images/{image_id}").headers["cache-control"] == "no-store"
 
 
-def test_broker_failure_retains_inputs_in_case_confirmation_was_lost(app, monkeypatch):
+def test_lost_broker_confirm_retains_durable_input(app, monkeypatch):
     def fail(*args):
         raise ConnectionError("confirm lost")
 
     monkeypatch.setattr("backend.service.publish_image", fail)
     with TestClient(app) as client:
         response = client.post("/images", files={"file": ("photo.png", image_bytes())})
-    assert response.status_code == 503
-    assert len(list(app.state.settings.image_root.glob("*/normalized.png"))) == 1
+        assert response.status_code == 503
+    with app.state.test_sessions() as session:
+        record = session.scalars(select(ImageRecord)).one()
+        assert record.manifest is None
+        assert ImageRepository(session).input(record.id)[1]["original"] == image_bytes()
 
 
 @pytest.mark.parametrize("data,status", [(b"bad", 422), (image_bytes("GIF"), 415)])
-def test_invalid_upload_is_not_published(app, monkeypatch, data, status):
-    def unexpected_publish(*args):
-        pytest.fail("Invalid upload was published")
-
-    monkeypatch.setattr("backend.service.publish_image", unexpected_publish)
+def test_invalid_upload_never_persists_or_publishes(app, monkeypatch, data, status):
+    monkeypatch.setattr(
+        "backend.service.publish_image", lambda *args: pytest.fail("Invalid upload published")
+    )
     with TestClient(app) as client:
         assert client.post("/images", files={"file": ("bad.png", data)}).status_code == status
-    assert not list(app.state.settings.image_root.iterdir())
+    with app.state.test_sessions() as session:
+        assert session.scalar(select(func.count()).select_from(ImageRecord)) == 0
 
 
-def test_downloads_only_expose_completed_bundle_inside_volume(app, tmp_path):
-    image_id = uuid4()
-    directory = tmp_path / "results" / str(image_id)
-    directory.mkdir(parents=True)
-    files = {
-        "original": image_bytes(),
-        "normalized.png": image_bytes(),
-        "detection.png": image_bytes(),
-        "results.json": b'{"annotation":{"raw_caption":"  Caption.  "}}',
-    }
+def test_files_zip_and_captions_preserve_original_bytes(app, monkeypatch):
+    monkeypatch.setattr(
+        "backend.service.compatible_labels", lambda: pytest.fail("Caption used mapping")
+    )
+    image_id, manifest, artifacts = ready_bundle(app)
     with TestClient(app) as client:
-        url = f"/images/{image_id}"
-        for name, content in files.items():
-            if name != "results.json":
-                (directory / name).write_bytes(content)
-        assert client.get(f"{url}/files/detection.png").status_code == 404
-        assert client.get(f"{url}/archive").status_code == 404
-        (directory / "results.json").write_bytes(files["results.json"])
-        for name, content in files.items():
-            response = client.get(f"{url}/files/{name}")
+        assert client.get(f"/images/{image_id}").json() == manifest
+        for name, content in artifacts.items():
+            response = client.get(f"/images/{image_id}/files/{name}")
             assert response.content == content
             assert response.headers["cache-control"] == "no-store"
-        archive = client.get(f"{url}/archive")
-        assert archive.headers["content-type"] == "application/zip"
-        with ZipFile(BytesIO(archive.content)) as bundle:
-            assert set(bundle.namelist()) == {f"{image_id}/{name}" for name in files}
-            assert bundle.read(f"{image_id}/results.json") == files["results.json"]
-        assert client.get(f"{url}/files/secret").status_code == 404
-        assert client.get("/images/invalid/archive").status_code == 422
-        outside = tmp_path / "secret.png"
-        outside.write_bytes(b"private")
-        (directory / "detection.png").unlink()
-        (directory / "detection.png").symlink_to(outside)
-        assert client.get(f"{url}/files/detection.png").status_code == 404
-        assert client.get(f"{url}/archive").status_code == 404
+        response = client.get(f"/images/{image_id}/archive")
+        assert response.status_code == 200
+        with ZipFile(BytesIO(response.content)) as archive:
+            assert set(archive.namelist()) == {f"{image_id}/{name}" for name in artifacts}
+            for name, content in artifacts.items():
+                assert archive.read(f"{image_id}/{name}") == content
+        for name in ("secret", "crops/not-a-crop.png", "crops/../../secret"):
+            assert client.get(f"/images/{image_id}/files/{name}").status_code == 404
 
 
-def test_file_size_is_checked_before_publication(app):
-    app.state.settings.max_upload_bytes = 50
+def test_legacy_mapping_changes_only_preview(app):
+    image_id, manifest, artifacts = ready_bundle(app, legacy=True)
     with TestClient(app) as client:
-        response = client.post("/images", files={"file": ("large.png", image_bytes())})
-    assert response.status_code == 413
-    assert not list(app.state.settings.image_root.iterdir())
+        preview = client.get(f"/images/{image_id}").json()
+        assert preview["classification"]["objects"][0]["refinement"] == "tabby"
+        assert preview["annotation"] == manifest["annotation"]
+        assert (
+            client.get(f"/images/{image_id}/files/results.json").content
+            == artifacts["results.json"]
+        )
 
 
-def test_crops_are_downloadable_and_included_in_zip(app, tmp_path):
-    image_id, object_id = uuid4(), uuid4()
-    directory = tmp_path / "results" / str(image_id)
-    (directory / "crops").mkdir(parents=True)
-    name = f"{object_id}.png"
-    crop = image_bytes(size=(5, 6))
-    (directory / "crops" / name).write_bytes(crop)
-    for filename in ("original", "normalized.png", "detection.png"):
-        (directory / filename).write_bytes(image_bytes())
-    manifest = directory / "results.json"
-    manifest.write_text(json.dumps({"crops": [name]}))
+def test_empty_crops_folder_is_present_in_export(app):
+    image_id, _, _ = ready_bundle(app, empty=True)
     with TestClient(app) as client:
-        url = f"/images/{image_id}"
-        assert client.get(f"{url}/files/crops/{name}").content == crop
-        with ZipFile(BytesIO(client.get(f"{url}/archive").content)) as archive:
-            assert archive.read(f"{image_id}/crops/{name}") == crop
-        assert client.get(f"{url}/files/crops/not-a-crop.png").status_code == 404
-        outside = tmp_path / "private.png"
-        outside.write_bytes(b"private")
-        (directory / "crops" / name).unlink()
-        (directory / "crops" / name).symlink_to(outside)
-        assert client.get(f"{url}/files/crops/{name}").status_code == 404
-        assert client.get(f"{url}/archive").status_code == 404
-        (directory / "crops" / name).unlink()
-        manifest.write_text(json.dumps({"crops": []}))
-        with ZipFile(BytesIO(client.get(f"{url}/archive").content)) as archive:
+        with ZipFile(BytesIO(client.get(f"/images/{image_id}/archive").content)) as archive:
             assert f"{image_id}/crops/" in archive.namelist()
 
 
-def test_preview_only_shows_compatible_refinements_and_preserves_raw_bundle(app, tmp_path):
-    image_id = uuid4()
-    directory = tmp_path / "results" / str(image_id)
-    directory.mkdir(parents=True)
-    pairs = [
-        ("person", "unicycle", None),
-        ("skateboard", "Loafer", None),
-        ("person", "whiskey jug", None),
-        ("cat", "tabby", "tabby"),
-        ("dog", "Labrador retriever", "Labrador retriever"),
-        ("dog", "tabby", None),
-        ("zebra", "zebra", None),
-        ("dog", "unknown", None),
-        ("dog", None, None),
-    ]
-    result = {
-        "detection": {
-            "objects": [
-                {"object_id": str(i), "label": coco} for i, (coco, _, _) in enumerate(pairs)
-            ]
-        },
-        "classification": {
-            "objects": [
-                {"object_id": str(i), "label": label} for i, (_, label, _) in enumerate(pairs)
-            ][::-1]
-        },
-        "annotation": {"raw_caption": "  A person on a skateboard.  "},
-    }
-    raw = json.dumps(result).encode()
-    (directory / "results.json").write_bytes(raw)
+def test_database_outage_returns_503_without_internal_details(app, monkeypatch):
+    def unavailable(*args):
+        raise OperationalError("secret query", {}, Exception("password"))
+
+    monkeypatch.setattr(ImageRepository, "get", unavailable)
     with TestClient(app) as client:
-        response = client.get(f"/images/{image_id}")
-        assert response.status_code == 200
-        assert response.headers["cache-control"] == "no-store"
-        preview = response.json()
-        assert preview["annotation"] == result["annotation"]
-        assert preview["detection"] == result["detection"]
-        for obj in preview["classification"]["objects"]:
-            i = int(obj["object_id"])
-            assert obj["label"] == pairs[i][1]
-            assert obj["refinement"] == pairs[i][2]
-        assert client.get(f"/images/{image_id}/files/results.json").content == raw
-    assert (directory / "results.json").read_bytes() == raw
+        response = client.get(f"/images/{uuid4()}")
+        assert response.status_code == 503
+        assert response.json() == {"detail": "database_unavailable"}
 
 
 def test_streaming_body_limit_without_content_length(app):
-    application = create_app(app.state.settings.model_copy(update={"max_upload_bytes": 50}))
+    app.state.settings.max_upload_bytes = 50
+    application = create_app(app.state.settings)
 
     def body():
         yield b'--test\r\nContent-Disposition: form-data; name="file"; filename="big.png"\r\n\r\n'
@@ -200,45 +183,25 @@ def test_streaming_body_limit_without_content_length(app):
             headers={"Content-Type": "multipart/form-data; boundary=test"},
         )
     assert response.status_code == 413
-    assert not list(app.state.settings.image_root.iterdir())
 
 
-def test_object_captions_reach_api_and_zip_without_mapping_or_rewrite(app, tmp_path, monkeypatch):
-    from io import BytesIO
-    from zipfile import ZipFile
-
-    def forbidden_mapping():
-        pytest.fail("Object captions must never use ImageNet mapping")
-
-    monkeypatch.setattr("backend.service.compatible_labels", forbidden_mapping)
-    image_id = uuid4()
-    directory = tmp_path / "results" / str(image_id)
-    directory.mkdir(parents=True)
-    result = {
-        "detection": {
-            "objects": [
-                {"object_id": "one", "label": "dog", "bbox": [0, 0, 8, 8]},
-                {"object_id": "two", "label": "cat", "bbox": [1, 1, 3, 3]},
-            ]
-        },
-        "classification": {
-            "objects": [
-                {"object_id": "two", "object_caption": "  <b>A cat</b>.  "},
-                {"object_id": "one", "object_caption": "tabby"},
-            ]
-        },
-        "annotation": {"raw_caption": "  A detailed scene.  "},
-        "crops": [],
-    }
-    raw = json.dumps(result).encode()
-    (directory / "results.json").write_bytes(raw)
-    for name in ("original", "normalized.png", "detection.png"):
-        (directory / name).write_bytes(b"test")
-    (directory / "crops").mkdir()
+def test_health_checks_both_dependencies(app, monkeypatch):
+    monkeypatch.setattr("backend.api.check_broker", lambda *args: True)
     with TestClient(app) as client:
-        assert client.get(f"/images/{image_id}").json() == result
-        assert client.get(f"/images/{image_id}/files/results.json").content == raw
-        with ZipFile(BytesIO(client.get(f"/images/{image_id}/archive").content)) as archive:
-            assert archive.read(f"{image_id}/results.json") == raw
-            assert f"{image_id}/crops/" in archive.namelist()
-    assert (directory / "results.json").read_bytes() == raw
+        assert client.get("/health").json() == {"rabbitmq": True, "database": True}
+        monkeypatch.setattr("backend.api.check_broker", lambda *args: False)
+        assert client.get("/health").status_code == 503
+
+
+def test_database_failure_during_upload_does_not_publish(app, monkeypatch):
+    def unavailable(*args):
+        raise OperationalError("private SQL", {}, Exception("password"))
+
+    monkeypatch.setattr(ImageRepository, "create_input", unavailable)
+    monkeypatch.setattr(
+        "backend.service.publish_image", lambda *args: pytest.fail("Undurable input published")
+    )
+    with TestClient(app) as client:
+        response = client.post("/images", files={"file": ("photo.png", image_bytes())})
+        assert response.status_code == 503
+        assert response.json() == {"detail": "database_unavailable"}

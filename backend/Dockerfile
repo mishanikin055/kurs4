@@ -4,7 +4,7 @@ WORKDIR /app
 COPY backend/requirements.txt /app/backend/requirements.txt
 RUN pip install --no-cache-dir -r backend/requirements.txt
 RUN useradd --uid 1000 --create-home app \
-    && mkdir -p /var/lib/kurs4/images /var/lib/kurs4/locks \
+    && mkdir -p /var/lib/kurs4/locks \
     && chown -R app:app /var/lib/kurs4
 COPY backend /app/backend
 USER app
@@ -38,5 +38,8 @@ USER root
 COPY backend/requirements-dev.txt /app/backend/requirements-dev.txt
 RUN pip install --no-cache-dir -r backend/requirements-dev.txt
 COPY pyproject.toml /app/pyproject.toml
+COPY scripts /app/scripts
+COPY detection/configs /app/detection/configs
+COPY annotation/configs /app/annotation/configs
 USER app
 CMD ["python", "-m", "pytest", "backend/tests", "-q"]

@@ -182,9 +182,9 @@ def worker_main(settings: Settings, *, runner=None) -> None:
                     # Fail readiness until the new completed-results table exists.
                     from sqlalchemy import select
 
-                    from backend.tables import ProcessedImage
+                    from backend.tables import ImageRecord
 
-                    session.execute(select(ProcessedImage.id).limit(1))
+                    session.execute(select(ImageRecord.id).limit(1))
                 break
             except SQLAlchemyError:
                 logger.warning("Worker waiting for database")

@@ -142,7 +142,7 @@ def load_annotator(directory: Path, device: str):
         str(directory),
         local_files_only=True,
         trust_remote_code=True,
-        torch_dtype=torch.float16,
+        torch_dtype=torch.float16 if device.startswith("cuda") else torch.float32,
         low_cpu_mem_usage=True,
         device_map={"": device},
         attn_implementation="eager",
@@ -159,7 +159,10 @@ def annotate(image: Image.Image, directory: Path, parameters: dict, *, loaded=No
     )
     inputs = processor(text=parameters["prompt"], images=image, return_tensors="pt")
     inputs = {
-        key: value.to(parameters["device"], dtype=torch.float16)
+        key: value.to(
+            parameters["device"],
+            dtype=torch.float16 if parameters["device"].startswith("cuda") else torch.float32,
+        )
         if value.is_floating_point()
         else value.to(parameters["device"])
         for key, value in inputs.items()

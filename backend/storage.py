@@ -1,10 +1,9 @@
 import json
 import os
-import shutil
 import tempfile
 import warnings
+from io import BytesIO
 from pathlib import Path
-from uuid import UUID
 
 from PIL import Image, ImageDraw, ImageFont, ImageOps, UnidentifiedImageError
 from starlette.datastructures import UploadFile
@@ -69,26 +68,26 @@ def save_detection_image(normalized_path: str, destination: Path, detection: dic
     return destination
 
 
-def save_image(upload: UploadFile, image_id: UUID, settings: Settings) -> dict:
-    root = settings.image_root
-    root.mkdir(parents=True, exist_ok=True)
-    temporary = Path(tempfile.mkdtemp(prefix=".upload-", dir=root))
-    destination = root / str(image_id)
-    try:
-        original = temporary / "original"
-        size = 0
-        with original.open("xb") as stream:
-            while block := upload.file.read(1024 * 1024):
-                size += len(block)
-                if size > settings.max_upload_bytes:
-                    raise UploadError(413, "upload_too_large")
-                stream.write(block)
-            stream.flush()
-            os.fsync(stream.fileno())
+class BundleTooLarge(ValueError):
+    pass
 
+
+def check_artifacts(artifacts: dict[str, bytes], settings: Settings) -> None:
+    if any(len(data) > settings.max_artifact_bytes for data in artifacts.values()):
+        raise BundleTooLarge("Artifact exceeds configured byte limit")
+    if sum(map(len, artifacts.values())) > settings.max_bundle_bytes:
+        raise BundleTooLarge("Bundle exceeds configured byte limit")
+
+
+def prepare_image(upload: UploadFile, settings: Settings) -> tuple[int, int, dict[str, bytes]]:
+    """Validate bounded input and normalize in memory; do not persist media on disk."""
+    original = upload.file.read(settings.max_upload_bytes + 1)
+    if len(original) > settings.max_upload_bytes:
+        raise UploadError(413, "upload_too_large")
+    try:
         with warnings.catch_warnings():
             warnings.simplefilter("error", Image.DecompressionBombWarning)
-            with Image.open(original) as image:
+            with Image.open(BytesIO(original)) as image:
                 if image.format not in ("JPEG", "PNG"):
                     raise UploadError(415, "unsupported_image_format")
                 if image.width * image.height > settings.max_image_pixels:
@@ -96,105 +95,51 @@ def save_image(upload: UploadFile, image_id: UUID, settings: Settings) -> dict:
                 if getattr(image, "n_frames", 1) != 1:
                     raise UploadError(415, "animated_image_not_supported")
                 image.verify()
-            with Image.open(original) as image:
+            with Image.open(BytesIO(original)) as image:
                 image.load()
                 normalized = ImageOps.exif_transpose(image).convert("RGB")
-                # Drop EXIF/text/ICC metadata from the normalized image.
                 normalized.info.clear()
                 width, height = normalized.size
-                with (temporary / "normalized.png").open("xb") as stream:
-                    normalized.save(stream, format="PNG")
-                    stream.flush()
-                    os.fsync(stream.fileno())
-        os.rename(temporary, destination)
-        directory_fd = os.open(root, os.O_RDONLY | os.O_DIRECTORY)
-        try:
-            os.fsync(directory_fd)
-        finally:
-            os.close(directory_fd)
-        return {
-            "id": image_id,
-            "original_path": str(destination / "original"),
-            "normalized_path": str(destination / "normalized.png"),
-            "width": width,
-            "height": height,
-        }
+                stream = BytesIO()
+                normalized.save(stream, format="PNG")
+        artifacts = {"original": original, "normalized.png": stream.getvalue()}
+        check_artifacts(artifacts, settings)
+        return width, height, artifacts
+    except BundleTooLarge as exc:
+        raise UploadError(413, "normalized_image_too_large") from exc
     except (Image.DecompressionBombError, Image.DecompressionBombWarning) as exc:
         raise UploadError(413, "image_too_large") from exc
     except UnidentifiedImageError as exc:
         raise UploadError(422, "invalid_image") from exc
     except (OSError, SyntaxError, ValueError) as exc:
-        # Disk errors must be reported as server errors, not corrupt input.
-        if isinstance(exc, OSError) and exc.errno is not None:
-            raise
         raise UploadError(422, "invalid_image") from exc
-    finally:
-        shutil.rmtree(temporary, ignore_errors=True)
 
 
-def result_directory(settings: Settings, image_id: UUID) -> Path:
-    root = settings.image_root.resolve()
-    destination = (root / "results" / str(image_id)).resolve()
-    if not destination.is_relative_to(root):
-        raise OSError("Result directory outside image volume")
-    return destination
-
-
-def save_result(
-    result: ImageResult, source: Path, destination: Path, *, crop_padding: float = 0.1
-) -> None:
-    """Publish the complete bundle by one directory rename, before the DB commit."""
-    destination.parent.mkdir(parents=True, exist_ok=True)
-    temporary = Path(tempfile.mkdtemp(prefix=".result-", dir=destination.parent))
-    try:
-        for name in ("original", "normalized.png"):
-            with (source / name).open("rb") as src, (temporary / name).open("xb") as dst:
-                shutil.copyfileobj(src, dst)
-                dst.flush()
-                os.fsync(dst.fileno())
-        save_detection_image(
-            str(temporary / "normalized.png"),
-            temporary / "detection.png",
-            result.detection.model_dump(mode="json"),
-        )
-        crops = temporary / "crops"
-        crops.mkdir()
-        manifest = result.model_dump(mode="json", exclude_none=True)
-        manifest["crops"] = []
-        with Image.open(temporary / "normalized.png") as source_image:
-            image = source_image.convert("RGB")
-            for obj in result.detection.objects:
-                name = f"{obj.object_id}.png"
-                with (crops / name).open("xb") as stream:
-                    crop_object(image, obj.bbox, crop_padding).save(stream, format="PNG")
-                    stream.flush()
-                    os.fsync(stream.fileno())
-                manifest["crops"].append(name)
-        directory_fd = os.open(crops, os.O_RDONLY | os.O_DIRECTORY)
-        try:
-            os.fsync(directory_fd)
-        finally:
-            os.close(directory_fd)
-        with (temporary / "results.json").open("x", encoding="utf-8") as stream:
-            json.dump(
-                manifest,
-                stream,
-                ensure_ascii=False,
-                indent=2,
-                allow_nan=False,
-            )
-            stream.flush()
-            os.fsync(stream.fileno())
-        directory_fd = os.open(temporary, os.O_RDONLY | os.O_DIRECTORY)
-        try:
-            os.fsync(directory_fd)
-        finally:
-            os.close(directory_fd)
-        os.rename(temporary, destination)
-        directory_fd = os.open(destination.parent, os.O_RDONLY | os.O_DIRECTORY)
-        try:
-            os.fsync(directory_fd)
-        finally:
-            os.close(directory_fd)
-    finally:
-        shutil.rmtree(temporary, ignore_errors=True)
+def build_artifacts(
+    result: ImageResult, source: Path, settings: Settings, *, crop_padding: float = 0.1
+) -> tuple[dict, dict[str, bytes]]:
+    """Prepare one bounded bundle using task-local scratch, never a permanent directory."""
+    artifacts = {name: (source / name).read_bytes() for name in ("original", "normalized.png")}
+    check_artifacts(artifacts, settings)
+    destination = source / "detection.png"
+    save_detection_image(
+        str(source / "normalized.png"), destination, result.detection.model_dump(mode="json")
+    )
+    artifacts["detection.png"] = destination.read_bytes()
+    check_artifacts(artifacts, settings)
+    manifest = result.model_dump(mode="json", exclude_none=True)
+    manifest["crops"] = []
+    with Image.open(source / "normalized.png") as source_image:
+        image = source_image.convert("RGB")
+        for obj in result.detection.objects:
+            name = f"{obj.object_id}.png"
+            stream = BytesIO()
+            crop_object(image, obj.bbox, crop_padding).save(stream, format="PNG")
+            artifacts[f"crops/{name}"] = stream.getvalue()
+            check_artifacts(artifacts, settings)
+            manifest["crops"].append(name)
+    artifacts["results.json"] = json.dumps(
+        manifest, ensure_ascii=False, indent=2, allow_nan=False
+    ).encode("utf-8")
+    check_artifacts(artifacts, settings)
+    return manifest, artifacts

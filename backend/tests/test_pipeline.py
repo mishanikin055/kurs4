@@ -1,8 +1,7 @@
-"""CPU-only inference pipeline checks; no model weights or database server."""
+"""CPU inference coordination and SQL publication tests; no model weights."""
 
-import json
 from concurrent.futures import ThreadPoolExecutor
-from contextlib import nullcontext
+from pathlib import Path
 from threading import Event
 from types import SimpleNamespace
 from uuid import uuid4
@@ -11,62 +10,46 @@ import pytest
 from sqlalchemy.exc import SQLAlchemyError
 
 from backend.processing import ProcessingInterrupted, process_image
+from backend.repository import ImageRepository
 from backend.runtime import ResidentModelFailed
 from backend.schemas import ImageResult
 from backend.settings import Settings
-from backend.storage import save_image
+from backend.storage import BundleTooLarge, prepare_image
 from backend.tests.mock_model import predict
 from backend.tests.test_storage import image_bytes, upload
 
 
 @pytest.fixture
-def pipeline(tmp_path, monkeypatch):
+def pipeline(tmp_path, monkeypatch, database):
+    _, sessions = database
     settings = Settings(
-        database_url="postgresql+psycopg://unused:unused@localhost/unused",
-        broker_url="amqp://unused:unused@localhost/unused",
-        image_root=tmp_path / "images",
-        lock_path=tmp_path / "inference.lock",
+        database_url="sqlite://", broker_url="amqp://unused", lock_path=tmp_path / "inference.lock"
     )
-    saved = {}
-    calls = []
-
-    class Repository:
-        def __init__(self, session):
-            pass
-
-        def get(self, image_id):
-            return saved.get(image_id)
-
-        def save(self, result, directory):
-            # A record is never created before all model outputs and files are complete.
-            assert set(path.name for path in directory.iterdir()) == {
-                "original",
-                "normalized.png",
-                "detection.png",
-                "results.json",
-                "crops",
-            }
-            assert (
-                ImageResult.model_validate_json((directory / "results.json").read_text()) == result
-            )
-            saved[result.id] = SimpleNamespace(
-                result=result, result_path=str(directory / "detection.png")
-            )
-
-    class Sessions:
-        def __call__(self):
-            return nullcontext(None)
-
-        def begin(self):
-            return nullcontext(None)
-
-    monkeypatch.setattr("backend.processing.ImageRepository", Repository)
-    monkeypatch.setenv("MOCK_MODEL_MODE", "success")
+    calls, scratch = [], []
     image_id = uuid4()
-    save_image(upload(image_bytes()), image_id, settings)
+    width, height, artifacts = prepare_image(upload(image_bytes()), settings)
+    with sessions.begin() as session:
+        ImageRepository(session).create_input(image_id, width, height, artifacts)
+    monkeypatch.setenv("MOCK_MODEL_MODE", "success")
+
+    class Completed:
+        def __contains__(self, key):
+            with sessions() as session:
+                return ImageRepository(session).get(key) is not None
+
+        def __bool__(self):
+            return image_id in self
+
+        def __getitem__(self, key):
+            with sessions() as session:
+                record = ImageRepository(session).get(key)
+                return SimpleNamespace(result=ImageResult.model_validate(record.manifest))
+
+    saved = Completed()
 
     def runner(request, *args, **kwargs):
         assert not saved
+        scratch.append(Path(request["image_path"]).parent)
         calls.append(request["stage"])
         return predict(request)
 
@@ -74,120 +57,85 @@ def pipeline(tmp_path, monkeypatch):
         settings=settings,
         saved=saved,
         calls=calls,
-        sessions=Sessions(),
+        sessions=sessions,
         id=image_id,
         runner=runner,
-        repository=Repository,
-        output=settings.image_root / "results" / str(image_id),
+        repository=ImageRepository,
+        scratch=scratch,
     )
 
 
-def test_detector_and_shared_florence_then_volume_then_database(pipeline):
+def test_parallel_branches_then_captions_publish_and_duplicate_skips_models(pipeline):
     p = pipeline
     process_image(p.id, p.sessions, p.settings, runner=p.runner)
     assert sorted(p.calls) == ["annotation", "classification", "detection"]
     assert p.calls.index("detection") < p.calls.index("classification")
     assert p.calls.index("annotation") < p.calls.index("classification")
-    assert p.saved[p.id].result.classification.objects[0].object_caption == "  Synthetic object.  "
     result = p.saved[p.id].result
     assert result.annotation.raw_caption == "  Synthetic caption.  "
-    assert result.detection.objects[0].object_id == result.classification.objects[0].object_id
-    assert not (p.settings.image_root / str(p.id)).exists()
-    original = (p.output / "original").read_bytes()
+    assert result.classification.objects[0].object_caption == "  Synthetic object.  "
+    with p.sessions() as session:
+        before = ImageRepository(session).bundle(p.id)
     process_image(p.id, p.sessions, p.settings, runner=p.runner)
     assert len(p.calls) == 3
-    assert (p.output / "original").read_bytes() == original
+    with p.sessions() as session:
+        assert ImageRepository(session).bundle(p.id) == before
+    assert all(not path.exists() for path in p.scratch)
 
 
 @pytest.mark.parametrize("stage", ["detection", "classification", "annotation"])
-def test_failure_never_creates_database_or_success_bundle(pipeline, monkeypatch, stage):
+def test_model_failure_leaves_only_durable_input(pipeline, monkeypatch, stage):
     p = pipeline
     monkeypatch.setenv("MOCK_MODEL_MODE", "fail_" + stage)
     with pytest.raises(RuntimeError, match=stage):
         process_image(p.id, p.sessions, p.settings, runner=p.runner)
     assert not p.saved
-    assert not p.output.exists()
-    assert (p.settings.image_root / str(p.id) / "original").exists()
+    with p.sessions() as session:
+        assert set(ImageRepository(session).input(p.id)[1]) == {"original", "normalized.png"}
+        with pytest.raises(FileNotFoundError):
+            ImageRepository(session).bundle(p.id)
+    assert all(not path.exists() for path in p.scratch)
 
 
-def test_no_detections_still_runs_caption_and_saves_empty_classification(pipeline, monkeypatch):
+def test_no_detections_saves_empty_crops_and_classification(pipeline, monkeypatch):
     p = pipeline
     monkeypatch.setenv("MOCK_MODEL_MODE", "empty")
     process_image(p.id, p.sessions, p.settings, runner=p.runner)
     assert sorted(p.calls) == ["annotation", "detection"]
     assert p.saved[p.id].result.classification.objects == []
-    assert (p.output / "crops").is_dir()
-    assert list((p.output / "crops").iterdir()) == []
-    assert json.loads((p.output / "results.json").read_text())["crops"] == []
+    with p.sessions() as session:
+        assert ImageRepository(session).get(p.id).manifest["crops"] == []
+        assert len(ImageRepository(session).bundle(p.id)) == 4
 
 
-def test_database_failure_keeps_volume_and_retry_does_not_run_models(pipeline, monkeypatch):
+def test_failed_publication_is_not_ready_and_retry_recomputes(pipeline, monkeypatch):
     p = pipeline
-    original = p.repository.save
+    original = p.repository.publish
 
     def failure(*args):
-        raise SQLAlchemyError("database unavailable after inference")
+        original(*args)
+        raise SQLAlchemyError("failed before commit")
 
-    monkeypatch.setattr(p.repository, "save", failure)
+    monkeypatch.setattr(p.repository, "publish", failure)
     with pytest.raises(SQLAlchemyError):
         process_image(p.id, p.sessions, p.settings, runner=p.runner)
-    manifest = (p.output / "results.json").read_bytes()
     assert not p.saved
-    monkeypatch.setattr(p.repository, "save", original)
+    assert all(not path.exists() for path in p.scratch)
+    with p.sessions() as session:
+        assert ImageRepository(session).input(p.id)[0].manifest is None
+    monkeypatch.setattr(p.repository, "publish", original)
     process_image(p.id, p.sessions, p.settings, runner=p.runner)
-    assert sorted(p.calls) == ["annotation", "classification", "detection"]
-    assert (p.output / "results.json").read_bytes() == manifest
+    assert len(p.calls) == 6
     assert p.id in p.saved
 
 
-@pytest.mark.parametrize("function", ["save_detection_image", "crop_object"])
-def test_disk_failure_never_commits_result_or_exposes_partial_bundle(
-    pipeline, monkeypatch, function
-):
+def test_oversized_result_is_never_published(pipeline):
     p = pipeline
-
-    def failure(*args):
-        raise OSError("disk full")
-
-    monkeypatch.setattr(f"backend.storage.{function}", failure)
-    with pytest.raises(OSError):
+    p.settings.max_bundle_bytes = 1
+    with pytest.raises(BundleTooLarge):
         process_image(p.id, p.sessions, p.settings, runner=p.runner)
     assert not p.saved
-    assert not p.output.exists()
-    assert not list(p.output.parent.glob(".result-*"))
-
-
-def test_corrupt_cached_bundle_is_not_saved_to_database(pipeline):
-    p = pipeline
-    p.output.mkdir(parents=True)
-    (p.output / "results.json").write_text(json.dumps({"id": str(p.id)}))
-    with pytest.raises(ValueError):
-        process_image(p.id, p.sessions, p.settings, runner=p.runner)
-    assert not p.saved
-    assert not p.calls
-
-
-@pytest.mark.parametrize("missing", ["file", "manifest_entry"])
-def test_cached_bundle_with_missing_crop_is_not_committed(pipeline, monkeypatch, missing):
-    p = pipeline
-
-    def failure(*args):
-        raise SQLAlchemyError("database unavailable")
-
-    monkeypatch.setattr(p.repository, "save", failure)
-    with pytest.raises(SQLAlchemyError):
-        process_image(p.id, p.sessions, p.settings, runner=p.runner)
-    manifest = p.output / "results.json"
-    data = json.loads(manifest.read_text())
-    if missing == "file":
-        (p.output / "crops" / data["crops"][0]).unlink()
-    else:
-        data["crops"] = []
-        manifest.write_text(json.dumps(data))
-    with pytest.raises(ValueError, match="Incomplete crop bundle"):
-        process_image(p.id, p.sessions, p.settings, runner=p.runner)
-    assert len(p.calls) == 3
-    assert not p.saved
+    assert all(not path.exists() for path in p.scratch)
 
 
 def test_annotation_overlaps_detection_but_crops_wait_for_florence(pipeline):
@@ -230,7 +178,7 @@ def test_saving_waits_for_scene_and_all_crops(pipeline, last_stage):
         try:
             assert blocked.wait(3)
             assert not future.done()
-            assert not p.saved and not p.output.exists()
+            assert not p.saved
         finally:
             release.set()
         future.result(timeout=3)
@@ -258,7 +206,7 @@ def test_model_error_drains_the_other_branch_before_returning(pipeline, failed_s
         try:
             assert failed.wait(3) and blocked.wait(3)
             assert not future.done()
-            assert not p.saved and not p.output.exists()
+            assert not p.saved
         finally:
             release.set()
         with pytest.raises(RuntimeError, match=failed_stage):
@@ -285,7 +233,7 @@ def test_fatal_model_failure_cancels_the_other_branch(pipeline, failed_stage):
     with pytest.raises(ResidentModelFailed):
         process_image(p.id, p.sessions, p.settings, runner=runner)
     assert other_stopped.is_set()
-    assert not p.saved and not p.output.exists()
+    assert not p.saved
 
 
 def test_coordinator_interrupt_stops_both_branches(pipeline, monkeypatch):
@@ -308,36 +256,4 @@ def test_coordinator_interrupt_stops_both_branches(pipeline, monkeypatch):
     with pytest.raises(ProcessingInterrupted):
         process_image(p.id, p.sessions, p.settings, runner=runner)
     assert all(event.is_set() for event in stopped.values())
-    assert not p.saved and not p.output.exists()
-
-
-def test_old_bundle_recovers_database_without_inference_or_rewrite(pipeline, monkeypatch):
-    p = pipeline
-
-    def fail_commit(*args):
-        raise SQLAlchemyError("offline")
-
-    monkeypatch.setattr(p.repository, "save", fail_commit)
-    with pytest.raises(SQLAlchemyError):
-        process_image(p.id, p.sessions, p.settings, runner=p.runner)
-    manifest = p.output / "results.json"
-    data = json.loads(manifest.read_text())
-    for obj in data["classification"]["objects"]:
-        obj.pop("object_caption")
-        obj["label"] = "tench"
-    data["models"]["classification"] = {"model_name": "vit_b_16", "model_revision": "legacy"}
-    for name in data.pop("crops"):
-        (p.output / "crops" / name).unlink()
-    (p.output / "crops").rmdir()
-    manifest.write_text(json.dumps(data))
-    previous = manifest.read_bytes()
-
-    def save_legacy(self, result, directory):
-        p.saved[result.id] = result
-
-    monkeypatch.setattr(p.repository, "save", save_legacy)
-    p.calls.clear()
-    process_image(p.id, p.sessions, p.settings, runner=p.runner)
-    assert not p.calls
-    assert manifest.read_bytes() == previous
-    assert p.saved[p.id].classification.objects[0].label == "tench"
+    assert not p.saved

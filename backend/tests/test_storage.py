@@ -1,5 +1,4 @@
 from io import BytesIO
-from pathlib import Path
 from uuid import uuid4
 
 import pytest
@@ -8,18 +7,26 @@ from starlette.datastructures import UploadFile
 
 from backend.schemas import ImageResult
 from backend.settings import Settings
-from backend.storage import UploadError, save_detection_image, save_image, save_result
+from backend.storage import (
+    BundleTooLarge,
+    UploadError,
+    build_artifacts,
+    prepare_image,
+    save_detection_image,
+)
 
 
 @pytest.mark.parametrize("padding", [0, 0.1, 0.25])
-def test_bundle_crops_match_florence_input_pixels(settings, padding):
+def test_bundle_crops_match_florence_input_pixels(settings, tmp_path, padding):
     import json
 
     from backend.models import crop_object
 
     image_id = uuid4()
-    save_image(upload(image_bytes(size=(16, 12))), image_id, settings)
-    source = settings.image_root / str(image_id)
+    source = tmp_path
+    _, _, inputs = prepare_image(upload(image_bytes()), settings)
+    for name, content in inputs.items():
+        (source / name).write_bytes(content)
     image = Image.new("RGB", (16, 12))
     image.putdata([(x * 10, y * 10, 100) for y in range(12) for x in range(16)])
     image.save(source / "normalized.png")
@@ -40,13 +47,12 @@ def test_bundle_crops_match_florence_input_pixels(settings, padding):
         },
         annotation={"raw_caption": "A car."},
     )
-    destination = settings.image_root / "results" / str(image_id)
-    save_result(result, source, destination, crop_padding=padding)
-    manifest = json.loads((destination / "results.json").read_text())
+    manifest, artifacts = build_artifacts(result, source, settings, crop_padding=padding)
+    assert json.loads(artifacts["results.json"]) == manifest
     assert manifest["crops"] == [f"{obj['object_id']}.png" for obj in objects]
     for obj, name in zip(objects, manifest["crops"], strict=True):
         expected = crop_object(image, obj["bbox"], padding)
-        with Image.open(destination / "crops" / name) as actual:
+        with Image.open(BytesIO(artifacts[f"crops/{name}"])) as actual:
             assert actual.format == "PNG"
             assert actual.size == expected.size
             assert actual.tobytes() == expected.tobytes()
@@ -58,7 +64,6 @@ def settings(tmp_path):
     return Settings(
         database_url="postgresql+psycopg://unused:unused@localhost/unused",
         broker_url="amqp://unused:unused@localhost/unused",
-        image_root=tmp_path,
     )
 
 
@@ -75,21 +80,25 @@ def upload(data, filename="image.png"):
 
 def test_original_and_normalized_are_separate(settings):
     data = image_bytes(mode="RGBA")
-    image_id = uuid4()
-    result = save_image(upload(data, "../../image.png"), image_id, settings)
-    directory = settings.image_root / str(image_id)
-    assert (directory / "original").read_bytes() == data
-    assert set(result) == {"id", "original_path", "normalized_path", "width", "height"}
-    with Image.open(directory / "normalized.png") as image:
+    width, height, artifacts = prepare_image(upload(data, "../../image.png"), settings)
+    assert artifacts["original"] == data
+    assert (width, height) == (16, 12)
+    with Image.open(BytesIO(artifacts["normalized.png"])) as image:
         assert image.mode == "RGB"
         assert image.size == (16, 12)
         assert not image.getexif()
 
 
+def scratch_image(settings, tmp_path, size=(16, 12)):
+    _, _, artifacts = prepare_image(upload(image_bytes(size=size)), settings)
+    path = tmp_path / "normalized.png"
+    path.write_bytes(artifacts["normalized.png"])
+    return path
+
+
 @pytest.mark.parametrize("empty", [False, True])
-def test_detection_image_is_saved_without_changing_source(settings, empty):
-    result = save_image(upload(image_bytes(size=(64, 48))), uuid4(), settings)
-    source = settings.image_root / str(result["id"]) / "normalized.png"
+def test_detection_image_is_saved_without_changing_source(settings, tmp_path, empty):
+    source = scratch_image(settings, tmp_path, (64, 48))
     before = source.read_bytes()
     destination = source.parent / "detection.png"
     payload = {"objects": [] if empty else [{"bbox": [10.5, 12.5, 64, 48], "label": "cat"}]}
@@ -103,28 +112,25 @@ def test_detection_image_is_saved_without_changing_source(settings, empty):
     assert save_detection_image(str(source), destination, payload) == output
 
 
-def test_detection_image_disk_failure_cleans_temporary_file(settings, monkeypatch):
-    result = save_image(upload(image_bytes()), uuid4(), settings)
+def test_detection_image_disk_failure_cleans_temporary_file(settings, tmp_path, monkeypatch):
+    source = scratch_image(settings, tmp_path)
 
     def fail(*args):
         raise OSError(28, "No space left on device")
 
     monkeypatch.setattr("backend.storage.os.replace", fail)
     with pytest.raises(OSError):
-        save_detection_image(
-            result["normalized_path"], settings.image_root / "detection.png", {"objects": []}
-        )
-    assert not list(settings.image_root.rglob(".detection-*"))
+        save_detection_image(str(source), tmp_path / "detection.png", {"objects": []})
+    assert not list(tmp_path.rglob(".detection-*"))
 
 
 @pytest.mark.parametrize("size", [(960, 720), (720, 960), (24, 16)])
-def test_detection_labels_keep_class_names_without_numbers(settings, monkeypatch, size):
+def test_detection_labels_keep_class_names_without_numbers(settings, tmp_path, monkeypatch, size):
     from copy import deepcopy
 
     from PIL import ImageDraw
 
-    result = save_image(upload(image_bytes(size=size)), uuid4(), settings)
-    source = Path(result["normalized_path"])
+    source = scratch_image(settings, tmp_path, size)
     before = source.read_bytes()
     payload = {
         "objects": [
@@ -168,8 +174,8 @@ def test_exif_orientation_changes_normalized_dimensions(settings):
     exif = Image.Exif()
     exif[274] = 6
     data = image_bytes("JPEG", size=(30, 10), exif=exif)
-    result = save_image(upload(data, "rotation.jpg"), uuid4(), settings)
-    assert (result["width"], result["height"]) == (10, 30)
+    width, height, _ = prepare_image(upload(data, "rotation.jpg"), settings)
+    assert (width, height) == (10, 30)
 
 
 @pytest.mark.parametrize(
@@ -178,22 +184,20 @@ def test_exif_orientation_changes_normalized_dimensions(settings):
 )
 def test_invalid_images_leave_no_files(settings, data, code):
     with pytest.raises(UploadError) as error:
-        save_image(upload(data), uuid4(), settings)
+        prepare_image(upload(data), settings)
     assert error.value.status_code == code
-    assert list(settings.image_root.iterdir()) == []
 
 
 def test_actual_bytes_limit(settings):
     settings.max_upload_bytes = 50
     with pytest.raises(UploadError, match="upload_too_large"):
-        save_image(upload(image_bytes()), uuid4(), settings)
-    assert not list(settings.image_root.iterdir())
+        prepare_image(upload(image_bytes()), settings)
 
 
 def test_pixel_limit(settings):
     settings.max_image_pixels = 100
     with pytest.raises(UploadError, match="image_too_large"):
-        save_image(upload(image_bytes()), uuid4(), settings)
+        prepare_image(upload(image_bytes()), settings)
 
 
 def test_animated_png_is_rejected(settings):
@@ -207,14 +211,16 @@ def test_animated_png_is_rejected(settings):
         loop=0,
     )
     with pytest.raises(UploadError, match="animated_image_not_supported"):
-        save_image(upload(stream.getvalue()), uuid4(), settings)
+        prepare_image(upload(stream.getvalue()), settings)
 
 
-def test_disk_failure_is_not_reported_as_bad_input(settings, monkeypatch):
-    def fail(*args, **kwargs):
-        raise OSError(28, "No space left on device")
+def test_normalized_and_bundle_limits_are_enforced(settings):
+    from backend.storage import check_artifacts
 
-    monkeypatch.setattr("backend.storage.os.rename", fail)
-    with pytest.raises(OSError):
-        save_image(upload(image_bytes()), uuid4(), settings)
-    assert not list(settings.image_root.iterdir())
+    settings.max_artifact_bytes = 10
+    with pytest.raises(UploadError, match="normalized_image_too_large"):
+        prepare_image(upload(image_bytes()), settings)
+    settings.max_artifact_bytes = 100
+    settings.max_bundle_bytes = 15
+    with pytest.raises(BundleTooLarge, match="Bundle"):
+        check_artifacts({"one": b"a" * 10, "two": b"b" * 10}, settings)

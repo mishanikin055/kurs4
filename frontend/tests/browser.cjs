@@ -64,7 +64,7 @@ const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
       requests.push(path);
       if (path === "/api/images") {
         assert.match(route.request().headers()["content-type"], /multipart\/form-data/);
-        return route.fulfill({ status: uploadError ? 503 : 202, json: { image_id: imageId, output_folder: `results/${imageId}` } });
+        return route.fulfill({ status: uploadError ? 503 : 202, json: { image_id: imageId } });
       }
       assert(!path.includes("/jobs/"), "No job API is allowed");
       if (resultError) return route.fulfill({ status: 503, json: { detail: "unavailable" } });

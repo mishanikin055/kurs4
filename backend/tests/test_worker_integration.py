@@ -5,8 +5,10 @@ import signal
 import subprocess
 import sys
 import time
+from io import BytesIO
 from pathlib import Path
 from uuid import UUID
+from zipfile import ZipFile
 
 import pytest
 from fastapi.testclient import TestClient
@@ -14,10 +16,11 @@ from sqlalchemy import func, select
 
 from backend.repository import ImageRepository
 from backend.schemas import ImageResult
-from backend.tables import ProcessedImage
+from backend.tables import ImageArtifact, ImageObject, ImageRecord
 from backend.tasks import publish_image
 from backend.tests.test_integration import app as app
 from backend.tests.test_integration import clear_queue, post_image
+from backend.tests.test_storage import image_bytes
 
 pytestmark = pytest.mark.skipif(
     os.environ.get("APP_TEST_INTEGRATION") != "1",
@@ -29,20 +32,19 @@ def worker(app, *, mode="success", control=None, resident=False):
     settings = app.state.settings
     environment = {
         **os.environ,
-        "APP_IMAGE_ROOT": str(settings.image_root),
-        "APP_LOCK_PATH": str(settings.image_root / "inference.lock"),
+        "APP_LOCK_PATH": str(settings.lock_path),
         "MOCK_MODEL_MODE": mode,
         "MOCK_RESIDENT": "1" if resident else "0",
     }
     if mode == "parallel":
-        environment["MOCK_PARALLEL_DIR"] = str(settings.image_root)
+        environment["MOCK_PARALLEL_DIR"] = str(app.state.test_scratch)
     if control:
         environment.update(MOCK_STARTED=str(control / "model_started"), MOCK_SLEEP="2")
         if mode == "slow_annotation":
             environment["MOCK_SLEEP"] = "30"
         if resident:
             environment["MOCK_RESIDENT_DIR"] = str(control)
-    log = settings.image_root / "worker.log"
+    log = app.state.test_scratch / "worker.log"
     with log.open("ab") as stream:
         return subprocess.Popen(
             [sys.executable, "-m", "backend.tests.mock_worker"],
@@ -75,20 +77,32 @@ def wait_result(app, image_id, *, timeout=30):
 
 @pytest.mark.parametrize("resident", [False, True])
 @pytest.mark.parametrize("mode", ["success", "empty", "parallel"])
-def test_separate_consumer_saves_volume_and_database_once(app, resident, mode):
+def test_separate_consumer_publishes_binary_bundle_and_catalogue_once(app, resident, mode):
     accepted = post_image(app)
     image_id = UUID(accepted["image_id"])
     consumer = worker(app, mode=mode, resident=resident)
     try:
         saved = wait_result(app, image_id)
-        directory = Path(saved.result_path).parent
-        manifest = (directory / "results.json").read_bytes()
+        with app.state.test_sessions() as session:
+            bundle = ImageRepository(session).bundle(image_id)
+        manifest = bundle["results.json"][1]
         parsed = ImageResult.model_validate_json(manifest)
         assert parsed.id == image_id
         assert parsed.annotation.raw_caption == "  Synthetic caption.  "
-        assert saved.annotation == {"raw_caption": "  Synthetic caption.  "}
-        assert saved.detection == parsed.detection.model_dump(mode="json")
-        assert not (app.state.settings.image_root / str(image_id)).exists()
+        assert saved.manifest["annotation"] == {"raw_caption": "  Synthetic caption.  "}
+        assert saved.manifest["detection"] == parsed.detection.model_dump(mode="json")
+        assert bundle["original"][1] == image_bytes()
+        assert bundle["normalized.png"][0] == bundle["detection.png"][0] == "image/png"
+        with app.state.test_sessions() as session:
+            catalogue = session.scalars(
+                select(ImageObject).where(ImageObject.image_id == image_id)
+            ).all()
+            assert len(catalogue) == len(parsed.detection.objects)
+            for obj in catalogue:
+                assert obj.label == "person"
+                assert obj.object_caption == "  Synthetic object.  "
+                assert obj.attributes == {}
+                assert bundle[f"crops/{obj.object_id}.png"][0] == "image/png"
         if mode != "empty":
             assert (
                 parsed.detection.objects[0].object_id == parsed.classification.objects[0].object_id
@@ -97,21 +111,23 @@ def test_separate_consumer_saves_volume_and_database_once(app, resident, mode):
             assert parsed.detection.objects == parsed.classification.objects == []
         publish_image(app.state.celery, str(image_id), 3)
         time.sleep(0.5)
-        assert (directory / "results.json").read_bytes() == manifest
         with app.state.test_sessions() as session:
+            assert ImageRepository(session).bundle(image_id) == bundle
             assert (
                 session.scalar(
-                    select(func.count())
-                    .select_from(ProcessedImage)
-                    .where(ProcessedImage.id == image_id)
+                    select(func.count()).select_from(ImageRecord).where(ImageRecord.id == image_id)
                 )
                 == 1
             )
-        # Explicit browser download never removes or changes the primary volume copy.
+        # Browser ZIP contains exactly the immutable database artifacts.
         with TestClient(app) as client:
             response = client.get(f"/images/{image_id}/archive")
             assert response.status_code == 200
-        assert (directory / "results.json").read_bytes() == manifest
+            with ZipFile(BytesIO(response.content)) as archive:
+                for name, (_, content) in bundle.items():
+                    assert archive.read(f"{image_id}/{name}") == content
+        with app.state.test_sessions() as session:
+            assert ImageRepository(session).bundle(image_id) == bundle
     finally:
         stop_worker(consumer)
         clear_queue(app)
@@ -122,7 +138,7 @@ def test_model_error_is_logged_without_database_error_or_job_record(app, stage):
     accepted = post_image(app)
     image_id = UUID(accepted["image_id"])
     consumer = worker(app, mode="fail_" + stage)
-    log = app.state.settings.image_root / "worker.log"
+    log = app.state.test_scratch / "worker.log"
     try:
         deadline = time.monotonic() + 25
         while time.monotonic() < deadline:
@@ -133,8 +149,17 @@ def test_model_error_is_logged_without_database_error_or_job_record(app, stage):
             pytest.fail("Synthetic model error was not logged")
         with app.state.test_sessions() as session:
             assert ImageRepository(session).get(image_id) is None
-        assert not (app.state.settings.image_root / "results" / str(image_id)).exists()
-        assert (app.state.settings.image_root / str(image_id) / "original").is_file()
+            record, artifacts = ImageRepository(session).input(image_id)
+            assert record.manifest is None
+            assert artifacts["original"] == image_bytes()
+            assert (
+                session.scalar(
+                    select(func.count())
+                    .select_from(ImageArtifact)
+                    .where(ImageArtifact.image_id == image_id)
+                )
+                == 2
+            )
     finally:
         stop_worker(consumer)
         clear_queue(app)
@@ -156,7 +181,6 @@ def test_shutdown_interrupts_annotation_and_redelivers_image(app, tmp_path, resi
         assert consumer.wait(timeout=10) == 0
         with pytest.raises(ProcessLookupError):
             os.kill(annotation_pid, 0)
-        assert not (app.state.settings.image_root / "results" / str(image_id)).exists()
         with app.state.test_sessions() as session:
             assert ImageRepository(session).get(image_id) is None
         consumer = worker(app, resident=resident)
@@ -178,7 +202,6 @@ def test_lost_resident_annotator_restarts_consumer_and_redelivers_image(app, tmp
             time.sleep(0.05)
         os.kill(int(marker.read_text()), signal.SIGKILL)
         assert consumer.wait(timeout=10) == 0
-        assert not (app.state.settings.image_root / "results" / str(image_id)).exists()
         with app.state.test_sessions() as session:
             assert ImageRepository(session).get(image_id) is None
         consumer = worker(app, resident=True)
@@ -188,26 +211,41 @@ def test_lost_resident_annotator_restarts_consumer_and_redelivers_image(app, tmp
         clear_queue(app)
 
 
-def test_database_outage_requeues_completed_bundle(app):
+def test_database_outage_preserves_input_and_requeues_image(app):
     if not os.environ.get("APP_TEST_OUTAGE_CONTROL"):
         pytest.skip("Requires the host-side check_db_outage controller")
     control = Path(os.environ["APP_TEST_OUTAGE_CONTROL"])
     accepted = post_image(app)
     image_id = UUID(accepted["image_id"])
+    with app.state.test_sessions() as session:
+        _, original_input = ImageRepository(session).input(image_id)
     consumer = worker(app, mode="slow", control=control)
     try:
-        consumer.wait(timeout=40)
-        manifest = app.state.settings.image_root / "results" / str(image_id) / "results.json"
-        before = manifest.read_bytes()
+        assert consumer.wait(timeout=40) == 0
         marker_time = (control / "model_started").stat().st_mtime_ns
         (control / "worker_stopped").touch()
         deadline = time.monotonic() + 30
         while not (control / "db_restored").exists():
             assert time.monotonic() < deadline
             time.sleep(0.1)
+        with app.state.test_sessions() as session:
+            repository = ImageRepository(session)
+            assert repository.get(image_id) is None
+            _, restored_input = repository.input(image_id)
+            assert restored_input == original_input
+            assert (
+                session.scalar(
+                    select(func.count())
+                    .select_from(ImageArtifact)
+                    .where(ImageArtifact.image_id == image_id)
+                )
+                == 2
+            )
         consumer = worker(app, mode="slow", control=control)
-        wait_result(app, image_id)
-        assert manifest.read_bytes() == before
-        assert (control / "model_started").stat().st_mtime_ns == marker_time
+        assert wait_result(app, image_id).id == image_id
+        assert (control / "model_started").stat().st_mtime_ns > marker_time
+        with app.state.test_sessions() as session:
+            bundle = ImageRepository(session).bundle(image_id)
+            assert {name: bundle[name][1] for name in original_input} == original_input
     finally:
         stop_worker(consumer)

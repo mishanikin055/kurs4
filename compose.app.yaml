@@ -3,10 +3,8 @@ x-app: &app
   env_file: .secrets/app.env
   restart: unless-stopped
   stop_grace_period: 60s
-  environment:
-    APP_IMAGE_ROOT: /var/lib/kurs4/images
-  volumes:
-    - image_data:/var/lib/kurs4/images
+  tmpfs:
+    - /tmp:size=1g,mode=1777
   depends_on:
     db:
       condition: service_healthy
@@ -15,7 +13,7 @@ x-app: &app
 
 services:
   frontend:
-    image: kurs4-frontend:v1
+    image: kurs4-frontend:0.2.0
     build:
       context: ./frontend
     restart: unless-stopped
@@ -53,20 +51,17 @@ services:
       retries: 20
   backend:
     <<: *app
-    image: kurs4-backend:v1
+    image: kurs4-backend:0.2.0
     build:
       context: .
       dockerfile: backend/Dockerfile
       target: api
-    mem_limit: 512m
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
+    mem_limit: 1g
     ports:
       - "127.0.0.1:${APP_HTTP_PORT:-8000}:8000"
   worker:
     <<: *app
-    image: kurs4-worker:v1
+    image: kurs4-worker:0.2.0
     build:
       context: .
       dockerfile: backend/Dockerfile
@@ -74,19 +69,17 @@ services:
     # Explicit opt-in: starting this service processes queued application images.
     profiles: ["processing"]
     restart: unless-stopped
-    mem_limit: 5g
+    mem_limit: ${APP_WORKER_MEMORY:-5g}
     # Two resident models; startup checks headroom before consuming images.
     volumes:
-      - image_data:/var/lib/kurs4/images
       - ./storage/locks:/var/lib/kurs4/locks
       - ./detection/models/rf_detr_small:/models/detection/models/rf_detr_small:ro
       - ./annotation/models/florence2_base_ft:/models/annotation/models/florence2_base_ft:ro
     environment:
-      APP_IMAGE_ROOT: /var/lib/kurs4/images
       APP_LOCK_PATH: /var/lib/kurs4/locks/inference.lock
       APP_MODEL_ROOT: /models
+      APP_DEVICE: ${APP_DEVICE:-cuda}
 
 volumes:
   pgdata:
   rabbitmq_data:
-  image_data:

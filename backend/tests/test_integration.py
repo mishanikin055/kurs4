@@ -8,11 +8,14 @@ from celery.exceptions import WorkerShutdown
 from fastapi.testclient import TestClient
 from kombu import Connection
 from sqlalchemy import delete, func, select
+from sqlalchemy.exc import IntegrityError
 
 from backend.db import make_engine, make_sessions
 from backend.main import create_app
+from backend.repository import ImageRepository
+from backend.schemas import ImageResult
 from backend.settings import Settings
-from backend.tables import ProcessedImage
+from backend.tables import ImageArtifact, ImageObject, ImageRecord
 from backend.tasks import TASK_NAME, require_processing_task
 from backend.tests.test_storage import image_bytes
 
@@ -30,10 +33,12 @@ def clear_queue(app):
 
 @pytest.fixture
 def app(tmp_path):
-    settings = Settings(image_root=tmp_path)
+    settings = Settings(lock_path=tmp_path / "inference.lock")
     application = create_app(settings)
     engine = make_engine(settings.database_url.get_secret_value())
     application.state.test_sessions = make_sessions(engine)
+    application.state.test_scratch = tmp_path
+    application.state.test_image_ids = []
     clear_queue(application)
     try:
         yield application
@@ -41,9 +46,7 @@ def app(tmp_path):
         clear_queue(application)
         with application.state.test_sessions.begin() as session:
             session.execute(
-                delete(ProcessedImage).where(
-                    ProcessedImage.original_path.startswith(str(tmp_path) + "/")
-                )
+                delete(ImageRecord).where(ImageRecord.id.in_(application.state.test_image_ids))
             )
         engine.dispose()
         application.state.celery.close()
@@ -55,20 +58,36 @@ def post_image(app):
             "/images", files={"file": ("photo.png", image_bytes(), "text/plain")}
         )
     assert response.status_code == 202, response.text
-    assert set(response.json()) == {"image_id", "output_folder"}
+    assert set(response.json()) == {"image_id"}
+    app.state.test_image_ids.append(UUID(response.json()["image_id"]))
     return response.json()
 
 
-def test_upload_writes_no_database_records_and_confirms_queue_message(app):
+def test_upload_commits_durable_input_before_confirmed_queue_message(app):
     sessions = app.state.test_sessions
     with sessions() as session:
-        before = session.scalar(select(func.count()).select_from(ProcessedImage))
+        before = session.scalar(select(func.count()).select_from(ImageRecord))
     accepted = post_image(app)
     with sessions() as session:
-        after = session.scalar(select(func.count()).select_from(ProcessedImage))
-    assert before == after
+        after = session.scalar(select(func.count()).select_from(ImageRecord))
+        image_id = UUID(accepted["image_id"])
+        repository = ImageRepository(session)
+        assert repository.get(image_id) is None
+        record, artifacts = repository.input(image_id)
+        assert record.manifest is None
+        assert (record.width, record.height) == (16, 12)
+        assert artifacts["original"] == image_bytes()
+        assert artifacts["normalized.png"].startswith(b"\x89PNG")
+        assert (
+            session.scalar(
+                select(func.count())
+                .select_from(ImageArtifact)
+                .where(ImageArtifact.image_id == image_id)
+            )
+            == 2
+        )
+    assert after == before + 1
     image_id = UUID(accepted["image_id"])
-    assert (app.state.settings.image_root / str(image_id) / "original").is_file()
     with Connection(app.state.celery.conf.broker_url) as connection:
         with connection.SimpleQueue("inference", queue_opts={"durable": True}) as queue:
             message = queue.get(block=True, timeout=5)
@@ -86,3 +105,43 @@ def test_unregistered_worker_refuses_to_consume(app):
 
     with pytest.raises(WorkerShutdown):
         require_processing_task(sender=Worker(app.state.celery))
+
+
+def test_failed_binary_publication_rolls_back_manifest_and_keeps_durable_input(app):
+    image_id = UUID(post_image(app)["image_id"])
+    sessions = app.state.test_sessions
+    with sessions() as session:
+        _, inputs = ImageRepository(session).input(image_id)
+    result = ImageResult(
+        id=image_id,
+        width=16,
+        height=12,
+        models={
+            stage: {"model_name": "synthetic"}
+            for stage in ("detection", "classification", "annotation")
+        },
+        detection={"objects": []},
+        classification={"objects": []},
+        annotation={"raw_caption": "Synthetic scene."},
+    )
+    with pytest.raises(IntegrityError):
+        with sessions.begin() as session:
+            ImageRepository(session).publish(
+                result,
+                {**inputs, "detection.png": None},
+                result.model_dump(mode="json"),
+            )
+    with sessions() as session:
+        repository = ImageRepository(session)
+        assert repository.get(image_id) is None
+        record, restored_input = repository.input(image_id)
+        assert record.manifest is None
+        assert restored_input == inputs
+        assert (
+            session.scalar(
+                select(func.count())
+                .select_from(ImageObject)
+                .where(ImageObject.image_id == image_id)
+            )
+            == 0
+        )

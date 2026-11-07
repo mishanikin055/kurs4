@@ -5,7 +5,6 @@ from pydantic import BaseModel, Field, FiniteFloat, model_validator
 
 class AcceptedImage(BaseModel):
     image_id: UUID
-    output_folder: str
 
 
 class DetectedObject(BaseModel):

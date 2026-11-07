@@ -5,6 +5,10 @@ detection/models
 data
 storage
 reports
+archive
+C:*
+*.dump
+image-analysis*.zip
 Материалы для курсовой
 
 classification/models

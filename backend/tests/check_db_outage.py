@@ -7,7 +7,8 @@ import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-COMPOSE = ["docker", "compose", "-p", "kurs4-simple-test", "-f", "compose.app.yaml"]
+PROJECT = os.environ.get("APP_TEST_PROJECT", "kurs4-simple-test")
+COMPOSE = ["docker", "compose", "-p", PROJECT, "-f", "compose.app.yaml"]
 
 
 def wait_marker(path: Path, process: subprocess.Popen, timeout: float = 35) -> None:
@@ -21,6 +22,8 @@ def wait_marker(path: Path, process: subprocess.Popen, timeout: float = 35) -> N
 
 
 def main():
+    if not PROJECT.startswith("kurs4-") or not PROJECT.endswith("-test"):
+        raise ValueError("Use an isolated kurs4-*-test Compose project")
     with tempfile.TemporaryDirectory(prefix="kurs4-db-outage-") as directory:
         control = Path(directory)
         os.chmod(control, 0o777)
@@ -32,7 +35,7 @@ def main():
             "kurs4-db-outage-check",
             "--init",
             "--network",
-            "kurs4-simple-test_default",
+            PROJECT + "_default",
             "--env-file",
             ".secrets/app.env",
             "-e",
@@ -48,7 +51,7 @@ def main():
             "-m",
             "pytest",
             "-q",
-            "backend/tests/test_worker_integration.py::test_database_outage_requeues_completed_bundle",
+            "backend/tests/test_worker_integration.py::test_database_outage_preserves_input_and_requeues_image",
         ]
         process = subprocess.Popen(command, cwd=ROOT)
         try:

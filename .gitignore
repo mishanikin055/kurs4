@@ -4,6 +4,8 @@ __pycache__/
 .ruff_cache/
 .venv*/
 .env
+*.dump
+image-analysis*.zip
 # Веса и локальные данные; маленькие manifests остаются версионируемыми.
 detection/models/*/
 detection/models/*.part
@@ -31,3 +33,10 @@ reports/comparisons/annotation-*/expert_*.csv
 
 # Новые результаты упрощённых однопроходных сравнений.
 reports/runs/
+
+# Исторический архив: тяжёлые локальные результаты остаются вне Git.
+archive/coursework/reports/detection/
+archive/coursework/reports/classification/
+archive/coursework/reports/annotation/
+archive/coursework/reports/runs/
+archive/coursework/reports/comparisons/annotation-*/expert_*.csv

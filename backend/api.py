@@ -1,16 +1,15 @@
-"""Uploads, result previews and downloads; database writes belong to the worker."""
+"""Uploads, previews and bounded exports backed by PostgreSQL."""
 
 import json
-import shutil
-import tempfile
-from pathlib import Path
+from io import BytesIO
 from typing import Annotated
 from uuid import UUID
 from zipfile import ZipFile
 
 from fastapi import APIRouter, Depends, File, HTTPException, Request, UploadFile
-from fastapi.responses import FileResponse, JSONResponse
-from starlette.background import BackgroundTask
+from fastapi.responses import JSONResponse, Response
+from sqlalchemy import text
+from sqlalchemy.exc import SQLAlchemyError
 
 from backend.schemas import AcceptedImage
 from backend.service import BrokerUnavailable, ImageService
@@ -21,7 +20,9 @@ router = APIRouter()
 
 
 def get_service(request: Request) -> ImageService:
-    return ImageService(request.app.state.settings, request.app.state.celery)
+    return ImageService(
+        request.app.state.settings, request.app.state.celery, request.app.state.sessions
+    )
 
 
 Service = Annotated[ImageService, Depends(get_service)]
@@ -42,8 +43,17 @@ def upload_image(service: Service, file: UploadFile = File(...)):
 @router.get("/health")
 def health(request: Request):
     state = request.app.state
-    ready = check_broker(state.celery, state.settings.broker_timeout)
-    return JSONResponse(status_code=200 if ready else 503, content={"rabbitmq": ready})
+    broker_ready = check_broker(state.celery, state.settings.broker_timeout)
+    try:
+        with state.sessions() as session:
+            session.execute(text("SELECT 1"))
+        database_ready = True
+    except SQLAlchemyError:
+        database_ready = False
+    return JSONResponse(
+        status_code=200 if broker_ready and database_ready else 503,
+        content={"rabbitmq": broker_ready, "database": database_ready},
+    )
 
 
 @router.get("/images/{image_id}")
@@ -58,45 +68,42 @@ def preview_result(image_id: UUID, service: Service):
 @router.get("/images/{image_id}/files/{filename:path}")
 def download_file(image_id: UUID, filename: str, service: Service):
     try:
-        path = service.result_file(image_id, filename)
+        media_type, content = service.result_file(image_id, filename)
     except FileNotFoundError as exc:
         raise HTTPException(404, "result_not_found") from exc
-    media_type = {".png": "image/png", ".json": "application/json"}.get(path.suffix)
-    return FileResponse(
-        path,
-        media_type=media_type or "application/octet-stream",
-        filename=path.name,
-        headers={"Cache-Control": "no-store", "X-Content-Type-Options": "nosniff"},
+    return Response(
+        content,
+        media_type=media_type,
+        headers={
+            "Cache-Control": "no-store",
+            "X-Content-Type-Options": "nosniff",
+            "Content-Disposition": f'attachment; filename="{filename.rsplit("/", 1)[-1]}"',
+        },
     )
 
 
 @router.get("/images/{image_id}/archive")
 def download_archive(image_id: UUID, service: Service):
     try:
-        paths = [
-            service.result_file(image_id, name)
-            for name in ("original", "normalized.png", "detection.png", "results.json")
-        ]
-        manifest = service.result_file(image_id, "results.json")
-        crops = json.loads(manifest.read_text(encoding="utf-8")).get("crops", [])
-        paths.extend(service.result_file(image_id, f"crops/{name}") for name in crops)
+        artifacts = service.bundle(image_id)
     except FileNotFoundError as exc:
         raise HTTPException(404, "result_not_found") from exc
-    temporary = Path(tempfile.mkdtemp(prefix="kurs4-download-"))
-    try:
-        archive = temporary / "result.zip"
-        with ZipFile(archive, "w") as bundle:
-            for path in paths:
-                bundle.write(path, arcname=f"{image_id}/{path.relative_to(manifest.parent)}")
-            if crops == [] and (manifest.parent / "crops").is_dir():
-                bundle.mkdir(f"{image_id}/crops/")
-        return FileResponse(
-            archive,
-            media_type="application/zip",
-            filename=f"{image_id}.zip",
-            headers={"Cache-Control": "no-store", "X-Content-Type-Options": "nosniff"},
-            background=BackgroundTask(shutil.rmtree, temporary),
-        )
-    except BaseException:
-        shutil.rmtree(temporary)
-        raise
+    # Only one bounded image bundle is materialized, never the archive catalogue.
+    if sum(len(content) for _, content in artifacts.values()) > service.settings.max_bundle_bytes:
+        raise HTTPException(413, "bundle_too_large")
+    stream = BytesIO()
+    with ZipFile(stream, "w") as bundle:
+        for name, (_, content) in artifacts.items():
+            bundle.writestr(f"{image_id}/{name}", content)
+        manifest = json.loads(artifacts["results.json"][1])
+        if manifest.get("crops") == []:
+            bundle.mkdir(f"{image_id}/crops/")
+    return Response(
+        stream.getvalue(),
+        media_type="application/zip",
+        headers={
+            "Content-Disposition": f'attachment; filename="{image_id}.zip"',
+            "Cache-Control": "no-store",
+            "X-Content-Type-Options": "nosniff",
+        },
+    )

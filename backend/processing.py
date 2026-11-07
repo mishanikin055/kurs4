@@ -1,9 +1,8 @@
-"""Parallel detection and scene caption, then sequential crops, files and one DB write."""
+"""Parallel scene/detection, sequential crop captions and atomic database publication."""
 
 import fcntl
 import json
 import os
-import shutil
 import signal
 import subprocess
 import tempfile
@@ -19,7 +18,7 @@ from PIL import Image
 from backend.repository import ImageRepository
 from backend.schemas import AnnotationPayload, ClassificationPayload, DetectionPayload, ImageResult
 from backend.settings import Settings, model_specs
-from backend.storage import result_directory, save_result
+from backend.storage import build_artifacts
 from backend.tables import STAGES
 
 
@@ -153,120 +152,99 @@ def process_image(
     lock_fd: int | None = None,
 ) -> None:
     deadline = time.monotonic() + settings.job_timeout
-    destination = result_directory(settings, image_id)
-    source = settings.image_root / str(image_id)
     lock = inference_lock(settings.lock_path, deadline) if lock_fd is None else nullcontext(lock_fd)
-    with lock as lock_fd:
+    with lock as lock_fd, tempfile.TemporaryDirectory(prefix="image-inference-") as temporary:
+        source = Path(temporary)
         with sessions() as session:
-            existing = ImageRepository(session).get(image_id)
-            if existing is not None:
-                # Duplicates must never rerun models or overwrite a completed image.
-                if Path(existing.result_path).parent != destination:
-                    raise ValueError("Conflicting volume path for completed image")
-                shutil.rmtree(source, ignore_errors=True)
+            repository = ImageRepository(session)
+            if repository.get(image_id) is not None:
                 return
-        manifest = destination / "results.json"
-        if manifest.is_file():
-            # If the DB was unavailable after file publication, retry only its write.
-            cached_manifest = json.loads(manifest.read_text(encoding="utf-8"))
-            result = ImageResult.model_validate(cached_manifest)
-            if result.id != image_id or not all(
-                (destination / name).is_file()
-                for name in ("original", "normalized.png", "detection.png")
-            ):
-                raise ValueError("Incomplete result bundle")
-            cached_crops = cached_manifest.get("crops", [])
-            expected_crops = [f"{obj.object_id}.png" for obj in result.detection.objects]
-            if "crops" in cached_manifest and (
-                cached_crops != expected_crops
-                or not all((destination / "crops" / name).is_file() for name in cached_crops)
-            ):
-                raise ValueError("Incomplete crop bundle")
-        else:
-            specs = model_specs(settings)
-            with Image.open(source / "normalized.png") as image:
-                size = image.size
-            cancelled = Event()
+            record, inputs = repository.input(image_id)
+            size = (record.width, record.height)
+        for name, content in inputs.items():
+            (source / name).write_bytes(content)
+        del inputs
+        specs = model_specs(settings)
+        with Image.open(source / "normalized.png") as image:
+            size = image.size
+        cancelled = Event()
 
-            def infer(stage: str, detection: dict | None = None) -> dict:
-                if cancelled.is_set():
-                    raise ProcessingInterrupted
-                remaining = deadline - time.monotonic()
-                if remaining <= 0:
-                    raise TimeoutError("Inference deadline exceeded")
-                request = dict(
-                    stage=stage,
-                    image_path=str(source / "normalized.png"),
-                    model_root=str(settings.model_root),
-                    **specs[stage],
-                )
-                if stage == "classification":
-                    request["detection"] = detection
-                response = runner(
-                    request,
-                    settings,
-                    lock_fd,
-                    min(settings.stage_timeout, remaining),
-                    cancelled=cancelled,
-                )
-                if response.get("error"):
-                    raise RuntimeError(f"{stage}: {response['error'].get('code', 'model_error')}")
-                status, payload = validate_payload(stage, response["payload"], size, detection)
-                if status != "succeeded":
-                    raise RuntimeError(f"{stage}: incomplete result")
-                return payload
+        def infer(stage: str, detection: dict | None = None) -> dict:
+            if cancelled.is_set():
+                raise ProcessingInterrupted
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                raise TimeoutError("Inference deadline exceeded")
+            request = dict(
+                stage=stage,
+                image_path=str(source / "normalized.png"),
+                model_root=str(settings.model_root),
+                **specs[stage],
+            )
+            if stage == "classification":
+                request["detection"] = detection
+            response = runner(
+                request,
+                settings,
+                lock_fd,
+                min(settings.stage_timeout, remaining),
+                cancelled=cancelled,
+            )
+            if response.get("error"):
+                raise RuntimeError(f"{stage}: {response['error'].get('code', 'model_error')}")
+            status, payload = validate_payload(stage, response["payload"], size, detection)
+            if status != "succeeded":
+                raise RuntimeError(f"{stage}: incomplete result")
+            return payload
 
-            payloads = {}
-            errors = []
-            # Threads only coordinate IPC; CUDA stays in the two model processes.
-            with ThreadPoolExecutor(max_workers=2, thread_name_prefix="inference") as executor:
-                try:
-                    pending = {
-                        executor.submit(infer, "detection"): "detection",
-                        executor.submit(infer, "annotation"): "annotation",
-                    }
-                    while pending:
-                        done, _ = wait(pending, timeout=0.1, return_when=FIRST_COMPLETED)
-                        for future in done:
-                            stage = pending.pop(future)
-                            try:
-                                payload = future.result()
-                            except Exception as exc:
-                                # Drain the other branch before reusing resident IPC channels.
-                                errors.append(exc)
-                            else:
-                                payloads[stage] = payload
-                finally:
-                    # Interrupt/IPC failure must unblock both branches before releasing the lock.
-                    cancelled.set()
-            if errors:
-                raise errors[0]
-            # Both branches have released their channels; Florence now owns all crop requests.
-            cancelled.clear()
-            payloads["classification"] = (
-                infer("classification", payloads["detection"])
-                if payloads["detection"]["objects"]
-                else {"objects": []}
-            )
-            result = ImageResult(
-                id=image_id,
-                width=size[0],
-                height=size[1],
-                models={
-                    stage: {key: specs[stage][key] for key in ("model_name", "model_revision")}
-                    for stage in STAGES
-                },
-                **payloads,
-            )
-            save_result(
-                result,
-                source,
-                destination,
-                crop_padding=specs["classification"]["parameters"].get(
-                    "crop_padding_fraction", 0.1
-                ),
-            )
-        # No image, job, status, error or intermediate stage is written before this point.
+        payloads = {}
+        errors = []
+        # Threads only coordinate IPC; CUDA stays in the two model processes.
+        with ThreadPoolExecutor(max_workers=2, thread_name_prefix="inference") as executor:
+            try:
+                pending = {
+                    executor.submit(infer, "detection"): "detection",
+                    executor.submit(infer, "annotation"): "annotation",
+                }
+                while pending:
+                    done, _ = wait(pending, timeout=0.1, return_when=FIRST_COMPLETED)
+                    for future in done:
+                        stage = pending.pop(future)
+                        try:
+                            payload = future.result()
+                        except Exception as exc:
+                            # Drain the other branch before reusing resident IPC channels.
+                            errors.append(exc)
+                        else:
+                            payloads[stage] = payload
+            finally:
+                # Interrupt/IPC failure must unblock both branches before releasing the lock.
+                cancelled.set()
+        if errors:
+            raise errors[0]
+        # Both branches have released their channels; Florence now owns all crop requests.
+        cancelled.clear()
+        payloads["classification"] = (
+            infer("classification", payloads["detection"])
+            if payloads["detection"]["objects"]
+            else {"objects": []}
+        )
+        result = ImageResult(
+            id=image_id,
+            width=size[0],
+            height=size[1],
+            models={
+                stage: {key: specs[stage][key] for key in ("model_name", "model_revision")}
+                for stage in STAGES
+            },
+            **payloads,
+        )
+        manifest, artifacts = build_artifacts(
+            result,
+            source,
+            settings,
+            crop_padding=specs["classification"]["parameters"].get("crop_padding_fraction", 0.1),
+        )
+        # Publication and all binary artifacts become visible in one transaction.
         with sessions.begin() as session:
-            ImageRepository(session).save(result, destination)
-        shutil.rmtree(source, ignore_errors=True)
+            ImageRepository(session).publish(result, artifacts, manifest)

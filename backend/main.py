@@ -1,8 +1,12 @@
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import JSONResponse
+from sqlalchemy.exc import SQLAlchemyError
 
+from backend import __version__
 from backend.api import router
+from backend.db import make_engine, make_sessions
 from backend.settings import Settings
 from backend.tasks import make_celery
 
@@ -36,14 +40,22 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @asynccontextmanager
     async def lifespan(app):
+        engine = make_engine(settings.database_url.get_secret_value())
+        app.state.sessions = make_sessions(engine)
         try:
             yield
         finally:
+            engine.dispose()
             celery.close()
 
-    app = FastAPI(title="Kurs4 Image API", lifespan=lifespan)
+    app = FastAPI(title="Image Analysis API", version=__version__, lifespan=lifespan)
     app.add_middleware(UploadLimitMiddleware, limit=settings.max_upload_bytes + 64 * 1024)
     app.state.celery = celery
     app.state.settings = settings
+
+    @app.exception_handler(SQLAlchemyError)
+    async def database_unavailable(request, exc):
+        return JSONResponse(status_code=503, content={"detail": "database_unavailable"})
+
     app.include_router(router)
     return app

@@ -11,7 +11,7 @@ from sqlalchemy import create_engine, inspect, text
 from sqlalchemy.engine import make_url
 
 from backend.settings import Settings
-from backend.tables import Base
+from backend.tables import Base, ProcessedImage
 
 pytestmark = pytest.mark.skipif(
     os.environ.get("APP_TEST_INTEGRATION") != "1", reason="Requires isolated PostgreSQL"
@@ -118,7 +118,7 @@ def test_historical_migrations_and_legacy_removal_preserve_completed_images(monk
                 ]
             }
             inspector = inspect(connection)
-            for table in Base.metadata.sorted_tables:
+            for table in [ProcessedImage.__table__]:
                 assert {col["name"] for col in inspector.get_columns(table.name)} == set(
                     table.c.keys()
                 )
@@ -142,13 +142,26 @@ def test_historical_migrations_and_legacy_removal_preserve_completed_images(monk
         command.upgrade(config, "head")
         command.check(config)
         with private.connect() as connection:
-            assert set(inspect(connection).get_table_names()) == {
-                "processed_images",
-                "alembic_version",
+            inspector = inspect(connection)
+            assert set(inspector.get_table_names()) == set(Base.metadata.tables) | {
+                "alembic_version"
             }
+            for table in Base.metadata.sorted_tables:
+                assert {column["name"] for column in inspector.get_columns(table.name)} == set(
+                    table.c.keys()
+                )
             row = connection.execute(text("SELECT id, annotation FROM processed_images")).one()
             assert str(row.id) == image_id
             assert row.annotation == caption
+            # Additive storage migration keeps legacy references without pretending
+            # their external image bytes were imported into PostgreSQL.
+            assert connection.scalar(text("SELECT count(*) FROM image_records")) == 0
+            indexes = {index["name"]: index for index in inspector.get_indexes("image_objects")}
+            assert indexes["image_objects_label_image_idx"]["column_names"] == ["label", "image_id"]
+            assert (
+                indexes["image_objects_attributes_idx"]["dialect_options"]["postgresql_using"]
+                == "gin"
+            )
         with pytest.raises(RuntimeError, match="irreversible"):
             command.downgrade(config, "a2f004752f43")
     finally:
