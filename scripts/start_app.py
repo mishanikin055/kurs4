@@ -99,10 +99,17 @@ def main(argv=None):
         )
         if info.get("OSType") != "linux" or info.get("Architecture") not in ("x86_64", "amd64"):
             raise RuntimeError("This bundle requires a Linux x86_64 Docker engine.")
+        if args.device == "cuda" and "nvidia" not in (info.get("Runtimes") or {}):
+            advice = (
+                "Для прямого запуска в WSL используйте --device wsl-cuda."
+                if Path("/dev/dxg").exists()
+                else "Установите и настройте NVIDIA Container Toolkit для Docker."
+            )
+            raise RuntimeError(f"Docker не имеет runtime nvidia для режима cuda. {advice}")
+        if args.device == "wsl-cuda" and not Path("/dev/dxg").exists():
+            raise RuntimeError("Режим wsl-cuda требует /dev/dxg в локальной WSL.")
         run(compose + ["config", "--quiet", "--no-env-resolution"], env=env)
         check_weights()
-        if args.device == "wsl-cuda" and not Path("/dev/dxg").exists():
-            raise RuntimeError("wsl-cuda requires /dev/dxg in the local WSL installation.")
         if args.check:
             print("Preflight passed. No services or settings were changed.")
             if not (ROOT / ".secrets" / "app.env").exists():

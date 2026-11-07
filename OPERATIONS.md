@@ -49,7 +49,7 @@ Launcher создаёт `.secrets/app.env` со случайными парол�
 | `APP_MAX_ARTIFACT_BYTES`, `APP_MAX_BUNDLE_BYTES` | 128 МиБ, 256 МиБ. |
 | `APP_STAGE_TIMEOUT`, `APP_JOB_TIMEOUT` | 600 и 2400 секунд. |
 
-Порты `APP_FRONTEND_PORT`/`APP_HTTP_PORT` (8080/8000) и `APP_WORKER_MEMORY` задаются в окружении Compose. Остальные `APP_*` — в `.secrets/app.env`. ES использует heap 1 ГБ и лимит контейнера 2 ГБ; это локальная single-node конфигурация. Linux x86_64, CPU и NVIDIA CUDA остаются явными режимами. Реальный CPU/GPU инференс этой версии не проверялся.
+Порты `APP_FRONTEND_PORT`/`APP_HTTP_PORT` (8080/8000) и `APP_WORKER_MEMORY` задаются в окружении Compose. Остальные `APP_*` — в `.secrets/app.env`. ES использует heap 512 МиБ и лимит контейнера 1 ГБ; это локальная single-node конфигурация. Linux x86_64, CPU и NVIDIA CUDA остаются явными режимами. Реальный CPU/GPU инференс этой версии не проверялся.
 
 MinIO собирается из закреплённого upstream release в `docker/minio.Dockerfile`, лицензия включена в образ. Первой сборке нужен интернет для Go-зависимостей. Отдельный MinIO контейнер имеет постоянный volume `s3data`; Elasticsearch — `esdata`. Модели и секреты не входят в образы/архив Git.
 
@@ -62,7 +62,9 @@ docker compose -p kurs4-app -f compose.app.yaml run --rm --no-deps backend pytho
 docker compose -p kurs4-app -f compose.app.yaml up -d backend frontend
 ```
 
-Обычный запуск с обработкой — `python3 scripts/start_app.py --device cpu` (либо `cuda`).
+Обычный запуск с обработкой — `python3 scripts/start_app.py --device cpu` (либо `cuda`). Режим `cuda` требует зарегистрированного NVIDIA runtime Docker и проверяется до сборки. Если локальный Docker Engine запущен прямо в WSL без этого runtime, используйте `python3 scripts/start_app.py --device wsl-cuda`: отдельный override передаёт `/dev/dxg` и библиотеки WSL, сохраняя `APP_DEVICE=cuda`. CPU автоматически не подставляется. Настройка стандартного NVIDIA runtime описана в [документации NVIDIA](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html).
+
+`MemoryError: Less than 768 MiB host RAM available` означает нехватку доступной RAM WSL/хоста во время загрузки моделей. Защиту не отключайте: освободите память или увеличьте лимит WSL. Heap Elasticsearch ограничен 512 МиБ, чтобы оставить больше памяти двум модельным процессам; это не отменяет общего требования к ресурсам.
 
 Остановка обработки/всего приложения:
 
@@ -89,4 +91,4 @@ docker compose -p kurs4-app -f compose.app.yaml --profile processing down
 
 `APP_TEST_INTEGRATION=1` включает тесты настоящих Elasticsearch/S3. Используйте отдельные тестовые контейнеры и тестовые credentials: тест создаёт и удаляет только свои случайные index/bucket. Инференс в нём синтетический, веса не загружаются. Новые отчёты, benchmark и проверки производительности без отдельного поручения не создаются.
 
-Проверено 07.11.2026: 117 функциональных тестов backend с отдельными настоящими ES/S3 и синтетическими моделями; Ruff check/format, три Compose-конфигурации и браузерные сценарии, включая EXIF 1–8. Образы API/frontend/worker/MinIO собраны, импорты worker проверены без загрузки моделей. Локальные хранилища/API/frontend запущены; worker обработки и настоящий CPU/GPU инференс не запускались.
+Проверено 07.11.2026: 117 функциональных тестов backend с отдельными настоящими ES/S3 и синтетическими моделями; Ruff check/format, три Compose-конфигурации и браузерные сценарии, включая EXIF 1–8. Образы API/frontend/worker/MinIO собраны, импорты worker проверены без загрузки моделей. Локальные хранилища/API/frontend запущены. После исправления режима запуска проверены загрузка и штатный прогрев обеих моделей на NVIDIA GPU через `wsl-cuda`, получено `Celery ready`; пользовательские изображения для дополнительной проверки не отправлялись. Реальный CPU-инференс не проверен.

@@ -80,15 +80,52 @@ def test_secrets_generate_matching_password_and_never_overwrite(bundle):
     assert path.read_text() == content
 
 
-def mock_docker(monkeypatch):
+def mock_docker(monkeypatch, *, runtimes=None):
     calls = []
 
     def run(command, **kwargs):
         calls.append((command, kwargs))
-        return SimpleNamespace(stdout=json.dumps({"OSType": "linux", "Architecture": "x86_64"}))
+        return SimpleNamespace(
+            stdout=json.dumps(
+                {
+                    "OSType": "linux",
+                    "Architecture": "x86_64",
+                    "Runtimes": {"nvidia": {}} if runtimes is None else runtimes,
+                }
+            )
+        )
 
     monkeypatch.setattr(start_app.subprocess, "run", run)
     return calls
+
+
+@pytest.mark.parametrize("wsl", [False, True])
+def test_missing_nvidia_runtime_stops_before_config_or_settings(bundle, monkeypatch, capsys, wsl):
+    calls = mock_docker(monkeypatch, runtimes={"runc": {}})
+    exists = Path.exists
+    monkeypatch.setattr(
+        Path, "exists", lambda path: wsl if path == Path("/dev/dxg") else exists(path)
+    )
+    before = sorted(bundle.rglob("*"))
+    assert start_app.main(["--device", "cuda"]) == 1
+    assert sorted(bundle.rglob("*")) == before
+    assert len(calls) == 2
+    error = capsys.readouterr().err
+    assert "runtime nvidia" in error
+    assert ("--device wsl-cuda" if wsl else "NVIDIA Container Toolkit") in error
+
+
+def test_missing_wsl_device_stops_before_config_or_settings(bundle, monkeypatch, capsys):
+    calls = mock_docker(monkeypatch)
+    exists = Path.exists
+    monkeypatch.setattr(
+        Path, "exists", lambda path: False if path == Path("/dev/dxg") else exists(path)
+    )
+    before = sorted(bundle.rglob("*"))
+    assert start_app.main(["--device", "wsl-cuda"]) == 1
+    assert sorted(bundle.rglob("*")) == before
+    assert len(calls) == 2
+    assert "/dev/dxg" in capsys.readouterr().err
 
 
 @pytest.mark.parametrize("existing_secrets", [False, True])
