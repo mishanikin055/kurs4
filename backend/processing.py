@@ -1,5 +1,7 @@
 """Parallel scene/detection, sequential crop captions and atomic database publication."""
 
+from __future__ import annotations
+
 import fcntl
 import json
 import os
@@ -11,14 +13,17 @@ from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
 from contextlib import contextmanager, nullcontext
 from pathlib import Path
 from threading import Event
+from typing import TYPE_CHECKING
 from uuid import UUID
 
 from PIL import Image
 
-from backend.repository import ImageRepository
 from backend.schemas import AnnotationPayload, ClassificationPayload, DetectionPayload, ImageResult
 from backend.settings import Settings, model_specs
 from backend.storage import build_artifacts
+
+if TYPE_CHECKING:
+    from backend.repository import ImageRepository
 
 STAGES = ("detection", "classification", "annotation")
 

@@ -192,12 +192,20 @@ def worker_main(settings: Settings, *, runner=None) -> None:
     finally:
         es.close()
         s3.close()
-    from contextlib import nullcontext
+    from contextlib import ExitStack, nullcontext
 
     from backend.runtime import resident_models
 
-    runtime = resident_models(settings) if runner is None else nullcontext(runner)
-    with runtime as runner:
+    with ExitStack() as stack:
+        while True:
+            try:
+                runtime = resident_models(settings) if runner is None else nullcontext(runner)
+                runner = stack.enter_context(runtime)
+                break
+            except MemoryError:
+                # Failed startup closes partial model processes before waiting; no tasks are consumed.
+                logger.warning("Worker waiting 30s for model memory headroom")
+                time.sleep(30)
         app = make_celery(settings)
         register_processing_task(
             app, settings, runner=runner, lock_fd=getattr(runner, "lock_fd", None)

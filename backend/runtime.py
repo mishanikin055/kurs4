@@ -108,6 +108,9 @@ class ResidentModels:
                         "HF_HUB_OFFLINE": "1",
                         "TRANSFORMERS_OFFLINE": "1",
                         "OMP_NUM_THREADS": "4",
+                        # Return freed CPU loading buffers instead of retaining many malloc arenas.
+                        "MALLOC_ARENA_MAX": "2",
+                        "MALLOC_TRIM_THRESHOLD_": "65536",
                     },
                     # Local startup logs contain no request payloads; never expose them through API.
                     stdout=None,

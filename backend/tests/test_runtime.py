@@ -223,3 +223,16 @@ def test_memory_headroom(host, anon, raises, monkeypatch):
             check_memory()
     else:
         check_memory()
+
+
+def test_model_ipc_import_does_not_load_storage_clients():
+    import subprocess
+
+    subprocess.run(
+        [
+            sys.executable,
+            "-c",
+            "import backend.runtime, sys; assert not {'botocore', 'elasticsearch'} & sys.modules.keys()",
+        ],
+        check=True,
+    )
