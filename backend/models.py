@@ -185,8 +185,8 @@ def annotate(image: Image.Image, directory: Path, parameters: dict, *, loaded=No
     }
 
 
-def load_translator(directory: Path):
-    """Keep the small English-to-Russian model on CPU alongside resident Florence."""
+def load_translator(directory: Path, device: str):
+    """Load the translator on the same explicit device as Florence."""
     from transformers import MarianMTModel, MarianTokenizer
 
     spec = TRANSLATION_SPEC
@@ -200,11 +200,15 @@ def load_translator(directory: Path):
     tokenizer = MarianTokenizer.from_pretrained(str(directory), local_files_only=True)
     model = (
         MarianMTModel.from_pretrained(
-            str(directory), local_files_only=True, torch_dtype="float32", use_safetensors=True
+            str(directory),
+            local_files_only=True,
+            torch_dtype="float16" if device.startswith("cuda") else "float32",
+            use_safetensors=True,
         )
-        .to("cpu")
+        .to(device)
         .eval()
     )
+    print(f"Translator ready device={model.device} dtype={model.dtype}", flush=True)
     return tokenizer, model
 
 
@@ -226,7 +230,7 @@ def translate_caption(caption: str, loaded) -> str | None:
     context_limit = min(tokenizer.model_max_length, model.config.max_position_embeddings)
     if inputs["input_ids"].shape[-1] > context_limit:
         raise ValueError("Caption exceeds translation model context")
-    inputs = {name: value.to("cpu") for name, value in inputs.items()}
+    inputs = {name: value.to(model.device) for name, value in inputs.items()}
     max_new_tokens = min(511, model.config.max_position_embeddings - 1)
     with torch.inference_mode():
         output = model.generate(
@@ -258,7 +262,10 @@ def predict(request: dict, directory: Path, *, loaded=None, translator=None, ima
             raise ValueError("Unknown stage")
         if stage in {"annotation", "classification"}:
             if translator is None:
-                translator = load_translator(directory.parent / TRANSLATION_SPEC["model_name"])
+                translator = load_translator(
+                    directory.parent / TRANSLATION_SPEC["model_name"],
+                    request["parameters"]["device"],
+                )
             if stage == "annotation":
                 payload["russian_caption"] = translate_caption(payload["raw_caption"], translator)
             else:
@@ -295,7 +302,7 @@ def serve(fd: int) -> None:
             loaded = load_detector(directory, device)
         else:
             loaded = load_annotator(directory, device)
-            translator = load_translator(directory.parent / TRANSLATION_SPEC["model_name"])
+            translator = load_translator(directory.parent / TRANSLATION_SPEC["model_name"], device)
         # Pay CUDA/kernel initialization once, before consuming user jobs.
         warmup = dict(
             spec, detection={"objects": [{"object_id": str(uuid4()), "bbox": [0, 0, 224, 224]}]}

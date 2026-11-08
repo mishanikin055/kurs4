@@ -149,16 +149,23 @@ def test_protocol_rejects_large_response():
 
 
 @pytest.mark.parametrize("stage", ["detection", "annotation"])
-def test_server_loads_once_and_rejects_checkpoint_change(settings, tmp_path, monkeypatch, stage):
+@pytest.mark.parametrize("device", ["cpu", "cuda"])
+def test_server_loads_once_and_rejects_checkpoint_change(
+    settings, tmp_path, monkeypatch, stage, device
+):
+    settings = settings.model_copy(update={"device": device})
     loader = Mock(return_value=object())
     verify = Mock(return_value=tmp_path)
     predict = Mock(return_value={"payload": {"test": True}})
     monkeypatch.setattr(models, "verify_files", verify)
     monkeypatch.setattr(models, "load_detector", loader)
     monkeypatch.setattr(models, "load_annotator", loader)
-    monkeypatch.setattr(models, "load_translator", Mock(return_value=object()))
+    translator_loader = Mock(return_value=object())
+    monkeypatch.setattr(models, "load_translator", translator_loader)
     monkeypatch.setattr(models, "predict", predict)
-    monkeypatch.setitem(sys.modules, "torch", Mock())
+    torch = Mock()
+    torch.cuda.mem_get_info.return_value = (2 * 1024**3, 6 * 1024**3)
+    monkeypatch.setitem(sys.modules, "torch", torch)
     left, right = socket.socketpair()
     errors = []
 
@@ -200,6 +207,12 @@ def test_server_loads_once_and_rejects_checkpoint_change(settings, tmp_path, mon
         assert predict.call_count == 3  # One warmup and two requests.
         assert all(call.kwargs["loaded"] is loader.return_value for call in predict.call_args_list)
         loader.assert_called_once()
+        if stage == "annotation":
+            translator_loader.assert_called_once_with(
+                tmp_path.parent / models.TRANSLATION_SPEC["model_name"], device
+            )
+        else:
+            translator_loader.assert_not_called()
         verify.assert_called_once()
     finally:
         left.close()
