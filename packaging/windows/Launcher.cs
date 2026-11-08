@@ -11,13 +11,20 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 [assembly: AssemblyTitle("Image Analysis")]
-[assembly: AssemblyVersion("0.3.7.0")]
+[assembly: AssemblyVersion("0.3.8.0")]
 
 internal static class Program
 {
     internal static readonly string Home = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ImageAnalysis");
     internal static readonly string AppRoot = Path.Combine(Home, "app");
+    internal static readonly string OfflineRoot = Path.Combine(
+        Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "offline");
+#if OFFLINE
+    internal static readonly bool IsOffline = true;
+#else
+    internal static readonly bool IsOffline = Directory.Exists(OfflineRoot);
+#endif
 
     [STAThread]
     private static int Main(string[] args)
@@ -114,6 +121,7 @@ internal static class Program
         info.EnvironmentVariables["PYTHONIOENCODING"] = "utf-8";
         info.EnvironmentVariables["PYTHONUTF8"] = "1";
         info.EnvironmentVariables["PYTHONUNBUFFERED"] = "1";
+        if (IsOffline) info.EnvironmentVariables["IMAGE_ANALYSIS_OFFLINE_DIR"] = OfflineRoot;
         return info;
     }
 }
@@ -132,7 +140,7 @@ internal sealed class Launcher : Form
 
     internal Launcher()
     {
-        Text = "Image Analysis 0.3.7";
+        Text = "Image Analysis 0.3.8";
         Font = new Font("Segoe UI", 11);
         AutoScaleMode = AutoScaleMode.Dpi;
         ClientSize = new Size(740, 455);
@@ -150,7 +158,9 @@ internal sealed class Launcher : Form
         Controls.Add(layout);
         layout.Controls.Add(new Label { Text = "Анализ фотографий на вашем компьютере", Dock = DockStyle.Fill,
             Font = new Font(Font, FontStyle.Bold) });
-        layout.Controls.Add(new Label { Text = "Нажмите «Запустить»: мастер подготовит Docker, скачает модели и откроет приложение в браузере.\n\nПервая установка требует интернета, около 30 ГБ свободного диска и рекомендуется 16 ГБ RAM. Возможна перезагрузка Windows.",
+        layout.Controls.Add(new Label { Text = Program.IsOffline
+            ? "Нажмите «Запустить»: мастер установит Docker, модели и зависимости из этой поставки и откроет браузер.\n\nИнтернет не требуется. Рекомендуется 16 ГБ RAM и 50 ГБ свободного диска с учётом распаковки. Возможна перезагрузка Windows."
+            : "Нажмите «Запустить»: мастер подготовит Docker, скачает модели и откроет приложение в браузере.\n\nПервая установка требует интернета, около 30 ГБ свободного диска и рекомендуется 16 ГБ RAM. Возможна перезагрузка Windows.",
             Dock = DockStyle.Fill });
         var selection = new FlowLayoutPanel { Dock = DockStyle.Fill, WrapContents = false };
         selection.Controls.Add(new Label { Text = "Обработка:", AutoSize = true, Margin = new Padding(0, 7, 12, 0) });

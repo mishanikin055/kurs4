@@ -135,6 +135,19 @@ def test_start_builds_only_when_requested_release_images_are_missing(bundle, mon
     assert any("up" in command for command, _ in calls)
 
 
+@pytest.mark.parametrize("present", [True, False])
+def test_offline_launcher_never_builds_or_pulls(bundle, monkeypatch, present):
+    calls = mock_docker(monkeypatch)
+    monkeypatch.setattr(start_app, "build_images_available", lambda *args: present)
+    assert start_app.main(["--device", "cpu", "--offline"]) == (0 if present else 1)
+    assert not any("build" in command for command, _ in calls)
+    startups = [command for command, _ in calls if "up" in command or "run" in command]
+    assert bool(startups) is present
+    assert all(command[command.index("--pull") + 1] == "never" for command in startups)
+    assert all("--no-build" in command for command in startups if "up" in command)
+    assert all("--no-build" not in command for command in startups if "run" in command)
+
+
 @pytest.mark.parametrize("wsl", [False, True])
 def test_missing_nvidia_runtime_stops_before_config_or_settings(bundle, monkeypatch, capsys, wsl):
     calls = mock_docker(monkeypatch, runtimes={"runc": {}})

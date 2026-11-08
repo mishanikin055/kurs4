@@ -1,6 +1,27 @@
 # Техническая документация Image Analysis
 
-Версия 0.3.7. Запуск — в [README](README.md). Старые учебные материалы находятся в archive/coursework.
+Версия 0.3.8. Запуск — в [README](README.md). Старые учебные материалы находятся в archive/coursework.
+
+## Автономная поставка 0.3.8
+
+Файл `image-analysis-0.3.8-offline-x64.zip` предназначен для Windows 11 x64 и Linux x86_64 с уже работающим локальным Docker Engine/Compose. В нём находятся `Image Analysis.exe`, `start-linux.sh`, чистые исходники `app/`, `offline/images.tar.gz`, только файлы трёх итоговых моделей и подписанные установщики Windows. Docker Desktop Installer и WSL 3.0.3 MSI закреплены SHA256 в сборщике; для Docker/WSL перед запуском проверяется также Authenticode (Docker Inc / Microsoft Corporation). Сравнительные модели/веса/эксперименты не включаются; `build_windows.source_archive` оставляет в общих manifests только модели из `backend/checkpoints.json`, не меняя научные исходники репозитория.
+
+Windows EXE офлайн-варианта всегда передаёт путь соседней `offline` в `IMAGE_ANALYSIS_OFFLINE_DIR`. Отсутствующая папка/файл приводит к ошибке, без перехода к онлайн-установке. `offline_setup.prepare_models` копирует только закреплённые файлы, проверяя SHA256 до/после копирования; отличающийся установленный файл сохраняется и требует разбора. Готовые образы сверяются по ID; недостающие загружаются через `docker load` после проверки SHA256 архива. `start_app.py --offline` добавляет `compose.app.offline.yaml`, убирает build-конфигурацию через `!reset` и запрещает pull. Образы Elasticsearch/RabbitMQ получают локальные release aliases: ссылки по digest из registry не сохраняются в `docker save/load` так же, как tags.
+
+WSL устанавливается из локального MSI, VirtualMachinePlatform включается через DISM `/LimitAccess`, без Windows Update; коды перезагрузки обрабатываются без принудительной перезагрузки. Для Windows с удалёнными системными компонентами нужен соответствующий установочный носитель ОС. Драйвер GPU, виртуализация BIOS/UEFI, лимит памяти и корпоративные политики остаются условиями среды. CPU не требует NVIDIA; GPU на Linux требует заранее настроенного NVIDIA Container Toolkit.
+
+Linux-скрипт использует `sh`, `sha256sum`, локальный Docker и Compose с поддержкой `!reset` (2.24.4+). Python из включённого API-образа с `--network none` проверяет и копирует модели, создаёт настройки и блокировку, разбирает конфигурацию S3. Устанавливать Python/pip на Linux-хост не требуется. Удалённый Docker daemon отвергается, так как bind mount должен обращаться к распакованным локальным файлам. Используется прежний Compose project `kurs4-app`; `APP_COMPOSE_PROJECT` позволяет отдельный проект для проверки инфраструктуры. Режим `check` подготавливает веса/настройки и проверяет Compose без запуска сервисов, `stop` сохраняет данные.
+
+Место: примерно 17 ГБ занимают распакованные образы текущих сервисов; около 1,34 ГБ — файлы трёх моделей. С учётом ZIP, распаковки и Windows Docker/WSL рекомендуется 50 ГБ свободного места сверх пользовательских результатов. Размеры — сведения о текущих образах/manifest, не benchmark. Полный CPU-инференс и чистая Windows-установка пока не подтверждены.
+
+Пересборка выполняется на машине с интернетом, проверенными весами и собранными текущими образами (тяжёлый запуск моделей не нужен):
+
+```bash
+docker compose -p kurs4-app -f compose.app.yaml --profile processing build backend worker frontend s3
+python3 -m scripts.build_offline --output /path/to/image-analysis-0.3.8-offline-x64.zip --work-dir /path/to/offline-staging --installers /path/to/installers --python-zip /path/to/python-3.14.10-embed-amd64.zip
+```
+
+`--installers` содержит `Docker Desktop Installer.exe` и `wsl.x64.msi` с закреплёнными в `scripts/build_offline.py` SHA256. WSL берётся из [официального выпуска 3.0.3](https://github.com/microsoft/WSL/releases/tag/3.0.3), Docker Desktop 4.98.0 — с [закреплённого адреса сборки 245422](https://desktop.docker.com/win/main/amd64/245422/Docker%20Desktop%20Installer.exe). В архив попадает разрешённый список исходников и моделей, без данных/secrets staging-папки. Кэш экспорта образов переиспользуется при совпадении ID. ZIP64 и рядом `.sha256` готовы для передачи; тяжёлые результаты остаются вне Git.
 
 ## Windows EXE и сборка поставки
 
@@ -17,7 +38,7 @@
 Пересборка из исходников, на Windows x64 или WSL с доступным Windows .NET Framework compiler:
 
 ```bash
-python3 scripts/build_windows.py --output /path/to/image-analysis-0.3.7-windows-x64.zip
+python3 scripts/build_windows.py --output /path/to/image-analysis-0.3.8-windows-x64.zip
 ```
 
 На Windows используйте `py -3` и Windows-путь для `--output`. Скрипт скачивает [официальный embedded Python](https://www.python.org/downloads/release/python-31410/) и сверяет закреплённый SHA256, затем компилирует C# штатным `csc.exe`. `--python-zip` позволяет передать уже скачанный ZIP (проверка SHA256 сохраняется). Готовый тяжёлый ZIP/EXE не коммитятся. Проверка встроенной поставки без Docker/моделей: `Image Analysis.exe --self-test <пустая-тестовая-папка>`; результат — `self-test.txt`, код завершения 0 при успехе.
@@ -201,6 +222,8 @@ docker compose -p kurs4-app -f compose.app.yaml --profile processing down
 ```
 
 `APP_TEST_INTEGRATION=1` включает тесты настоящих Elasticsearch/S3. Используйте отдельные тестовые контейнеры и тестовые credentials: тест создаёт и удаляет только свои случайные index/bucket. Инференс в нём синтетический, веса не загружаются. Новые отчёты, benchmark и проверки производительности без отдельного поручения не создаются.
+
+Проверено 08.11.2026 для 0.3.8: 214 CPU/mock тестов backend и упаковки, 2 инфраструктурных теста pytest пропущены; Ruff check/format и синтаксис Linux shell прошли. Все шесть настоящих образов экспортированы, загружены обратно через `docker load` и сверены по ID. На Linux выполнена реальная офлайн-подготовка с Python внутри API-образа и `--network none`; Windows EXE открыл окно и выполнил self-test с кодом 0, встроенный Python скопировал и проверил модели при запрещённых сетевых вызовах, тестовые настройки сохранились. В отдельном Docker-проекте с `internal: true` запущены Elasticsearch/MinIO/RabbitMQ/API/frontend без worker; через frontend внутри контейнера получены HTTP 200 и `{"rabbitmq":true,"elasticsearch":true,"s3":true}`. Host-порты этой internal-сети Docker не публиковал, поэтому HTTP проверен внутри неё. Тестовые контейнеры и volumes удалены. Проверены подписи установщиков Docker Desktop 4.98.0 и WSL 3.0.3, целостность ZIP и его состав. Исправлены первый запуск RabbitMQ с root-owned Erlang cookie (healthcheck теперь под пользователем брокера) и обход внешнего proxy для локальной readiness-проверки. Полная установка Docker/WSL на чистой Windows, новый настоящий CPU/GPU-инференс не выполнялись; пользовательские ES/S3 данные не менялись.
 
 Проверено 08.11.2026 для 0.3.7: 204 CPU/mock теста (`backend/tests` и `tests/test_windows_distribution.py`), 2 инфраструктурных теста пропущены; Ruff check/format и проверка конфигурации Compose прошли. Windows x64 EXE собран штатным C# compiler; настоящий EXE распаковал поставку в отдельную тестовую папку с пробелами/кириллицей, открыл окно и выполнил проверку встроенного Python/SSL/manifests с кодом 0. Окно визуально проверено; ранее созданный тестовый `.secrets/app.env` сохранился при обновлении распаковки. Проверены целостность и SHA256 выпуска, состав чистого архива. Установка Docker/WSL на чистой Windows, полный запуск сервисов из EXE и новый настоящий инференс не выполнялись; пользовательские сервисы и ES/S3 данные при проверке не менялись.
 

@@ -1,4 +1,4 @@
-Image Analysis 0.3.7 — Windows x64
+Image Analysis 0.3.8 — Windows x64
 
 КАК ЗАПУСТИТЬ
 1. Распакуйте ZIP в обычную папку.

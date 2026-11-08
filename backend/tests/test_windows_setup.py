@@ -120,6 +120,11 @@ def test_health_wait_does_not_accept_partial_readiness(monkeypatch):
         io.BytesIO(b'{"rabbitmq":true,"elasticsearch":true,"s3":true}'),
     ]
     request = Mock(side_effect=responses)
-    monkeypatch.setattr(windows_setup.urllib.request, "urlopen", request)
+
+    def local_opener(handler):
+        assert handler.proxies == {}
+        return SimpleNamespace(open=request)
+
+    monkeypatch.setattr(windows_setup.urllib.request, "build_opener", local_opener)
     windows_setup.wait_for_api("http://localhost:8080")
     assert request.call_count == 2

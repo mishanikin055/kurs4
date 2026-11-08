@@ -50,7 +50,10 @@ def fetch(target, expected, url, spec):
             raise ValueError(f"Existing file differs; preserve it and resolve manually: {target}")
         print(f"Verified: {target.relative_to(ROOT)}")
         return
+    new_directory = not target.parent.exists()
     target.parent.mkdir(parents=True, exist_ok=True)
+    if new_directory:
+        target.parent.chmod(0o755)
     temporary = None
     try:
         with tempfile.NamedTemporaryFile(dir=target.parent, prefix=".fetch-", delete=False) as out:
@@ -83,6 +86,8 @@ def fetch(target, expected, url, spec):
                         out.write(block)
         if digest(temporary) != expected:
             raise ValueError(f"SHA256 mismatch: {target.name}")
+        # Public weights must also be readable by the container's UID 1000.
+        temporary.chmod(0o644)
         os.replace(temporary, target)
         print(f"Verified: {target.relative_to(ROOT)}")
     finally:

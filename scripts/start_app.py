@@ -71,6 +71,10 @@ def use_external_s3(compose, env):
     # Let Compose resolve dotenv quoting/interpolation exactly as for the containers.
     config = json.loads(run(compose + ["config", "--format", "json"], env=env, capture=True).stdout)
     values = config["services"]["backend"]["environment"]
+    return external_s3_settings(values)
+
+
+def external_s3_settings(values):
     endpoint = (values.get("APP_S3_ENDPOINT_URL") or "").strip().rstrip("/")
     if not endpoint or endpoint == "http://s3:9000":
         return False
@@ -113,6 +117,19 @@ def build_images_available(compose, services, env):
     return True
 
 
+def prepare_lock():
+    lock = ROOT / "storage" / "locks" / "inference.lock"
+    lock.parent.mkdir(parents=True, exist_ok=True)
+    if lock.is_symlink() or (lock.exists() and not lock.is_file()):
+        raise RuntimeError(f"Inference lock must be a regular file: {lock}")
+    try:
+        with lock.open("x"):
+            pass
+        lock.chmod(0o666)
+    except FileExistsError:
+        pass
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--device", choices=("cpu", "cuda", "wsl-cuda"), required=True)
@@ -124,6 +141,7 @@ def main(argv=None):
         action="store_true",
         help="Reuse local release images; build only when an application image is missing",
     )
+    parser.add_argument("--offline", action="store_true", help="Never build or pull images")
     args = parser.parse_args(argv)
     env = dict(os.environ, APP_DEVICE="cpu" if args.device == "cpu" else "cuda")
     env.setdefault("APP_WORKER_MEMORY", "8g" if args.device == "cpu" else "5g")
@@ -134,6 +152,8 @@ def main(argv=None):
         )
         compose += ["-f", override]
     compose += ["--profile", "processing"]
+    if args.offline:
+        compose += ["-f", "compose.app.offline.yaml"]
     try:
         run(["docker", "compose", "version"], env=env, capture=True)
         info = json.loads(
@@ -162,27 +182,39 @@ def main(argv=None):
                 print(".secrets/app.env will be generated on launch.")
             return 0
         prepare_secrets(external_s3=external_s3)
-        lock = ROOT / "storage" / "locks" / "inference.lock"
-        lock.parent.mkdir(parents=True, exist_ok=True)
-        if lock.is_symlink() or (lock.exists() and not lock.is_file()):
-            raise RuntimeError(f"Inference lock must be a regular file: {lock}")
-        try:
-            with lock.open("x"):
-                pass
-            # The container uses UID 1000; host users may have another UID.
-            lock.chmod(0o666)
-        except FileExistsError:
-            pass
+        prepare_lock()
         local_s3 = [] if external_s3 else ["s3"]
         build_services = [*local_s3, "backend", "worker", "frontend"]
-        if not args.build_if_missing or not build_images_available(compose, build_services, env):
+        if args.offline:
+            if not build_images_available(
+                compose, [*build_services, "elasticsearch", "rabbitmq"], env
+            ):
+                raise RuntimeError(
+                    "Не все офлайн-образы загружены. Повторите установку из полного архива."
+                )
+        elif not args.build_if_missing or not build_images_available(compose, build_services, env):
             run(compose + ["build", *build_services], env=env)
-        run(compose + ["up", "-d", "--wait", "elasticsearch", *local_s3, "rabbitmq"], env=env)
+        offline_options = ["--pull", "never", "--no-build"] if args.offline else []
         run(
-            compose + ["run", "--rm", "--no-deps", "backend", "python", "-m", "backend.db"],
+            compose
+            + ["up", "-d", "--wait", *offline_options, "elasticsearch", *local_s3, "rabbitmq"],
             env=env,
         )
-        run(compose + ["up", "-d", "backend", "worker", "frontend"], env=env)
+        run(
+            compose
+            + [
+                "run",
+                "--rm",
+                "--no-deps",
+                *(["--pull", "never"] if args.offline else []),
+                "backend",
+                "python",
+                "-m",
+                "backend.db",
+            ],
+            env=env,
+        )
+        run(compose + ["up", "-d", *offline_options, "backend", "worker", "frontend"], env=env)
         if external_s3:
             # Stop a previous local deployment only after the new storage is initialized.
             run(compose + ["stop", "s3"], env=env)

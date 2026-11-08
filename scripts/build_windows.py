@@ -3,6 +3,7 @@
 import argparse
 import hashlib
 import io
+import json
 import os
 import shutil
 import subprocess
@@ -30,10 +31,23 @@ def release_files(root=ROOT):
 
 
 def source_archive():
+    checkpoints = json.loads((ROOT / "backend/checkpoints.json").read_text(encoding="utf-8"))
+    selected = {
+        f"{stage}/configs/models.json": spec["model_name"] for stage, spec in checkpoints.items()
+    }
     stream = io.BytesIO()
     with zipfile.ZipFile(stream, "w", zipfile.ZIP_DEFLATED) as archive:
         for path in release_files():
-            archive.write(path, path.relative_to(ROOT).as_posix())
+            name = path.relative_to(ROOT).as_posix()
+            if name in selected:
+                config = json.loads(path.read_text(encoding="utf-8"))
+                models = [row for row in config["models"] if row["id"] == selected[name]]
+                if len(models) != 1:
+                    raise ValueError(f"Expected one application model in {name}")
+                content = {"models": models}
+                archive.writestr(name, json.dumps(content, ensure_ascii=False, indent=2) + "\n")
+            else:
+                archive.write(path, name)
     return stream.getvalue()
 
 
@@ -46,6 +60,11 @@ def windows_path(path):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True, help="Release ZIP path")
+    parser.add_argument(
+        "--offline-only",
+        action="store_true",
+        help="Require adjacent offline assets; never download",
+    )
     parser.add_argument(
         "--python-zip", type=Path, help="Previously downloaded official embedded ZIP"
     )
@@ -95,6 +114,7 @@ def main(argv=None):
                     "/target:winexe",
                     "/platform:x64",
                     "/optimize+",
+                    "/define:OFFLINE" if args.offline_only else "/define:ONLINE",
                     "/reference:System.Windows.Forms.dll",
                     "/reference:System.Drawing.dll",
                     "/reference:System.IO.Compression.dll",

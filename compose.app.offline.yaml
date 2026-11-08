@@ -1,0 +1,20 @@
+# Local aliases survive docker save/load, including images originally pinned by digest.
+services:
+  backend:
+    build: !reset null
+    pull_policy: never
+  worker:
+    build: !reset null
+    pull_policy: never
+  frontend:
+    build: !reset null
+    pull_policy: never
+  s3:
+    build: !reset null
+    pull_policy: never
+  elasticsearch:
+    image: kurs4-offline-elasticsearch:0.3.8
+    pull_policy: never
+  rabbitmq:
+    image: kurs4-offline-rabbitmq:0.3.8
+    pull_policy: never

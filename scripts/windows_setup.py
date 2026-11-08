@@ -1,6 +1,7 @@
 """Windows desktop setup; stdlib only, with the existing application launcher."""
 
 import argparse
+import base64
 import json
 import os
 import platform
@@ -13,10 +14,15 @@ import urllib.request
 import webbrowser
 from pathlib import Path
 
-from scripts import fetch_app_models, start_app
+from scripts import fetch_app_models, offline_setup, start_app
 
 ROOT = Path(__file__).resolve().parents[1]
 DOCKER_DOWNLOAD = "https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe"
+
+
+def offline_bundle():
+    value = os.environ.get("IMAGE_ANALYSIS_OFFLINE_DIR")
+    return Path(value) if value else None
 
 
 def status(message):
@@ -49,17 +55,29 @@ def find_docker():
 
 
 def install_docker():
-    status("1/4. Скачивание официального установщика Docker Desktop…")
-    target = ROOT.parent / "downloads" / "Docker Desktop Installer.exe"
-    target.parent.mkdir(parents=True, exist_ok=True)
-    temporary = target.with_suffix(".part")
-    try:
-        with urllib.request.urlopen(DOCKER_DOWNLOAD, timeout=90) as response:
-            with temporary.open("wb") as output:
-                shutil.copyfileobj(response, output, 1024 * 1024)
-        os.replace(temporary, target)
-    finally:
-        temporary.unlink(missing_ok=True)
+    bundle = offline_bundle()
+    if bundle:
+        status("1/4. Подготовка Docker Desktop из офлайн-поставки…")
+        target = offline_setup.verified_file(bundle, "installers/Docker Desktop Installer.exe")
+        try:
+            result = subprocess.run(["wsl.exe", "--version"], capture_output=True, check=False)
+            wsl_missing = result.returncode != 0
+        except FileNotFoundError:
+            wsl_missing = True
+        if wsl_missing:
+            setup_wsl()
+    else:
+        status("1/4. Скачивание официального установщика Docker Desktop…")
+        target = ROOT.parent / "downloads" / "Docker Desktop Installer.exe"
+        target.parent.mkdir(parents=True, exist_ok=True)
+        temporary = target.with_suffix(".part")
+        try:
+            with urllib.request.urlopen(DOCKER_DOWNLOAD, timeout=90) as response:
+                with temporary.open("wb") as output:
+                    shutil.copyfileobj(response, output, 1024 * 1024)
+            os.replace(temporary, target)
+        finally:
+            temporary.unlink(missing_ok=True)
     os.environ["IMAGE_ANALYSIS_DOCKER_INSTALLER"] = str(target)
     # Trust Windows certificate verification, not an unpinned download alone.
     powershell(
@@ -122,6 +140,43 @@ def ensure_docker():
 
 def setup_wsl():
     status("Установка или обновление WSL. Подтвердите запрос Windows.")
+    bundle = offline_bundle()
+    if bundle:
+        target = offline_setup.verified_file(bundle, "installers/wsl.x64.msi")
+        os.environ["IMAGE_ANALYSIS_WSL_INSTALLER"] = str(target)
+        powershell(
+            "$ErrorActionPreference='Stop'; "
+            "$s=Get-AuthenticodeSignature -LiteralPath $env:IMAGE_ANALYSIS_WSL_INSTALLER; "
+            "if ($s.Status -ne 'Valid' -or $s.SignerCertificate.Subject -notmatch "
+            "'(?:^|,\\s*)O=Microsoft Corporation(?:,|$)') { throw 'Invalid WSL signature' }",
+            timeout=120,
+        )
+        script = (
+            "$ErrorActionPreference='Stop'; "
+            "dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart /LimitAccess; "
+            "$feature=$LASTEXITCODE; if ($feature -notin 0,3010) { exit $feature }; "
+            "$arguments='/i \"'+$env:IMAGE_ANALYSIS_WSL_INSTALLER+'\" /passive /norestart'; "
+            "$p=Start-Process msiexec.exe -ArgumentList $arguments -Wait -PassThru; "
+            "if ($p.ExitCode -notin 0,3010) { exit $p.ExitCode }; "
+            "if ($feature -eq 3010 -or $p.ExitCode -eq 3010) { exit 3010 }"
+        )
+        os.environ["IMAGE_ANALYSIS_ELEVATED_SCRIPT"] = base64.b64encode(
+            script.encode("utf-16le")
+        ).decode()
+        try:
+            powershell(
+                "$p=Start-Process -FilePath ($PSHOME+'\\powershell.exe') "
+                "-ArgumentList '-NoProfile','-NonInteractive','-EncodedCommand',$env:IMAGE_ANALYSIS_ELEVATED_SCRIPT "
+                "-Verb RunAs -Wait -PassThru; exit $p.ExitCode"
+            )
+        except subprocess.CalledProcessError as exc:
+            if exc.returncode == 3010:
+                raise RuntimeError(
+                    "WSL установлена. Перезагрузите Windows и снова запустите приложение."
+                ) from exc
+            raise
+        status("WSL установлена из локального пакета. При запросе Windows выполните перезагрузку.")
+        return
     powershell(
         "$ErrorActionPreference='Stop'; "
         "$p=Start-Process -FilePath wsl.exe -ArgumentList '--install','--no-distribution' "
@@ -136,10 +191,12 @@ def setup_wsl():
 
 
 def wait_for_api(url, *, timeout=180):
+    # Local readiness must not go through an Internet/corporate proxy.
+    local = urllib.request.build_opener(urllib.request.ProxyHandler({}))
     deadline = time.monotonic() + timeout
     while time.monotonic() < deadline:
         try:
-            with urllib.request.urlopen(url + "/api/health", timeout=5) as response:
+            with local.open(url + "/api/health", timeout=5) as response:
                 health = json.load(response)
             if all(health.get(key) is True for key in ("rabbitmq", "elasticsearch", "s3")):
                 return
@@ -200,10 +257,19 @@ def main(argv=None):
             status("Приложение остановлено. Данные сохранены.")
             return 0
         ensure_docker()
-        status("2/4. Подготовка моделей. Первая загрузка может занять много времени…")
-        fetch_app_models.main([])
-        status("3/4. Сборка и запуск приложения. Не закрывайте окно; первая сборка длительная…")
-        if start_app.main(["--device", args.device, "--build-if-missing"]):
+        bundle = offline_bundle()
+        if bundle:
+            status("2/4. Установка моделей из офлайн-поставки…")
+            offline_setup.prepare_models(bundle)
+            status("3/4. Загрузка готовых Docker-образов из поставки. Не закрывайте окно…")
+            offline_setup.load_images(bundle)
+        else:
+            status("2/4. Подготовка моделей. Первая загрузка может занять много времени…")
+            fetch_app_models.main([])
+        status("3/4. Запуск приложения…")
+        if start_app.main(
+            ["--device", args.device, "--offline" if bundle else "--build-if-missing"]
+        ):
             raise RuntimeError("Не удалось запустить приложение. Подробности — в журнале.")
         port = int(os.environ.get("APP_FRONTEND_PORT", "8080"))
         if not 1 <= port <= 65535:

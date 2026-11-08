@@ -34,6 +34,7 @@ backend/tests/mock_model.py
 backend/tests/test_api.py
 backend/tests/test_fetch_app_models.py
 backend/tests/test_integration.py
+backend/tests/test_offline_setup.py
 backend/tests/test_pipeline.py
 backend/tests/test_portable_launch.py
 backend/tests/test_processing.py
@@ -47,6 +48,7 @@ backend/tests/test_windows_setup.py
 backend/translation.json
 compose.app.external-s3.yaml
 compose.app.gpu.yaml
+compose.app.offline.yaml
 compose.app.wsl-gpu.yaml
 compose.app.yaml
 detection/configs/coco_categories.json
@@ -65,14 +67,18 @@ frontend/vendor/swagger-ui/LICENSE
 frontend/vendor/swagger-ui/manifest.json
 frontend/vendor/swagger-ui/swagger-ui-bundle.js
 frontend/vendor/swagger-ui/swagger-ui.css
+packaging/README-offline.txt
+packaging/start-linux.sh
 packaging/windows/Launcher.cs
 packaging/windows/README.txt
 packaging/windows/app.manifest
 packaging/windows/files.txt
 pyproject.toml
 rabbitmq.conf
+scripts/build_offline.py
 scripts/build_windows.py
 scripts/fetch_app_models.py
+scripts/offline_setup.py
 scripts/start_app.py
 scripts/windows_setup.py
 tests/test_windows_distribution.py

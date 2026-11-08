@@ -17,7 +17,7 @@ x-app: &app
 
 services:
   frontend:
-    image: kurs4-frontend:0.3.7
+    image: kurs4-frontend:0.3.8
     build:
       context: ./frontend
     restart: unless-stopped
@@ -70,13 +70,14 @@ services:
       - rabbitmq_data:/var/lib/rabbitmq
       - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
     healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      # Run as the broker user: an early root probe can create an unreadable Erlang cookie.
+      test: ["CMD", "su-exec", "rabbitmq", "rabbitmq-diagnostics", "-q", "ping"]
       interval: 5s
       timeout: 5s
       retries: 20
   backend:
     <<: *app
-    image: kurs4-backend:0.3.7
+    image: kurs4-backend:0.3.8
     build:
       context: .
       dockerfile: backend/Dockerfile
@@ -86,7 +87,7 @@ services:
       - "127.0.0.1:${APP_HTTP_PORT:-8000}:8000"
   worker:
     <<: *app
-    image: kurs4-worker:0.3.7
+    image: kurs4-worker:0.3.8
     build:
       context: .
       dockerfile: backend/Dockerfile
