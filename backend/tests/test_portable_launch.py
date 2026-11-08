@@ -15,6 +15,25 @@ from backend.settings import Settings, model_specs
 from scripts import start_app
 
 
+@pytest.mark.parametrize("present", [True, False])
+def test_release_image_check_uses_local_images_only(monkeypatch, present):
+    calls = []
+
+    def run(command, **kwargs):
+        calls.append(command)
+        if "config" in command:
+            return SimpleNamespace(stdout=json.dumps({"services": {"backend": {"image": "app:1"}}}))
+        if not present:
+            import subprocess
+
+            raise subprocess.CalledProcessError(1, command)
+        return SimpleNamespace(stdout="[]")
+
+    monkeypatch.setattr(start_app, "run", run)
+    assert start_app.build_images_available(["docker", "compose"], ["backend"], {}) is present
+    assert calls[-1] == ["docker", "image", "inspect", "app:1"]
+
+
 @pytest.mark.parametrize("device,dtype", [("cpu", "float32"), ("cuda:0", "float16")])
 def test_florence_model_and_floating_inputs_use_device_precision(
     monkeypatch, tmp_path, device, dtype
@@ -104,6 +123,16 @@ def mock_docker(monkeypatch, *, runtimes=None, s3_settings=None):
 
     monkeypatch.setattr(start_app.subprocess, "run", run)
     return calls
+
+
+@pytest.mark.parametrize("present", [True, False])
+def test_start_builds_only_when_requested_release_images_are_missing(bundle, monkeypatch, present):
+    calls = mock_docker(monkeypatch)
+    monkeypatch.setattr(start_app, "build_images_available", lambda *args: present)
+    assert start_app.main(["--device", "cpu", "--build-if-missing"]) == 0
+    builds = [command for command, _ in calls if "build" in command]
+    assert len(builds) == (0 if present else 1)
+    assert any("up" in command for command, _ in calls)
 
 
 @pytest.mark.parametrize("wsl", [False, True])

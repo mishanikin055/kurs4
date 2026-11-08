@@ -103,11 +103,26 @@ def check_weights():
                 raise RuntimeError(f"Model checksum mismatch: {path}")
 
 
+def build_images_available(compose, services, env):
+    config = json.loads(run(compose + ["config", "--format", "json"], env=env, capture=True).stdout)
+    images = [config["services"][name]["image"] for name in services]
+    try:
+        run(["docker", "image", "inspect", *images], env=env, capture=True)
+    except subprocess.CalledProcessError:
+        return False
+    return True
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--device", choices=("cpu", "cuda", "wsl-cuda"), required=True)
     parser.add_argument(
         "--check", action="store_true", help="Read-only preflight; do not start services"
+    )
+    parser.add_argument(
+        "--build-if-missing",
+        action="store_true",
+        help="Reuse local release images; build only when an application image is missing",
     )
     args = parser.parse_args(argv)
     env = dict(os.environ, APP_DEVICE="cpu" if args.device == "cpu" else "cuda")
@@ -159,7 +174,9 @@ def main(argv=None):
         except FileExistsError:
             pass
         local_s3 = [] if external_s3 else ["s3"]
-        run(compose + ["build", *local_s3, "backend", "worker", "frontend"], env=env)
+        build_services = [*local_s3, "backend", "worker", "frontend"]
+        if not args.build_if_missing or not build_images_available(compose, build_services, env):
+            run(compose + ["build", *build_services], env=env)
         run(compose + ["up", "-d", "--wait", "elasticsearch", *local_s3, "rabbitmq"], env=env)
         run(
             compose + ["run", "--rm", "--no-deps", "backend", "python", "-m", "backend.db"],

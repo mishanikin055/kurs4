@@ -17,6 +17,7 @@ image-analysis*.zip
 
 classification/models
 .secrets
+python
 
 annotation/models
 
